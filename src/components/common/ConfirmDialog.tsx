@@ -1,0 +1,72 @@
+import React from 'react';
+import { Modal } from './Modal';
+import { AlertTriangle, Trash2, RotateCcw } from 'lucide-react';
+
+interface ConfirmDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  variant?: 'danger' | 'warning' | 'primary';
+  icon?: 'trash' | 'warning' | 'restore';
+}
+
+export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
+  variant = 'danger',
+  icon = 'warning',
+}) => {
+  const handleConfirm = () => {
+    onConfirm();
+    onClose();
+  };
+
+  const IconComponent = () => {
+    if (icon === 'trash') return <Trash2 className="w-5 h-5 text-red-600" />;
+    if (icon === 'restore') return <RotateCcw className="w-5 h-5 text-emerald-600" />;
+    return <AlertTriangle className="w-5 h-5 text-amber-600" />;
+  };
+
+  const confirmBtnClass = {
+    danger: 'erp-btn-danger bg-red-600 text-white hover:bg-red-700 border-red-700',
+    warning: 'erp-btn-primary bg-amber-600 hover:bg-amber-700 text-white',
+    primary: 'erp-btn-primary',
+  }[variant];
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      maxWidth="md"
+      footer={
+        <>
+          <button onClick={onClose} className="erp-btn-secondary">
+            {cancelText}
+          </button>
+          <button onClick={handleConfirm} className={confirmBtnClass}>
+            {confirmText}
+          </button>
+        </>
+      }
+    >
+      <div className="flex items-start gap-3 py-2">
+        <div className="p-2 rounded-full bg-slate-100 shrink-0">
+          <IconComponent />
+        </div>
+        <div className="space-y-1">
+          <p className="text-xs text-slate-600 leading-relaxed">{message}</p>
+        </div>
+      </div>
+    </Modal>
+  );
+};
