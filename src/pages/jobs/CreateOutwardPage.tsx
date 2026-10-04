@@ -2,9 +2,11 @@ import { Button, Card, Input, Select } from '../../components/ui/Primitives';
 import React, { useState, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { PhotoUpload } from '../../components/common/PhotoUpload';
+import { SuccessModal } from '../../components/common/SuccessModal';
 import { calculatePlatingPerKg } from '../../utils/calculations';
 import { formatWeight, formatPlating } from '../../utils/formatters';
-import { ArrowUpRight, ArrowLeft, Calculator, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, ArrowLeft, Calculator, AlertTriangle, CheckCircle2, FileText, Eye } from 'lucide-react';
+import { JewelleryJob } from '../../types/erp';
 
 export const CreateOutwardPage: React.FC = () => {
   const { jobs, processOutward, setCurrentPage, navigateToJob } = useERP();
@@ -24,7 +26,11 @@ export const CreateOutwardPage: React.FC = () => {
   );
   const [outwardRemarks, setOutwardRemarks] = useState<string>('');
   const [error, setError] = useState<string>('');
-  const [successMsg, setSuccessMsg] = useState<string>('');
+  const [successOutward, setSuccessOutward] = useState<{
+    job: JewelleryJob;
+    platingPerKg: number;
+    outwardWeight: number;
+  } | null>(null);
 
   const selectedJob = jobs.find((j) => j.id === selectedJobId);
   const inwardWeight = selectedJob?.inwardWeight || 10.250;
@@ -42,7 +48,7 @@ export const CreateOutwardPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedJobId) {
+    if (!selectedJobId || !selectedJob) {
       setError('Please select an active Job ID.');
       return;
     }
@@ -64,17 +70,18 @@ export const CreateOutwardPage: React.FC = () => {
     });
 
     if (result.success) {
-      setSuccessMsg(`Outward completed! Plating: ${result.platingPerKg.toFixed(3)} g/kg`);
-      setTimeout(() => {
-        navigateToJob(selectedJobId);
-      }, 1000);
+      setSuccessOutward({
+        job: selectedJob,
+        platingPerKg: result.platingPerKg,
+        outwardWeight: parsedOutwardWeight,
+      });
     } else {
       setError(result.error || 'Failed to process outward.');
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <Button variant="ghost"
@@ -109,13 +116,6 @@ export const CreateOutwardPage: React.FC = () => {
           <div className="mx-5 mt-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
-          </div>
-        )}
-
-        {successMsg && (
-          <div className="mx-5 mt-4 p-3 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-            <span>{successMsg}</span>
           </div>
         )}
 
@@ -289,6 +289,72 @@ export const CreateOutwardPage: React.FC = () => {
           </div>
         </form>
       </Card>
+
+      {/* Success Modal Pop-up */}
+      {successOutward && (
+        <SuccessModal
+          isOpen={!!successOutward}
+          onClose={() => {
+            const jId = successOutward.job.id;
+            setSuccessOutward(null);
+            navigateToJob(jId);
+          }}
+          title="Customer Outward Dispatched Successfully!"
+          greeting={`✨ Plating density certified at ${formatPlating(successOutward.platingPerKg)}.`}
+          message="Final scale weight and plating concentration per KG have been recorded and marked completed."
+          details={[
+            {
+              label: 'Job ID',
+              value: successOutward.job.id,
+              isMono: true,
+              isHighlight: true,
+            },
+            {
+              label: 'Customer',
+              value: successOutward.job.customerName,
+              isHighlight: true,
+            },
+            {
+              label: 'Dispatched Outward Weight',
+              value: formatWeight(successOutward.outwardWeight),
+              isMono: true,
+              isHighlight: true,
+            },
+            {
+              label: 'Net Weight Increase',
+              value: `+${(successOutward.outwardWeight - successOutward.job.inwardWeight).toFixed(3)} kg`,
+              isMono: true,
+            },
+            {
+              label: 'Plating Concentration',
+              value: formatPlating(successOutward.platingPerKg),
+              isMono: true,
+              badge: {
+                text: 'Certified Standard',
+                variant: 'purple',
+              },
+            },
+          ]}
+          primaryAction={{
+            label: 'Generate Customer Bill',
+            icon: <FileText className="w-3.5 h-3.5" />,
+            onClick: () => {
+              setSuccessOutward(null);
+              setCurrentPage('bills_list');
+            },
+          }}
+          secondaryAction={{
+            label: 'View Job Details',
+            icon: <Eye className="w-3.5 h-3.5" />,
+            onClick: () => {
+              const jId = successOutward.job.id;
+              setSuccessOutward(null);
+              navigateToJob(jId);
+            },
+          }}
+          dismissText="Done"
+        />
+      )}
     </div>
   );
 };

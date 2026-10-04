@@ -58,7 +58,7 @@ export const JobDetailPage: React.FC = () => {
   );
 
   return (
-    <div className="max-w-5xl mx-auto space-y-5 font-sans">
+    <div className="space-y-5 font-sans">
       {/* Top Navigation */}
       <div className="flex items-center justify-between">
         <Button variant="ghost"
@@ -348,53 +348,69 @@ export const JobDetailPage: React.FC = () => {
       </Card>
 
       {/* 6. ACTIVITY TIMELINE (Section 46: Job Created, Labour Assigned, Processing, Ready, Outward Completed) */}
-      <Card padding="md" className="erp-card p-5">
-        <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-slate-500" /> Complete Production Traceability Timeline
+      <Card padding="md" className="erp-card p-5 border border-slate-200/80 shadow-xs">
+        <h3 className="text-sm font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <Clock className="w-4 h-4 text-slate-600" /> Complete Production Traceability Timeline
         </h3>
 
         <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
           <div className="relative">
             <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-emerald-600 ring-4 ring-white"></div>
             <div>
-              <p className="text-xs font-bold text-slate-900">Job Inward Received & Verified</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <p className="text-xs sm:text-sm font-bold text-slate-900">Job Inward Received & Verified</p>
+                <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                  {formatDateTime(job.inwardDate)}
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
                 Received {formatWeight(job.inwardWeight)} from {job.customerName}. Photo inspection passed.
               </p>
-              <span className="text-2xs font-mono text-slate-400 mt-0.5 block">{formatDateTime(job.inwardDate)}</span>
             </div>
           </div>
 
           <div className="relative">
             <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-indigo-600 ring-4 ring-white"></div>
             <div>
-              <p className="text-xs font-bold text-slate-900">Labour Binding Started & Completed</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <p className="text-xs sm:text-sm font-bold text-slate-900">Labour Binding Started & Completed</p>
+                <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                  24 Sep 2026, 12:30 PM
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
                 Assigned to {bindingTask?.labourName || 'Ramesh Patel'}. 150g hard tar used. Fixed on copper jigs.
               </p>
-              <span className="text-2xs font-mono text-slate-400 mt-0.5 block">24 Sep 2026, 12:30 PM</span>
             </div>
           </div>
 
           <div className="relative">
             <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-cyan-600 ring-4 ring-white"></div>
             <div>
-              <p className="text-xs font-bold text-slate-900">Electroplating Bath Cycle ({job.platingType})</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <p className="text-xs sm:text-sm font-bold text-slate-900">Electroplating Bath Cycle ({job.platingType})</p>
+                <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                  24 Sep 2026, 01:15 PM
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
                 Bath 02 immersion at 45°C. Current density monitored. Gold solution replenishment verified.
               </p>
-              <span className="text-2xs font-mono text-slate-400 mt-0.5 block">24 Sep 2026, 01:15 PM</span>
             </div>
           </div>
 
           <div className="relative">
             <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-orange-600 ring-4 ring-white"></div>
             <div>
-              <p className="text-xs font-bold text-slate-900">Labour Open / Untying Completed</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <p className="text-xs sm:text-sm font-bold text-slate-900">Labour Open / Untying Completed</p>
+                <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                  24 Sep 2026, 03:00 PM
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
                 Artisan {openTask?.labourName || 'Suresh Parmar'} untied pieces. Tar reclaimed into recovery vat.
               </p>
-              <span className="text-2xs font-mono text-slate-400 mt-0.5 block">24 Sep 2026, 03:00 PM</span>
             </div>
           </div>
 
@@ -402,12 +418,16 @@ export const JobDetailPage: React.FC = () => {
             <div className="relative">
               <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-emerald-600 ring-4 ring-white"></div>
               <div>
-                <p className="text-xs font-bold text-emerald-800">Customer Outward Completed & Dispatched</p>
-                <p className="text-[11px] text-slate-600 mt-0.5">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <p className="text-xs sm:text-sm font-bold text-emerald-800">Customer Outward Completed & Dispatched</p>
+                  <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                    {formatDateTime(job.outwardDate)}
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
                   Final scale weight: {formatWeight(job.outwardWeight)}. Plating density certified at{' '}
                   <strong className="text-purple-700">{formatPlating(job.platingPerKg)}</strong>.
                 </p>
-                <span className="text-2xs font-mono text-slate-400 mt-0.5 block">{formatDateTime(job.outwardDate)}</span>
               </div>
             </div>
           )}

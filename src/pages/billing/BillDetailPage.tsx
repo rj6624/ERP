@@ -53,7 +53,7 @@ export const BillDetailPage: React.FC = () => {
   const billPayments = payments.filter((p) => p.billId === bill.id);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
+    <div className="space-y-4">
       {/* Header Controls (Hidden on Print) */}
       <div className="flex items-center justify-between no-print">
         <Button variant="ghost"

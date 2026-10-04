@@ -468,30 +468,45 @@ export const ManagerDashboardPage: React.FC = () => {
 
       {/* 7. RECENT JOB ACTIVITY TIMELINE (Section 46 & 62) */}
       <Card padding="md" className="erp-card p-4">
-        <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+        <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-2.5">
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-slate-500" />
+            <Clock className="w-4 h-4 text-slate-600" />
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
               Recent Operational Job Activity
             </h4>
           </div>
-          <span className="text-xs font-mono text-slate-400">Plant floor stream</span>
+          <span className="text-2xs font-mono font-medium text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+            Plant floor stream
+          </span>
         </div>
 
         <div className="divide-y divide-slate-100 text-xs">
-          {operationalTimeline.slice(0, 5).map((item) => (
-            <div key={item.id} className="py-2.5 flex items-start justify-between gap-4">
-              <div className="flex items-start gap-2.5">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
-                <div>
-                  <p className="font-bold text-slate-900">{item.title}</p>
-                  <p className="text-slate-500 text-[11px] mt-0.5">{item.description}</p>
+          {operationalTimeline.slice(0, 6).map((item) => (
+            <div
+              key={item.id}
+              className="py-2.5 flex flex-col sm:flex-row sm:items-start justify-between gap-2.5"
+            >
+              <div className="space-y-0.5 min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-bold text-slate-900 text-xs sm:text-sm">{item.title}</p>
+                  {item.jobId && (
+                    <span className="font-mono text-2xs font-bold bg-slate-100 text-slate-800 px-1.5 py-0.2 rounded border border-slate-200">
+                      {item.jobId}
+                    </span>
+                  )}
+                </div>
+                <p className="text-slate-700 text-xs font-normal leading-relaxed">{item.description}</p>
+                <div className="flex items-center gap-3 pt-0.5 text-[11px] text-slate-600">
+                  <span>
+                    Operator: <strong className="font-semibold text-slate-900">{item.userName}</strong>
+                  </span>
                 </div>
               </div>
-              <div className="text-right shrink-0">
-                <span className="text-2xs font-mono text-slate-400 block">{formatDateTime(item.timestamp)}</span>
-                <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded font-medium">
-                  {item.userName}
+
+              <div className="shrink-0 sm:self-start sm:text-right">
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold font-mono text-slate-700 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded">
+                  <Clock className="w-3.5 h-3.5 text-slate-500" />
+                  {formatDateTime(item.timestamp)}
                 </span>
               </div>
             </div>

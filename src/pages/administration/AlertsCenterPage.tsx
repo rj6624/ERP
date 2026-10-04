@@ -60,7 +60,7 @@ export const AlertsCenterPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-5 max-w-5xl mx-auto font-sans">
+    <div className="space-y-5 font-sans">
       {/* Header Banner */}
       <div className="erp-light-panel bg-slate-900 text-white p-5 rounded-lg border border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

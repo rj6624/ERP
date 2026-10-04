@@ -70,7 +70,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         )}
 
         {/* Content Body */}
-        <main className="erp-workspace flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 custom-scrollbar">
+        <main className="erp-workspace flex-1 overflow-y-auto px-6 py-5 space-y-5 custom-scrollbar">
           {children}
         </main>
       </div>

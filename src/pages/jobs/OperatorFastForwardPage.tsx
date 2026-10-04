@@ -24,7 +24,7 @@ export const OperatorFastForwardPage: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto font-sans">
+    <div className="space-y-6 font-sans">
       {/* Header */}
       <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 rounded-2xl p-6 text-slate-950 shadow-md border border-amber-300">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

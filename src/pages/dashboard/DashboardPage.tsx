@@ -468,30 +468,47 @@ export const DashboardPage: React.FC = () => {
 
       {/* Live System Activity Timeline Feed */}
       <Card padding="md" className="erp-card bg-white p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+        <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-slate-100">
+          <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
             Live Manufacturing Activity Stream
           </h3>
-          <span className="text-2xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">
+          <span className="text-2xs bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded font-mono border border-slate-200">
             Auto-Updated
           </span>
         </div>
 
         <div className="divide-y divide-slate-100">
-          {timeline.slice(0, 5).map((item) => (
-            <div key={item.id} className="py-2.5 flex items-start gap-3 text-xs">
-              <div className="w-2 h-2 rounded-full bg-slate-400 mt-1.5 shrink-0" />
-              <div className="flex-1 min-w-0 space-y-0.5">
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold text-slate-900 truncate">
+          {timeline.slice(0, 6).map((item) => (
+            <div
+              key={item.id}
+              className="py-2.5 flex flex-col sm:flex-row sm:items-start justify-between gap-2.5"
+            >
+              <div className="space-y-0.5 min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-bold text-slate-900 text-xs sm:text-sm">
                     {item.title}
                   </p>
-                  <span className="text-[10px] text-slate-400 font-mono shrink-0 ml-2">
-                    {formatDateTime(item.timestamp)}
+                  {item.jobId && (
+                    <span className="font-mono text-2xs font-bold bg-slate-100 text-slate-800 px-1.5 py-0.2 rounded border border-slate-200">
+                      {item.jobId}
+                    </span>
+                  )}
+                </div>
+                <p className="text-slate-700 text-xs font-normal leading-relaxed">
+                  {item.description}
+                </p>
+                <div className="flex items-center gap-3 pt-0.5 text-[11px] text-slate-600">
+                  <span>
+                    Operator: <strong className="font-semibold text-slate-900">{item.userName}</strong>
                   </span>
                 </div>
-                <p className="text-slate-500 text-[11px]">{item.description}</p>
-                <p className="text-[10px] text-slate-400">Operator: {item.userName}</p>
+              </div>
+
+              <div className="shrink-0 sm:self-start sm:text-right">
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold font-mono text-slate-700 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded">
+                  <Clock className="w-3.5 h-3.5 text-slate-500" />
+                  {formatDateTime(item.timestamp)}
+                </span>
               </div>
             </div>
           ))}

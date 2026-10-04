@@ -5,6 +5,7 @@ import { ChemicalItem } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Modal } from '../../components/common/Modal';
+import { SuccessModal } from '../../components/common/SuccessModal';
 import { FlaskConical, Plus, ArrowDown, ArrowUp, AlertTriangle } from 'lucide-react';
 import { formatCurrency, formatDateTime } from '../../utils/formatters';
 
@@ -16,6 +17,12 @@ export const ChemicalStockPage: React.FC = () => {
   const [selectedChemicalId, setSelectedChemicalId] = useState(chemicals[0]?.id || '');
   const [quantity, setQuantity] = useState('5.0');
   const [notes, setNotes] = useState('');
+  const [successStockData, setSuccessStockData] = useState<{
+    name: string;
+    type: 'Stock In' | 'Usage';
+    quantity: number;
+    unit: string;
+  } | null>(null);
 
   const selectedChem = chemicals.find((c) => c.id === selectedChemicalId);
 
@@ -24,6 +31,12 @@ export const ChemicalStockPage: React.FC = () => {
     const qty = parseFloat(quantity);
     if (!selectedChem || isNaN(qty) || qty <= 0) return;
     updateChemicalStock(selectedChem.id, qty, 'Stock In');
+    setSuccessStockData({
+      name: selectedChem.name,
+      type: 'Stock In',
+      quantity: qty,
+      unit: selectedChem.unit,
+    });
     setIsStockInModalOpen(false);
     setQuantity('5.0');
   };
@@ -33,6 +46,12 @@ export const ChemicalStockPage: React.FC = () => {
     const qty = parseFloat(quantity);
     if (!selectedChem || isNaN(qty) || qty <= 0) return;
     updateChemicalStock(selectedChem.id, qty, 'Usage');
+    setSuccessStockData({
+      name: selectedChem.name,
+      type: 'Usage',
+      quantity: qty,
+      unit: selectedChem.unit,
+    });
     setIsUsageModalOpen(false);
     setQuantity('5.0');
   };
@@ -329,6 +348,43 @@ export const ChemicalStockPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Success Modal Pop-up */}
+      {successStockData && (
+        <SuccessModal
+          isOpen={!!successStockData}
+          onClose={() => setSuccessStockData(null)}
+          title={successStockData.type === 'Stock In' ? 'Chemical Stock-In Recorded!' : 'Chemical Usage Recorded!'}
+          greeting={`🧪 ${successStockData.name} ledger updated successfully.`}
+          message={
+            successStockData.type === 'Stock In'
+              ? `Added ${successStockData.quantity.toFixed(2)} ${successStockData.unit} to chemical inventory.`
+              : `Logged consumption of ${successStockData.quantity.toFixed(2)} ${successStockData.unit} for bath processing.`
+          }
+          details={[
+            {
+              label: 'Chemical Item',
+              value: successStockData.name,
+              isHighlight: true,
+            },
+            {
+              label: 'Transaction Type',
+              value: successStockData.type,
+              badge: {
+                text: successStockData.type,
+                variant: successStockData.type === 'Stock In' ? 'success' : 'info',
+              },
+            },
+            {
+              label: 'Quantity',
+              value: `${successStockData.type === 'Stock In' ? '+' : '-'}${successStockData.quantity.toFixed(2)} ${successStockData.unit}`,
+              isMono: true,
+              isHighlight: true,
+            },
+          ]}
+          dismissText="Done"
+        />
+      )}
     </div>
   );
 };

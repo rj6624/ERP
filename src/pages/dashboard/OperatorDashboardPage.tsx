@@ -177,7 +177,7 @@ export const OperatorDashboardPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-5 font-sans max-w-[1600px] mx-auto text-slate-800">
+    <div className="space-y-5 font-sans text-slate-800">
       {/* 1. Top Header Actions & Station Bar */}
       <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
         <div>

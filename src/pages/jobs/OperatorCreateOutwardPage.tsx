@@ -207,7 +207,7 @@ export const OperatorCreateOutwardPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 font-sans">
+    <div className="space-y-6 font-sans">
       {/* Top Navigation */}
       <div className="flex items-center justify-between">
         <Button variant="secondary"

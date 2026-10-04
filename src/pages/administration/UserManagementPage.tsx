@@ -5,7 +5,8 @@ import { AppUser, UserRole, UserStatus } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Modal } from '../../components/common/Modal';
-import { UserCog, UserPlus, ShieldCheck, KeyRound, Lock, Unlock } from 'lucide-react';
+import { SuccessModal } from '../../components/common/SuccessModal';
+import { UserCog, UserPlus, ShieldCheck, KeyRound, Lock, Unlock, UserCheck } from 'lucide-react';
 import { formatDate, formatDateTime } from '../../utils/formatters';
 
 export const UserManagementPage: React.FC = () => {
@@ -15,17 +16,27 @@ export const UserManagementPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<UserRole>('Operator');
+  const [createdUserSuccess, setCreatedUserSuccess] = useState<AppUser | null>(null);
 
   const handleAddUserSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim()) return;
 
-    addUser({
-      name,
-      email,
+    const newUserData = {
+      name: name.trim(),
+      email: email.trim(),
       role,
-      status: 'Active',
-    });
+      status: 'Active' as const,
+    };
+    addUser(newUserData);
+
+    const created: AppUser = {
+      ...newUserData,
+      id: `USR-${String(users.length + 1).padStart(3, '0')}`,
+      lastLogin: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+    };
+    setCreatedUserSuccess(created);
 
     setName('');
     setEmail('');
@@ -230,6 +241,52 @@ export const UserManagementPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Success Modal Pop-up */}
+      {createdUserSuccess && (
+        <SuccessModal
+          isOpen={!!createdUserSuccess}
+          onClose={() => setCreatedUserSuccess(null)}
+          title="Staff User Account Created Successfully!"
+          greeting={`🎉 Welcome ${createdUserSuccess.name} to the team!`}
+          message="System credentials and role permissions have been configured. The user can now access plant workstations."
+          details={[
+            {
+              label: 'Staff Name',
+              value: createdUserSuccess.name,
+              isHighlight: true,
+            },
+            {
+              label: 'User ID',
+              value: createdUserSuccess.id,
+              isMono: true,
+              isHighlight: true,
+            },
+            {
+              label: 'Email / Login',
+              value: createdUserSuccess.email,
+              isMono: true,
+            },
+            {
+              label: 'Role Assigned',
+              value: createdUserSuccess.role,
+              badge: {
+                text: createdUserSuccess.role,
+                variant: createdUserSuccess.role === 'Admin' ? 'success' : 'info',
+              },
+            },
+          ]}
+          primaryAction={{
+            label: 'View Permissions Matrix',
+            icon: <KeyRound className="w-3.5 h-3.5" />,
+            onClick: () => {
+              setCreatedUserSuccess(null);
+              setCurrentPage('admin_permissions');
+            },
+          }}
+          dismissText="Done"
+        />
+      )}
     </div>
   );
 };

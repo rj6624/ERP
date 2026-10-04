@@ -1,9 +1,10 @@
 import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
-import { PaymentMode } from '../../types/erp';
+import { PaymentMode, Payment } from '../../types/erp';
 import { Modal } from '../../components/common/Modal';
-import { CreditCard, ShieldCheck } from 'lucide-react';
+import { SuccessModal } from '../../components/common/SuccessModal';
+import { CreditCard, ShieldCheck, Eye } from 'lucide-react';
 import { formatCurrency, formatWeight } from '../../utils/formatters';
 
 interface RecordPaymentModalProps {
@@ -17,7 +18,7 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
   onClose,
   defaultBillId,
 }) => {
-  const { bills, payments, recordPayment } = useERP();
+  const { bills, payments, recordPayment, setCurrentPage } = useERP();
 
   // Filter bills with pending balance or matching default
   const pendingBills = bills.filter((b) => b.pendingAmount > 0 || b.id === defaultBillId);
@@ -30,6 +31,7 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
   const [promiseDate, setPromiseDate] = useState('');
   const [remarks, setRemarks] = useState('Payment received and verified by Admin.');
   const [error, setError] = useState('');
+  const [recordedPaymentSuccess, setRecordedPaymentSuccess] = useState<Payment | null>(null);
 
   const selectedBill = bills.find((b) => b.id === selectedBillId);
   const nextPaymentNumber = `PAY-${String(payments.length + 42).padStart(4, '0')}`;
@@ -70,7 +72,7 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
     }
 
     try {
-      recordPayment({
+      const newPay = recordPayment({
         billId: selectedBill.id,
         amountReceived: amt,
         paymentMode,
@@ -80,19 +82,20 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
         remarks,
       });
 
-      onClose();
+      setRecordedPaymentSuccess(newPay);
     } catch (err: any) {
       setError(err.message || 'Failed to record payment.');
     }
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Record Payment Receipt (Admin Only)"
-      subtitle="Record settlement against customer manufacturing bills with mode & reference tracking"
-      maxWidth="lg"
+    <>
+      <Modal
+        isOpen={isOpen && !recordedPaymentSuccess}
+        onClose={onClose}
+        title="Record Payment Receipt (Admin Only)"
+        subtitle="Record settlement against customer manufacturing bills with mode & reference tracking"
+        maxWidth="lg"
       footer={
         <>
           <Button variant="secondary" type="button" onClick={onClose} className="">
@@ -241,5 +244,68 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
         </div>
       </form>
     </Modal>
+
+    {/* Success Modal Pop-up */}
+    {recordedPaymentSuccess && (
+      <SuccessModal
+        isOpen={!!recordedPaymentSuccess}
+        onClose={() => {
+          setRecordedPaymentSuccess(null);
+          onClose();
+        }}
+        title="Payment Receipt Logged Successfully!"
+        greeting={`💰 ₹${recordedPaymentSuccess.amountReceived.toLocaleString('en-IN')} received from ${recordedPaymentSuccess.customerName}!`}
+        message={`Financial credit logged against ${recordedPaymentSuccess.billNumber} with payment reference.`}
+        details={[
+          {
+            label: 'Receipt Number',
+            value: recordedPaymentSuccess.paymentNumber,
+            isMono: true,
+            isHighlight: true,
+          },
+          {
+            label: 'Customer Account',
+            value: recordedPaymentSuccess.customerName,
+            isHighlight: true,
+          },
+          {
+            label: 'Amount Received',
+            value: formatCurrency(recordedPaymentSuccess.amountReceived, true),
+            isMono: true,
+            isHighlight: true,
+            badge: { text: 'Verified Payment', variant: 'success' },
+          },
+          {
+            label: 'Payment Mode',
+            value: recordedPaymentSuccess.paymentMode,
+          },
+          {
+            label: 'Transaction / UTR Ref',
+            value: recordedPaymentSuccess.referenceNumber || 'N/A',
+            isMono: true,
+          },
+          ...(recordedPaymentSuccess.promiseDate
+            ? [
+                {
+                  label: 'Committed Balance Promise Date',
+                  value: recordedPaymentSuccess.promiseDate,
+                  badge: { text: 'Follow-Up Pending', variant: 'warning' as const },
+                },
+              ]
+            : []),
+        ]}
+        primaryAction={{
+          label: 'View Payment Register',
+          icon: <Eye className="w-3.5 h-3.5" />,
+          onClick: () => {
+            setRecordedPaymentSuccess(null);
+            onClose();
+            setCurrentPage('payments_received');
+          },
+        }}
+        dismissText="Done"
+      />
+    )}
+    </>
   );
 };

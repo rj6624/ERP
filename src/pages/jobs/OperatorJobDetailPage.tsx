@@ -46,7 +46,7 @@ export const OperatorJobDetailPage: React.FC = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 font-sans">
+    <div className="space-y-6 font-sans">
       {/* Top Bar */}
       <div className="flex items-center justify-between">
         <Button variant="secondary"
@@ -258,25 +258,31 @@ export const OperatorJobDetailPage: React.FC = () => {
 
           {/* 5. OPERATIONAL ACTIVITY TIMELINE */}
           <div>
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-2 border-b border-slate-100">
+            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider pb-2 border-b border-slate-100">
               Operational Activity Timeline
             </h3>
             <div className="pt-3 space-y-3">
               {jobTimeline.length > 0 ? (
                 jobTimeline.map((item, idx) => (
-                  <div key={item.id || idx} className="flex items-start gap-2.5 text-xs">
-                    <div className="w-2 h-2 rounded-full bg-slate-900 mt-1.5 shrink-0"></div>
-                    <div>
-                      <span className="font-bold text-slate-900">{item.title}</span>
-                      <span className="text-slate-500 ml-2">{item.description}</span>
-                      <span className="text-[10px] text-slate-400 block font-mono">
-                        {formatDateTime(item.timestamp)}
-                      </span>
+                  <div
+                    key={item.id || idx}
+                    className="p-3 bg-slate-50/80 rounded-xl border border-slate-200/80 flex flex-col sm:flex-row sm:items-start justify-between gap-3"
+                  >
+                    <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                      <div className="w-2.5 h-2.5 rounded-full bg-slate-900 mt-1 shrink-0"></div>
+                      <div className="space-y-0.5 min-w-0">
+                        <span className="font-bold text-slate-900 text-xs sm:text-sm">{item.title}</span>
+                        <p className="text-slate-700 text-xs leading-relaxed">{item.description}</p>
+                      </div>
                     </div>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-md shrink-0 shadow-2xs">
+                      <Clock className="w-3.5 h-3.5 text-slate-500" />
+                      {formatDateTime(item.timestamp)}
+                    </span>
                   </div>
                 ))
               ) : (
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-slate-700 p-3 bg-slate-50 rounded-xl border border-slate-200">
                   Initial inward recorded. Job processing underway on shop floor.
                 </div>
               )}

@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { PlatingType, JobPriority } from '../../types/erp';
 import { PhotoUpload } from '../../components/common/PhotoUpload';
-import { ArrowDownLeft, ArrowLeft, Zap, Info } from 'lucide-react';
+import { SuccessModal } from '../../components/common/SuccessModal';
+import { ArrowDownLeft, ArrowLeft, Zap, Info, Eye, Plus } from 'lucide-react';
 import { formatWeight } from '../../utils/formatters';
+import { JewelleryJob } from '../../types/erp';
 
 export const CreateInwardPage: React.FC = () => {
   const {
@@ -30,6 +32,7 @@ export const CreateInwardPage: React.FC = () => {
   );
   const [inwardRemarks, setInwardRemarks] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [successJob, setSuccessJob] = useState<JewelleryJob | null>(null);
 
   const nextJobIdPreview = customerId ? getNextJobIdForCustomer(customerId) : 'DARSHAN1';
   const selectedCustomerObj = customers.find((c) => c.id === customerId);
@@ -59,14 +62,14 @@ export const CreateInwardPage: React.FC = () => {
         inwardRemarks,
       });
 
-      navigateToJob(newJob.id);
+      setSuccessJob(newJob);
     } catch (err: any) {
       setError(err.message || 'Failed to create inward record.');
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <Button variant="ghost"
@@ -292,6 +295,70 @@ export const CreateInwardPage: React.FC = () => {
           </div>
         </form>
       </Card>
+
+      {/* Success Modal Pop-up */}
+      {successJob && (
+        <SuccessModal
+          isOpen={!!successJob}
+          onClose={() => {
+            setSuccessJob(null);
+            setCurrentPage('inward_list');
+          }}
+          title="Customer Inward Recorded Successfully!"
+          greeting={`✨ Batch #${successJob.id} has entered the manufacturing stream.`}
+          message="Inward weight and scale photo verification have been validated and locked for plant traceability."
+          details={[
+            {
+              label: 'Generated Job ID',
+              value: successJob.id,
+              isMono: true,
+              isHighlight: true,
+            },
+            {
+              label: 'Customer',
+              value: successJob.customerName,
+              isHighlight: true,
+            },
+            {
+              label: 'Inward Weight',
+              value: formatWeight(successJob.inwardWeight),
+              isMono: true,
+              isHighlight: true,
+            },
+            {
+              label: 'Plating Bath Type',
+              value: successJob.platingType,
+            },
+            {
+              label: 'Priority Queue',
+              value: successJob.priority,
+              badge: {
+                text: successJob.priority,
+                variant: successJob.priority === 'Fast Forward' ? 'warning' : 'info',
+              },
+            },
+          ]}
+          primaryAction={{
+            label: 'View Job Details',
+            icon: <Eye className="w-3.5 h-3.5" />,
+            onClick: () => {
+              const jId = successJob.id;
+              setSuccessJob(null);
+              navigateToJob(jId);
+            },
+          }}
+          secondaryAction={{
+            label: 'Record Another Inward',
+            icon: <Plus className="w-3.5 h-3.5" />,
+            onClick: () => {
+              setSuccessJob(null);
+              setInwardWeight('10.250');
+              setInwardRemarks('');
+            },
+          }}
+          dismissText="Go to Inward List"
+        />
+      )}
     </div>
   );
 };

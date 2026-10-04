@@ -140,7 +140,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ collapsed, setCollapse
   const { title, subtitle, crumbs } = getPageInfo();
 
   return (
-    <header className="erp-header h-15 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-3 sm:px-5 flex items-center justify-between z-20 shrink-0 sticky top-0">
+    <header className="erp-header h-15 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 flex items-center justify-between z-20 shrink-0 sticky top-0">
       {/* Left: Sidebar Toggle + Title & Breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0 mr-2">
         <Button variant="secondary" size="icon"

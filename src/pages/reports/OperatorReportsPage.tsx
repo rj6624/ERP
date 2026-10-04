@@ -79,7 +79,7 @@ export const OperatorReportsPage: React.FC = () => {
       : 0;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto font-sans">
+    <div className="space-y-6 font-sans">
       {/* Header */}
       <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

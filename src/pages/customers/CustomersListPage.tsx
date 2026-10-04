@@ -5,7 +5,8 @@ import { Customer } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { CustomerFormModal } from './CustomerFormModal';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
-import { UserPlus, Eye, Edit2, Trash2, Phone, Calendar, Scale, Briefcase } from 'lucide-react';
+import { SuccessModal } from '../../components/common/SuccessModal';
+import { UserPlus, Eye, Edit2, Trash2, Phone, Calendar, Scale, Briefcase, Plus } from 'lucide-react';
 import { formatWeight, formatDate } from '../../utils/formatters';
 
 export const CustomersListPage: React.FC = () => {
@@ -15,19 +16,24 @@ export const CustomersListPage: React.FC = () => {
     updateCustomer,
     deleteCustomer,
     navigateToCustomer,
+    setCurrentPage,
   } = useERP();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [deletingCustomer, setDeletingCustomer] = useState<Customer | null>(null);
+  const [successCustomer, setSuccessCustomer] = useState<{ customer: Customer; isEdit: boolean } | null>(null);
 
   const handleCreateCustomer = (data: { name: string; mobile: string; address: string }) => {
-    addCustomer(data);
+    const newCust = addCustomer(data);
+    setSuccessCustomer({ customer: newCust, isEdit: false });
   };
 
   const handleUpdateCustomer = (data: { name: string; mobile: string; address: string }) => {
     if (editingCustomer) {
       updateCustomer(editingCustomer.id, data);
+      const updated = { ...editingCustomer, ...data };
+      setSuccessCustomer({ customer: updated, isEdit: true });
       setEditingCustomer(null);
     }
   };
@@ -298,6 +304,71 @@ export const CustomersListPage: React.FC = () => {
           confirmText="Move to Recycle Bin"
           variant="danger"
           icon="trash"
+        />
+      )}
+
+      {/* Success Modal Pop-up */}
+      {successCustomer && (
+        <SuccessModal
+          isOpen={!!successCustomer}
+          onClose={() => setSuccessCustomer(null)}
+          title={successCustomer.isEdit ? 'Customer Updated Successfully!' : 'Customer Registered Successfully!'}
+          greeting={
+            successCustomer.isEdit
+              ? `✨ Details for ${successCustomer.customer.name} have been updated.`
+              : `🎉 Welcome ${successCustomer.customer.name} to the ERP system!`
+          }
+          message={
+            successCustomer.isEdit
+              ? 'All profile attributes, contact info, and linked job references are synchronized.'
+              : 'The customer account is active. Auto-generated Job IDs will follow the sequential customer naming rule.'
+          }
+          details={[
+            {
+              label: 'Customer Name',
+              value: successCustomer.customer.name,
+              isHighlight: true,
+            },
+            {
+              label: 'Customer ID',
+              value: successCustomer.customer.id,
+              isMono: true,
+              isHighlight: true,
+            },
+            {
+              label: 'Mobile Number',
+              value: successCustomer.customer.mobile,
+              isMono: true,
+            },
+            {
+              label: 'Next Job ID',
+              value: `${successCustomer.customer.name.toUpperCase().replace(/\s+/g, '')}1`,
+              isMono: true,
+              badge: { text: 'Auto-Sequence', variant: 'info' },
+            },
+            {
+              label: 'Workshop / Address',
+              value: successCustomer.customer.address || 'Standard Registered Workshop',
+            },
+          ]}
+          primaryAction={{
+            label: 'Create Inward Job',
+            icon: <Plus className="w-3.5 h-3.5" />,
+            onClick: () => {
+              setSuccessCustomer(null);
+              setCurrentPage('create_inward');
+            },
+          }}
+          secondaryAction={{
+            label: 'View Customer Profile',
+            icon: <Eye className="w-3.5 h-3.5" />,
+            onClick: () => {
+              const custId = successCustomer.customer.id;
+              setSuccessCustomer(null);
+              navigateToCustomer(custId);
+            },
+          }}
+          dismissText="Done"
         />
       )}
     </div>

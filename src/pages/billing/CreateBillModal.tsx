@@ -2,9 +2,11 @@ import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { Modal } from '../../components/common/Modal';
+import { SuccessModal } from '../../components/common/SuccessModal';
 import { calculateBillTotal } from '../../utils/calculations';
 import { formatWeight, formatCurrency } from '../../utils/formatters';
-import { FileText, Calculator } from 'lucide-react';
+import { FileText, Calculator, Eye, CreditCard } from 'lucide-react';
+import { Bill } from '../../types/erp';
 
 interface CreateBillModalProps {
   isOpen: boolean;
@@ -27,6 +29,7 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
   const [billDate, setBillDate] = useState(new Date().toISOString().slice(0, 10));
   const [remarks, setRemarks] = useState('Standard manufacturing rate per kg applied.');
   const [error, setError] = useState('');
+  const [createdBillSuccess, setCreatedBillSuccess] = useState<Bill | null>(null);
 
   const selectedJob = jobs.find((j) => j.id === selectedJobId);
   const inwardWeight = selectedJob?.inwardWeight || 10.250;
@@ -61,16 +64,16 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
         remarks,
       });
 
-      onClose();
-      navigateToBill(newBill.id);
+      setCreatedBillSuccess(newBill);
     } catch (err: any) {
       setError(err.message || 'Failed to generate bill.');
     }
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
+    <>
+      <Modal
+        isOpen={isOpen && !createdBillSuccess}
       onClose={onClose}
       title="Generate Customer Manufacturing Invoice"
       subtitle={`Formula: Inward Weight (${formatWeight(inwardWeight)}) × Price per KG (Read-Only Total Amount)`}
@@ -211,5 +214,63 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
         </div>
       </form>
     </Modal>
+
+    {/* Success Modal Pop-up */}
+    {createdBillSuccess && (
+      <SuccessModal
+        isOpen={!!createdBillSuccess}
+        onClose={() => {
+          const bId = createdBillSuccess.id;
+          setCreatedBillSuccess(null);
+          onClose();
+          navigateToBill(bId);
+        }}
+        title="Manufacturing Invoice Generated Successfully!"
+        greeting={`📄 Invoice ${createdBillSuccess.billNumber} created for ${createdBillSuccess.customerName}!`}
+        message="Billing record generated from verified inward weight and unit price. Ready for dispatch and payment."
+        details={[
+          {
+            label: 'Bill Number',
+            value: createdBillSuccess.billNumber,
+            isMono: true,
+            isHighlight: true,
+          },
+          {
+            label: 'Customer',
+            value: createdBillSuccess.customerName,
+            isHighlight: true,
+          },
+          {
+            label: 'Total Bill Amount',
+            value: formatCurrency(createdBillSuccess.totalAmount, true),
+            isMono: true,
+            isHighlight: true,
+            badge: { text: 'Receivable Due', variant: 'warning' },
+          },
+          {
+            label: 'Inward Weight Rate',
+            value: `${formatWeight(createdBillSuccess.inwardWeight)} × ₹${createdBillSuccess.pricePerKg}/kg`,
+            isMono: true,
+          },
+          {
+            label: 'Linked Job ID',
+            value: createdBillSuccess.jobId,
+            isMono: true,
+          },
+        ]}
+        primaryAction={{
+          label: 'View Invoice Details',
+          icon: <Eye className="w-3.5 h-3.5" />,
+          onClick: () => {
+            const bId = createdBillSuccess.id;
+            setCreatedBillSuccess(null);
+            onClose();
+            navigateToBill(bId);
+          },
+        }}
+        dismissText="Done"
+      />
+    )}
+    </>
   );
 };

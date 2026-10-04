@@ -95,7 +95,7 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
   const pageInfo = getPageInfo();
 
   return (
-    <header className="erp-header h-15 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-3 sm:px-5 flex items-center justify-between z-20 shrink-0 font-sans sticky top-0">
+    <header className="erp-header h-15 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 flex items-center justify-between z-20 shrink-0 font-sans sticky top-0">
       {/* Left: Sidebar Toggle + Title */}
       <div className="flex items-center gap-3 min-w-0 mr-2">
         <Button variant="secondary" size="icon"
