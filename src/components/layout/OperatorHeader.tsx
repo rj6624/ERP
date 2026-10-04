@@ -7,7 +7,7 @@ import {
   Search,
   Plus,
   Bell,
-  Calendar,
+  
   ChevronDown,
   HardHat,
   LogOut,
@@ -125,14 +125,6 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) 
 
       {/* Right Actions */}
       <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-        {/* Shift & Station Badge */}
-        <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-600 font-medium whitespace-nowrap">
-          <Calendar className="w-3.5 h-3.5 text-slate-500" />
-          <span>Thu, 26 Sep 2026</span>
-          <span className="text-[9px] bg-sky-100 text-sky-800 font-bold px-1.5 py-0.5 rounded border border-sky-300/60">
-            STATION 01
-          </span>
-        </div>
 
         {/* Global Search Button */}
         <Button variant="secondary"
@@ -161,7 +153,7 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) 
 
         {/* Operational Notifications */}
         <div className="relative">
-          <Button variant="secondary"
+          <Button variant="secondary" size="icon"
             type="button"
             onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
             className="relative transition-colors cursor-pointer"
@@ -186,40 +178,41 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) 
           <Button variant="surface"
             type="button"
             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-            className="flex items-center gap-2 p-1 rounded-lg hover:bg-slate-100 transition-colors text-left cursor-pointer"
+            className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors text-left cursor-pointer"
+            aria-label="Operator Profile Menu"
           >
-            <div className="w-7 h-7 rounded-full bg-sky-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+            <div className="w-8 h-8 rounded-full bg-sky-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
               RP
             </div>
             <div className="hidden md:flex flex-col min-w-0 pr-0.5">
-              <span className="text-xs font-bold text-slate-900 leading-tight truncate">
+              <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">
                 {currentUser?.name || 'Ramesh Patel'}
               </span>
-              <span className="text-[10px] text-sky-700 font-semibold leading-tight flex items-center gap-0.5">
-                <HardHat className="w-2.5 h-2.5 text-sky-600" /> Operator
+              <span className="text-[11px] text-sky-700 font-semibold leading-tight flex items-center gap-1 mt-0.5">
+                <HardHat className="w-3 h-3 text-sky-600" /> Operator
               </span>
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
+            <ChevronDown className="w-4 h-4 text-slate-500 hidden sm:block" />
           </Button>
 
           {/* Profile Dropdown */}
           {isProfileMenuOpen && (
-            <div className="ds-popover absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-slate-200/90 py-2 z-50 text-xs animate-in fade-in zoom-in-95 duration-150 origin-top-right">
-              <div className="px-3.5 py-2.5 border-b border-slate-100">
-                <p className="font-bold text-slate-900 text-sm">{currentUser?.name || 'Ramesh Patel'}</p>
-                <p className="text-[11px] text-slate-500">{currentUser?.email || 'ramesh.operator@platingerp.in'}</p>
-                <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-sky-50 text-sky-800 text-[10px] font-bold border border-sky-200">
-                  <HardHat className="w-3 h-3 text-sky-600" /> Factory Floor Operator
+            <div className="ds-popover absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-xl shadow-2xl border border-slate-200 py-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
+              <div className="px-4 py-3 border-b border-slate-100">
+                <p className="text-sm font-bold text-slate-900 leading-snug">{currentUser?.name || 'Ramesh Patel'}</p>
+                <p className="text-xs text-slate-600 font-medium mt-0.5 break-all">{currentUser?.email || 'ramesh.operator@platingerp.in'}</p>
+                <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-sky-50 text-sky-800 text-xs font-semibold border border-sky-200">
+                  <HardHat className="w-3.5 h-3.5 text-sky-600 shrink-0" /> Factory Floor Operator
                 </div>
               </div>
 
-              <div className="pt-1 px-1 border-t border-slate-100">
+              <div className="pt-1.5 px-1.5 border-t border-slate-100">
                 <Button variant="surface"
                   type="button"
                   onClick={() => setIsProfileMenuOpen(false)}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-red-50 text-red-700 text-left font-medium transition-colors cursor-pointer"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-rose-50 text-rose-600 hover:text-rose-700 text-left text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
                 >
-                  <LogOut className="w-3.5 h-3.5 text-red-500" />
+                  <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
                   <span>Sign Out</span>
                 </Button>
               </div>

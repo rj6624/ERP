@@ -103,7 +103,7 @@ export const ManagerDashboardPage: React.FC = () => {
             onClick={() => setIsQuickActionOpen(true)}
             className="inline-flex items-center gap-1.5 transition-colors"
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Actions Menu
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Quick Action
           </Button>
         </div>
       </div>

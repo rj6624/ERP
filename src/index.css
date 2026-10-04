@@ -105,19 +105,19 @@ pre {
   justify-content: center;
   gap: 0.5rem;
   border-radius: 0.75rem; /* 12px */
-  background-color: #2563eb;
+  background-color: #081c05;
   padding: 0.5rem 1rem;
   font-size: 0.8125rem;
   font-weight: 600;
   color: #ffffff;
-  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 1px 2px rgba(8, 28, 5, 0.2);
   transition: all 0.15s ease-in-out;
   cursor: pointer;
 }
 .ref-btn-primary:hover {
-  background-color: #1d4ed8;
+  background-color: #040e02;
   transform: translateY(-0.5px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 12px rgba(8, 28, 5, 0.25);
 }
 
 .ref-btn-secondary {
@@ -153,7 +153,7 @@ pre {
 }
 
 .ref-pill-active {
-  background-color: #0f172a;
+  background-color: #081c05;
   color: #ffffff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
@@ -189,9 +189,9 @@ pre {
 }
 
 .erp-input:focus {
-  border-color: #2563eb;
+  border-color: #081c05;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(8, 28, 5, 0.1);
 }
 
 .erp-input-readonly {
@@ -213,16 +213,16 @@ pre {
   justify-content: center;
   gap: 0.5rem;
   border-radius: 0.75rem;
-  background-color: #2563eb;
+  background-color: #081c05;
   padding: 0.5rem 1rem;
   font-size: 0.8125rem;
   font-weight: 600;
   color: #ffffff;
-  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 1px 2px rgba(8, 28, 5, 0.2);
   transition: all 0.15s;
 }
 .erp-btn-primary:hover {
-  background-color: #1d4ed8;
+  background-color: #040e02;
 }
 
 /* Print styling for invoices and reports */

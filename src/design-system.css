@@ -19,9 +19,9 @@
   --ds-text: #192c35;
   --ds-text-secondary: #526873;
   --ds-text-muted: #647984;
-  --ds-primary: #087f70;
-  --ds-primary-hover: #066657;
-  --ds-primary-soft: #e9f5f1;
+  --ds-primary: #081c05;
+  --ds-primary-hover: #040e02;
+  --ds-primary-soft: #edf5ec;
   --ds-danger: #b43737;
   --ds-danger-hover: #922b2b;
   --ds-danger-soft: #fff0f0;
@@ -29,14 +29,14 @@
   --ds-warning-soft: #fff5df;
   --ds-info: #256ba6;
   --ds-info-soft: #edf5fd;
-  --ds-success: #15704e;
-  --ds-success-soft: #eaf6ef;
+  --ds-success: #081c05;
+  --ds-success-soft: #edf5ec;
   --ds-violet: #7050a0;
   --ds-violet-soft: #f3effa;
   --ds-shadow-card: 0 2px 4px #223b4805;
   --ds-shadow-popover: 0 12px 36px #17333f1a, 0 2px 8px #17333f0a;
   --ds-shadow-dialog: 0 24px 90px #0d293b33;
-  --ds-focus: 0 0 0 3px #087f7029;
+  --ds-focus: 0 0 0 3px rgba(8, 28, 5, 0.2);
   --ds-overlay: #172e3b66;
   --ds-control-height: 40px;
   --ds-motion: 150ms;
@@ -71,7 +71,7 @@
 .ds-button.ds-button--ghost:hover:not(:disabled) { background: var(--ds-primary-soft); color: var(--ds-primary-hover); }
 .ds-button:not(.ds-button--surface) :is(svg, span, div) { color: inherit; }
 .ds-button.ds-button--sm:not(.ds-button--surface) { min-height: 34px; padding: 6px 12px; font-size: 12px; }
-.ds-button.ds-button--icon:not(.ds-button--surface) { width: 36px; min-width: 36px; min-height: 36px; padding: 8px; }
+.ds-button.ds-button--icon:not(.ds-button--surface) { width: 36px; min-width: 36px; max-width: 36px; height: 36px; min-height: 36px; max-height: 36px; padding: 8px; aspect-ratio: 1 / 1; }
 .ds-button--surface { border-radius: var(--ds-radius-control); }
 .ds-button:disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
 .ds-button:focus-visible, .ds-tab:focus-visible { outline: 2px solid var(--ds-primary); outline-offset: 3px; box-shadow: var(--ds-focus); }
@@ -118,7 +118,7 @@
 .ds-badge { border: 1px solid transparent; max-width: 100%; vertical-align: middle; }
 .ds-badge--neutral { color: var(--ds-text-secondary); background: #f0f4f6; border-color: var(--ds-border); }
 .ds-badge--info { color: var(--ds-info); background: var(--ds-info-soft); border-color: #d3e4f5; }
-.ds-badge--success { color: var(--ds-success); background: var(--ds-success-soft); border-color: #cee7da; }
+.ds-badge--success { color: var(--ds-success); background: var(--ds-success-soft); border-color: #c4dac0; }
 .ds-badge--warning { color: var(--ds-warning); background: var(--ds-warning-soft); border-color: #efddb4; }
 .ds-badge--danger { color: var(--ds-danger); background: var(--ds-danger-soft); border-color: #f0cccc; }
 .ds-badge--violet { color: var(--ds-violet); background: var(--ds-violet-soft); border-color: #e2d8ef; }
@@ -138,7 +138,8 @@
 
 /* Shared variants take precedence over legacy page-specific component styling. */
 .erp-data-table > :first-child .ds-control { min-height: var(--ds-control-height); border-radius: var(--ds-radius-control); font-size: 14px; background: var(--ds-surface); }
-.erp-data-table > :first-child .ds-button:not(.ds-button--surface) { min-height: var(--ds-control-height); border-radius: var(--ds-radius-control); }
+.erp-data-table > :first-child .ds-button:not(.ds-button--surface):not(.ds-button--icon) { min-height: var(--ds-control-height); border-radius: var(--ds-radius-control); }
+.erp-data-table .ds-button.ds-button--icon { width: 36px !important; min-width: 36px !important; max-width: 36px !important; height: 36px !important; min-height: 36px !important; max-height: 36px !important; aspect-ratio: 1 / 1 !important; padding: 8px !important; }
 .ds-dialog:focus { outline: none; }
 .ds-overlay { overscroll-behavior: contain; }
 .erp-shell:has(.ds-overlay) .erp-workspace { overflow: hidden; }
@@ -146,6 +147,14 @@
 .ds-control[type="number"] { font-variant-numeric: tabular-nums; }
 .ds-select { cursor: pointer; }
 .ds-select:disabled { cursor: not-allowed; }
+
+.erp-toolbar-control {
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  box-sizing: border-box !important;
+  border-radius: var(--ds-radius-control, 9px) !important;
+}
 
 @media (max-width: 1023px) and (min-width: 768px) {
   .erp-header { padding-inline: 16px; gap: 8px; }

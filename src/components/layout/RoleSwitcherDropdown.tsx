@@ -227,7 +227,7 @@ export const RoleSwitcherDropdown: React.FC = () => {
                       <span className="text-slate-500 text-[10px]">{role.roleTag}</span>
                     </div>
 
-                    <div className="text-[10px] text-slate-500 leading-tight">
+                    <div className="text-xs text-slate-600 leading-snug">
                       {role.description}
                     </div>
                   </div>

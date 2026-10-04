@@ -5,7 +5,7 @@ import {
   Menu,
   Search,
   Bell,
-  Calendar,
+  
   ChevronRight,
   Hammer,
   ChevronDown,
@@ -117,14 +117,6 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ setCollapsed }) => {
 
       {/* Right Actions: Shift Indicator, Search, Notifications, Role Switcher, Profile */}
       <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-        {/* Shift / Bench Indicator */}
-        <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-600 font-medium whitespace-nowrap">
-          <Calendar className="w-3.5 h-3.5 text-slate-500" />
-          <span>Shift 01</span>
-          <span className="text-[9px] bg-amber-100 text-amber-900 font-bold px-1.5 py-0.5 rounded border border-amber-300/60">
-            BENCH #4
-          </span>
-        </div>
 
         {/* Search Job ID */}
         <Button variant="secondary"
@@ -143,7 +135,7 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ setCollapsed }) => {
 
         {/* Notifications */}
         <div className="relative">
-          <Button variant="secondary"
+          <Button variant="secondary" size="icon"
             type="button"
             onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
             className="relative transition-colors cursor-pointer"
@@ -168,40 +160,41 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ setCollapsed }) => {
           <Button variant="surface"
             type="button"
             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-            className="flex items-center gap-2 p-1 rounded-lg hover:bg-slate-100 transition-colors text-left cursor-pointer"
+            className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors text-left cursor-pointer"
+            aria-label="Labour Profile Menu"
           >
-            <div className="w-7 h-7 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+            <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
               SP
             </div>
             <div className="hidden md:flex flex-col min-w-0 pr-0.5">
-              <span className="text-xs font-bold text-slate-900 leading-tight truncate">
+              <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">
                 {currentUser?.name || 'Suresh Parmar'}
               </span>
-              <span className="text-[10px] text-amber-700 font-semibold leading-tight flex items-center gap-0.5">
-                <Hammer className="w-2.5 h-2.5 text-amber-600" /> Artisan
+              <span className="text-[11px] text-amber-700 font-semibold leading-tight flex items-center gap-1 mt-0.5">
+                <Hammer className="w-3 h-3 text-amber-600" /> Artisan
               </span>
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
+            <ChevronDown className="w-4 h-4 text-slate-500 hidden sm:block" />
           </Button>
 
           {/* Profile Dropdown */}
           {isProfileMenuOpen && (
-            <div className="ds-popover absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-slate-200/90 py-2 z-50 text-xs animate-in fade-in zoom-in-95 duration-150 origin-top-right">
-              <div className="px-3.5 py-2.5 border-b border-slate-100">
-                <p className="font-bold text-slate-900">{currentUser?.name || 'Suresh Parmar'}</p>
-                <p className="text-[11px] text-slate-500">{currentUser?.email || 'suresh.labour@platingerp.in'}</p>
-                <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-50 text-amber-900 text-[10px] font-bold border border-amber-200">
-                  <Hammer className="w-3 h-3 text-amber-600" /> Artisan Bench #4 • Station 03
+            <div className="ds-popover absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-xl shadow-2xl border border-slate-200 py-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
+              <div className="px-4 py-3 border-b border-slate-100">
+                <p className="text-sm font-bold text-slate-900 leading-snug">{currentUser?.name || 'Suresh Parmar'}</p>
+                <p className="text-xs text-slate-600 font-medium mt-0.5 break-all">{currentUser?.email || 'suresh.labour@platingerp.in'}</p>
+                <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 text-xs font-semibold border border-amber-200">
+                  <Hammer className="w-3.5 h-3.5 text-amber-600 shrink-0" /> Artisan Bench #4 • Station 03
                 </div>
               </div>
 
-              <div className="pt-1 px-1 border-t border-slate-100">
+              <div className="pt-1.5 px-1.5 border-t border-slate-100">
                 <Button variant="surface"
                   type="button"
                   onClick={() => setIsProfileMenuOpen(false)}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-red-50 text-red-700 text-left font-medium transition-colors cursor-pointer"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-rose-50 text-rose-600 hover:text-rose-700 text-left text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
                 >
-                  <LogOut className="w-3.5 h-3.5 text-red-500" />
+                  <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
                   <span>End Shift / Sign Out</span>
                 </Button>
               </div>
