@@ -149,7 +149,7 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
                   {!collapsed && <span className="truncate">Outward Dispatch</span>}
                 </div>
                 {!collapsed && outwardPendingCount > 0 && (
-                  <span className="text-[10px] bg-blue-950/80 text-blue-300 border border-blue-800/60 px-1.5 py-0.2 rounded-full font-bold">
+                  <span className="text-[10px] bg-blue-950/80 text-blue-300 border border-blue-800/60 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-bold min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {outwardPendingCount}
                   </span>
                 )}
@@ -170,7 +170,7 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
                   {!collapsed && <span className="truncate font-bold">Fast Forward</span>}
                 </div>
                 {!collapsed && fastForwardPendingCount > 0 && (
-                  <span className="text-[10px] bg-amber-500 text-slate-950 font-black px-1.5 py-0.2 rounded-full shadow-xs">
+                  <span className="text-[10px] bg-amber-500 text-slate-950 font-black px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-full shadow-xs">
                     {fastForwardPendingCount}
                   </span>
                 )}

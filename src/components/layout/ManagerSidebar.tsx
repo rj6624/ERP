@@ -195,7 +195,7 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({ collapsed }) => 
                   {!collapsed && <span>Fast Forward</span>}
                 </div>
                 {!collapsed && fastForwardPendingCount > 0 && (
-                  <span className="text-[10px] bg-amber-500 text-slate-950 px-1.5 py-0.2 rounded-full font-bold">
+                  <span className="text-[10px] bg-amber-500 text-slate-950 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-bold min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {fastForwardPendingCount}
                   </span>
                 )}
@@ -472,7 +472,7 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({ collapsed }) => 
               {!collapsed && <span>Alerts</span>}
             </div>
             {!collapsed && unreadAlertsCount > 0 && (
-              <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.2 rounded-full font-bold">
+              <span className="text-[10px] bg-red-500 text-white px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-bold min-w-[18px] h-[18px] inline-flex items-center justify-center">
                 {unreadAlertsCount}
               </span>
             )}

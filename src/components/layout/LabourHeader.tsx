@@ -2,7 +2,8 @@ import { Button } from '../ui/Primitives';
 import React, { useState, useRef, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import {
-  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   Search,
   Bell,
   
@@ -20,7 +21,7 @@ interface LabourHeaderProps {
   setCollapsed: (v: boolean | ((prev: boolean) => boolean)) => void;
 }
 
-export const LabourHeader: React.FC<LabourHeaderProps> = ({ setCollapsed }) => {
+export const LabourHeader: React.FC<LabourHeaderProps> = ({ collapsed, setCollapsed }) => {
   const {
     currentUser,
     alerts,
@@ -82,9 +83,10 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ setCollapsed }) => {
           type="button"
           onClick={() => setCollapsed((prev: boolean) => !prev)}
           className="transition-colors cursor-pointer shrink-0"
-          title="Toggle Navigation"
+          title={collapsed ? "Open sidebar" : "Close sidebar"}
+          aria-label={collapsed ? "Open sidebar" : "Close sidebar"}
         >
-          <Menu className="w-4 h-4" />
+          {collapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
         </Button>
 
         <div className="flex flex-col min-w-0">

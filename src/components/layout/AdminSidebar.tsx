@@ -132,7 +132,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
                   {!collapsed && <span>Customers</span>}
                 </div>
                 {!collapsed && (
-                  <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-mono">
+                  <span className="text-[10px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-mono min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {dashboardMetrics.totalCustomers}
                   </span>
                 )}
@@ -182,7 +182,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
                   {!collapsed && <span>Fast Forward</span>}
                 </div>
                 {!collapsed && dashboardMetrics.fastForwardCount > 0 && (
-                  <span className="bg-amber-500 text-slate-950 font-extrabold text-[10px] px-1.5 py-0.2 rounded-full animate-pulse">
+                  <span className="bg-amber-500 text-slate-950 font-extrabold text-[10px] px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {dashboardMetrics.fastForwardCount}
                   </span>
                 )}
@@ -226,7 +226,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
                   {!collapsed && <span>Labour Binding</span>}
                 </div>
                 {!collapsed && dashboardMetrics.pendingBindingCount > 0 && (
-                  <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-mono">
+                  <span className="text-[10px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-mono min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {dashboardMetrics.pendingBindingCount}
                   </span>
                 )}
@@ -243,7 +243,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
                   {!collapsed && <span>Labour Open</span>}
                 </div>
                 {!collapsed && dashboardMetrics.pendingOpenCount > 0 && (
-                  <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-mono">
+                  <span className="text-[10px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-mono min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {dashboardMetrics.pendingOpenCount}
                   </span>
                 )}
@@ -277,7 +277,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
                   {!collapsed && <span>Chemical</span>}
                 </div>
                 {!collapsed && dashboardMetrics.lowStockChemicalCount > 0 && (
-                  <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded">
+                  <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {dashboardMetrics.lowStockChemicalCount} Low
                   </span>
                 )}
@@ -295,7 +295,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
                   {!collapsed && <span>Acid</span>}
                 </div>
                 {!collapsed && dashboardMetrics.lowStockAcidCount > 0 && (
-                  <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded">
+                  <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {dashboardMetrics.lowStockAcidCount} Low
                   </span>
                 )}
@@ -433,7 +433,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
                   {!collapsed && <span>Promise Date Due</span>}
                 </div>
                 {!collapsed && dashboardMetrics.promiseDateDueCount > 0 && (
-                  <span className="text-[10px] bg-orange-500/20 text-orange-300 border border-orange-500/40 px-1.5 py-0.2 rounded">
+                  <span className="text-[10px] bg-orange-500/20 text-orange-300 border border-orange-500/40 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {dashboardMetrics.promiseDateDueCount}
                   </span>
                 )}
@@ -503,7 +503,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
                   {!collapsed && <span>Alerts</span>}
                 </div>
                 {!collapsed && unreadAlertsCount > 0 && (
-                  <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.2 rounded-full font-bold">
+                  <span className="text-[10px] bg-red-500 text-white px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-bold min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {unreadAlertsCount}
                   </span>
                 )}
@@ -521,7 +521,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
                   {!collapsed && <span>Recycle Bin</span>}
                 </div>
                 {!collapsed && recycleBin.length > 0 && (
-                  <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-mono">
+                  <span className="text-[10px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-mono min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {recycleBin.length}
                   </span>
                 )}

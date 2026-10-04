@@ -3,7 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   Search,
   Plus,
   Bell,
@@ -21,7 +22,7 @@ interface OperatorHeaderProps {
   setCollapsed: (v: boolean | ((prev: boolean) => boolean)) => void;
 }
 
-export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) => {
+export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCollapsed }) => {
   const {
     setIsSearchModalOpen,
     alerts,
@@ -101,9 +102,10 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) 
           type="button"
           onClick={() => setCollapsed((prev) => !prev)}
           className="transition-colors cursor-pointer shrink-0"
-          title="Toggle Navigation"
+          title={collapsed ? "Open sidebar" : "Close sidebar"}
+          aria-label={collapsed ? "Open sidebar" : "Close sidebar"}
         >
-          <Menu className="w-4 h-4" />
+          {collapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
         </Button>
 
         <div className="min-w-0">

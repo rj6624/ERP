@@ -42,7 +42,20 @@ body { background: var(--erp-canvas); color: var(--erp-ink); letter-spacing: 0; 
 .erp-sidebar button[title].erp-nav-active svg { color: var(--erp-accent); }
 .erp-sidebar button.uppercase { margin-block: 12px 6px; font-size: 10px; font-weight: 600; letter-spacing: .09em; color: #7c8a92; }
 .erp-sidebar button.uppercase:hover { color: var(--erp-accent); }
-.erp-sidebar span.bg-slate-800 { background: #edf1f3; color: #62747e; border-radius: 5px; }
+.erp-sidebar button span[class*="rounded"] {
+  border-radius: 4px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 4px !important;
+  box-sizing: border-box !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+.erp-sidebar span.bg-slate-800 { background: #edf1f3; color: #62747e; }
 .erp-sidebar span[class*="bg-emerald-950"] { background: #edf5ec; color: #081c05; border-color: #c4dac0; }
 .erp-sidebar span[class*="bg-orange-500"] { background: #fff2e6; color: #a85820; border-color: #f1d8c3; }
 .erp-sidebar .text-emerald-400 { color: #081c05; }
