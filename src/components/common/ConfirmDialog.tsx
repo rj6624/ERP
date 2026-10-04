@@ -1,3 +1,4 @@
+import { Button } from '../ui/Primitives';
 import React from 'react';
 import { Modal } from './Modal';
 import { AlertTriangle, Trash2, RotateCcw } from 'lucide-react';
@@ -36,12 +37,6 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     return <AlertTriangle className="w-5 h-5 text-amber-600" />;
   };
 
-  const confirmBtnClass = {
-    danger: 'erp-btn-danger bg-red-600 text-white hover:bg-red-700 border-red-700',
-    warning: 'erp-btn-primary bg-amber-600 hover:bg-amber-700 text-white',
-    primary: 'erp-btn-primary',
-  }[variant];
-
   return (
     <Modal
       isOpen={isOpen}
@@ -50,12 +45,12 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       maxWidth="md"
       footer={
         <>
-          <button onClick={onClose} className="erp-btn-secondary">
+          <Button variant="secondary" onClick={onClose} className="">
             {cancelText}
-          </button>
-          <button onClick={handleConfirm} className={confirmBtnClass}>
+          </Button>
+          <Button variant={variant} onClick={handleConfirm}>
             {confirmText}
-          </button>
+          </Button>
         </>
       }
     >

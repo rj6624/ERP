@@ -1,3 +1,5 @@
+import { DialogSurface } from '../../components/ui/DialogSurface';
+import { Button, Card, Input, TabButton } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import {
@@ -71,7 +73,7 @@ export const LabourBindingWorkPage: React.FC = () => {
   return (
     <div className="space-y-5 font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+      <Card padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
@@ -93,26 +95,26 @@ export const LabourBindingWorkPage: React.FC = () => {
             Total Binding: {myBindingTasks.length} jobs
           </span>
         </div>
-      </div>
+      </Card>
 
       {/* Search & Status Filters */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 text-xs">
+      <Card padding="sm" className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 text-xs">
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
-          <input
+          <Input
             type="text"
             placeholder="Search by Customer ID (DARSHAN1...) or Customer Name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-9 pl-9 pr-3 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full pl-9 pr-3 ds-control-leading"
           />
           {searchQuery && (
-            <button
+            <Button variant="ghost" size="icon"
               onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600"
+              className="absolute right-2.5 top-2" aria-label="Close dialog"
             >
               <X className="w-4 h-4" />
-            </button>
+            </Button>
           )}
         </div>
 
@@ -121,23 +123,19 @@ export const LabourBindingWorkPage: React.FC = () => {
             <Filter className="w-3 h-3" /> Status:
           </span>
           {(['All', 'Pending', 'In Progress', 'Completed'] as const).map((status) => (
-            <button
+            <TabButton active={statusFilter === status}
               key={status}
               onClick={() => setStatusFilter(status)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
-                statusFilter === status
-                  ? 'bg-amber-600 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80'
-              }`}
+              className=""
             >
               {status}
-            </button>
+            </TabButton>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Binding Work Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         {filteredTasks.length === 0 ? (
           <div className="p-12 text-center text-slate-400 text-xs space-y-2">
             <Layers className="w-10 h-10 mx-auto text-slate-300" />
@@ -244,33 +242,33 @@ export const LabourBindingWorkPage: React.FC = () => {
                     {/* Action */}
                     <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
                       {task.status === 'Pending' && (
-                        <button
+                        <Button variant="primary"
                           onClick={() => handleStartWork(task.id)}
-                          className="h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs hover:shadow transition-all inline-flex items-center gap-1"
+                          className="transition-all inline-flex items-center gap-1"
                         >
                           <Play className="w-3.5 h-3.5 fill-current" />
                           Start Work
-                        </button>
+                        </Button>
                       )}
 
                       {task.status === 'In Progress' && (
-                        <button
+                        <Button variant="primary"
                           onClick={() => setCompleteModalTask(task)}
-                          className="h-8 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs hover:shadow transition-all inline-flex items-center gap-1"
+                          className="transition-all inline-flex items-center gap-1"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
                           Complete Work
-                        </button>
+                        </Button>
                       )}
 
                       {task.status === 'Completed' && (
-                        <button
+                        <Button variant="secondary"
                           onClick={() => setSelectedTask(task)}
-                          className="h-8 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs inline-flex items-center gap-1"
+                          className="inline-flex items-center gap-1"
                         >
                           <Info className="w-3.5 h-3.5 text-slate-500" />
                           Details
-                        </button>
+                        </Button>
                       )}
                     </td>
                   </tr>
@@ -279,12 +277,12 @@ export const LabourBindingWorkPage: React.FC = () => {
             </table>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Slide-over Detail Drawer */}
       {selectedTask && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col justify-between overflow-y-auto">
+        <div className="ds-overlay fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <DialogSurface onClose={() => setSelectedTask(null)} presentation="drawer" aria-label="Binding work details" className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col justify-between overflow-y-auto">
             <div>
               <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-amber-50/50">
                 <div className="flex items-center gap-2.5">
@@ -298,12 +296,12 @@ export const LabourBindingWorkPage: React.FC = () => {
                     <p className="text-[11px] text-slate-500">{selectedTask.customerName} • {selectedTask.jobId}</p>
                   </div>
                 </div>
-                <button
+                <Button variant="ghost" size="icon"
                   onClick={() => setSelectedTask(null)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60"
+                  className="" aria-label="Close dialog"
                 >
                   <X className="w-5 h-5" />
-                </button>
+                </Button>
               </div>
 
               <div className="p-5 space-y-4">
@@ -324,7 +322,7 @@ export const LabourBindingWorkPage: React.FC = () => {
                 </div>
 
                 {/* Job Information */}
-                <div className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-2.5 text-xs">
+                <Card padding="sm" className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-2.5 text-xs">
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500 font-medium">Customer</span>
                     <span className="font-bold text-slate-900">{selectedTask.customerName}</span>
@@ -349,10 +347,10 @@ export const LabourBindingWorkPage: React.FC = () => {
                     <span className="text-slate-500 font-medium">Assigned Labour</span>
                     <span className="font-semibold text-slate-800">{selectedTask.labourName}</span>
                   </div>
-                </div>
+                </Card>
 
                 {/* Timestamps */}
-                <div className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-2 text-xs">
+                <Card padding="sm" className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-2 text-xs">
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500 font-medium">Binding Start Date/Time</span>
                     <span className="font-medium text-slate-800">
@@ -376,10 +374,10 @@ export const LabourBindingWorkPage: React.FC = () => {
                         : 'Not completed yet'}
                     </span>
                   </div>
-                </div>
+                </Card>
 
                 {/* Tar Usage */}
-                <div className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1.5 text-xs">
+                <Card padding="sm" className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500 font-medium">Tar Used</span>
                     <span className="font-bold text-amber-900 font-mono">
@@ -390,14 +388,14 @@ export const LabourBindingWorkPage: React.FC = () => {
                     <span className="text-slate-400">Tar Unit</span>
                     <span className="text-slate-600 font-medium">{selectedTask.tarUnit || 'grams'}</span>
                   </div>
-                </div>
+                </Card>
 
                 {/* Remarks */}
                 {selectedTask.remarks && (
-                  <div className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1 text-xs">
+                  <Card padding="sm" className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1 text-xs">
                     <span className="text-slate-500 font-medium">Remarks</span>
                     <p className="text-slate-700 italic">"{selectedTask.remarks}"</p>
-                  </div>
+                  </Card>
                 )}
               </div>
             </div>
@@ -405,23 +403,23 @@ export const LabourBindingWorkPage: React.FC = () => {
             {/* Actions */}
             <div className="p-5 border-t border-slate-200 bg-slate-50">
               {selectedTask.status === 'Pending' && (
-                <button
+                <Button variant="primary"
                   onClick={() => handleStartWork(selectedTask.id)}
-                  className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 flex items-center justify-center gap-2"
+                  className="w-full flex items-center justify-center gap-2"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   Start Work
-                </button>
+                </Button>
               )}
 
               {selectedTask.status === 'In Progress' && (
-                <button
+                <Button variant="primary"
                   onClick={() => setCompleteModalTask(selectedTask)}
-                  className="w-full h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2"
+                  className="w-full flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-4 h-4" />
                   Complete Work
-                </button>
+                </Button>
               )}
 
               {selectedTask.status === 'Completed' && (
@@ -431,7 +429,7 @@ export const LabourBindingWorkPage: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
+          </DialogSurface>
         </div>
       )}
 

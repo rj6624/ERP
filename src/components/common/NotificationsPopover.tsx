@@ -1,3 +1,4 @@
+import { Button } from '../ui/Primitives';
 import React, { useRef, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { Bell, CheckCheck, AlertTriangle, Zap, ShieldAlert, X } from 'lucide-react';
@@ -60,7 +61,7 @@ export const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({ isOp
   return (
     <div
       ref={popoverRef}
-      className="erp-notifications absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl border border-slate-200 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150 font-sans"
+      className="ds-popover erp-notifications absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl border border-slate-200 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150 font-sans"
     >
       {/* Header */}
       <div className="p-3 bg-slate-900 text-white flex items-center justify-between">
@@ -75,17 +76,17 @@ export const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({ isOp
         </div>
         <div className="flex items-center gap-2">
           {unreadAlerts.length > 0 && (
-            <button
+            <Button variant="ghost" size="sm"
               onClick={clearAllAlerts}
-              className="text-[11px] text-slate-300 hover:text-white flex items-center gap-1 transition-colors"
+              className="flex items-center gap-1 transition-colors"
               title="Mark all as read"
             >
               <CheckCheck className="w-3.5 h-3.5" /> Clear
-            </button>
+            </Button>
           )}
-          <button onClick={onClose} className="text-slate-400 hover:text-white">
+          <Button variant="ghost" size="icon" onClick={onClose} className="" aria-label="Close dialog">
             <X className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -134,15 +135,15 @@ export const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({ isOp
 
       {/* Footer */}
       <div className="p-2 border-t border-slate-100 bg-slate-50 text-center">
-        <button
+        <Button variant="ghost"
           onClick={() => {
             onClose();
             setCurrentPage('alerts');
           }}
-          className="text-xs text-brand-600 hover:text-brand-800 font-semibold"
+          className=""
         >
           View All Alerts & Thresholds →
-        </button>
+        </Button>
       </div>
     </div>
   );

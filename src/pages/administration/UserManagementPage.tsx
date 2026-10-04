@@ -1,3 +1,4 @@
+import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { AppUser, UserRole, UserStatus } from '../../types/erp';
@@ -100,21 +101,21 @@ export const UserManagementPage: React.FC = () => {
       align: 'right',
       cell: (row) => (
         <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
-          <button
+          <Button variant="secondary"
             onClick={() => setCurrentPage('admin_permissions')}
-            className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-2xs font-semibold flex items-center gap-1"
+            className="text-2xs flex items-center gap-1"
             title="Permissions"
           >
             <KeyRound className="w-3.5 h-3.5" /> Permissions
-          </button>
+          </Button>
           {row.role !== 'Admin' && (
-            <button
+            <Button variant="secondary"
               onClick={() => toggleUserStatus(row.id)}
-              className="p-1 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+              className=""
               title={row.status === 'Active' ? 'Deactivate Account' : 'Activate Account'}
             >
               {row.status === 'Active' ? <Lock className="w-3.5 h-3.5 text-red-500" /> : <Unlock className="w-3.5 h-3.5 text-emerald-600" />}
-            </button>
+            </Button>
           )}
         </div>
       ),
@@ -124,7 +125,7 @@ export const UserManagementPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <UserCog className="w-4 h-4 text-slate-700" /> Staff & User Access Management
@@ -135,18 +136,18 @@ export const UserManagementPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button variant="secondary"
             onClick={() => setCurrentPage('admin_permissions')}
-            className="erp-btn-secondary"
+            className=""
           >
             <KeyRound className="w-3.5 h-3.5" /> View Permissions Matrix
-          </button>
-          <button
+          </Button>
+          <Button variant="primary"
             onClick={() => setIsAddModalOpen(true)}
-            className="erp-btn-brand"
+            className=""
           >
             <UserPlus className="w-3.5 h-3.5" /> Add System User
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -166,20 +167,20 @@ export const UserManagementPage: React.FC = () => {
         maxWidth="md"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleAddUserSubmit}
-              className="erp-btn-primary"
+              className=""
             >
               Create Account
-            </button>
+            </Button>
           </>
         }
       >
@@ -188,13 +189,13 @@ export const UserManagementPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Full Name <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Amit Dave"
-              className="erp-input"
+              className="w-full"
             />
           </div>
 
@@ -202,13 +203,13 @@ export const UserManagementPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Work Email / Login Identifier <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="amit.manager@platingerp.internal"
-              className="erp-input font-mono"
+              className="font-mono w-full"
             />
           </div>
 
@@ -216,16 +217,16 @@ export const UserManagementPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               System Role <span className="text-red-500">*</span>
             </label>
-            <select
+            <Select
               value={role}
               onChange={(e) => setRole(e.target.value as UserRole)}
-              className="erp-input"
+              className="w-full"
             >
               <option value="Manager">Manager (Operations, Inventory, Inward/Outward)</option>
               <option value="Operator">Operator (Scale Inward/Outward only)</option>
               <option value="Labour User">Labour User (Binding & Open tasks)</option>
               <option value="Admin">Admin (Full Access + Payment Authority)</option>
-            </select>
+            </Select>
           </div>
         </form>
       </Modal>

@@ -1,3 +1,4 @@
+import { Button, Card, TabButton } from '../../components/ui/Primitives';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
@@ -213,7 +214,7 @@ export const ReportsCenterPage: React.FC = () => {
   return (
     <div className="space-y-4 font-sans">
       {/* 1. Header Banner */}
-      <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <Card padding="sm" className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-emerald-600" /> Operational Reports Center
@@ -224,36 +225,32 @@ export const ReportsCenterPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-auto">
-          <button onClick={handleExport} className="erp-btn-secondary">
+          <Button variant="secondary" onClick={handleExport} className="">
             <Download className="w-3.5 h-3.5" /> Export CSV
-          </button>
-          <button onClick={triggerPrint} className="erp-btn-secondary">
+          </Button>
+          <Button variant="secondary" onClick={triggerPrint} className="">
             <Printer className="w-3.5 h-3.5" /> Print
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
 
       {/* 2. Operational Categories Selector */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      <div className="ds-tabs" role="group" aria-label="Report categories">
         {categories.map((c) => {
           const Icon = c.icon;
           const isActive = activeCategory === c.key;
           return (
-            <button
+            <TabButton active={isActive}
               key={c.key}
               onClick={() => {
                 setActiveCategory(c.key);
                 setSelectedReportCategory(c.key);
               }}
-              className={`flex items-center gap-2 p-3 rounded-lg text-xs font-semibold transition-all border text-left ${
-                isActive
-                  ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-              }`}
+              className=""
             >
               <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
-              <span className="truncate">{c.label}</span>
-            </button>
+              <span>{c.label}</span>
+            </TabButton>
           );
         })}
       </div>

@@ -1,3 +1,4 @@
+import { Button, Card, Input } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import {
@@ -74,16 +75,16 @@ export const AlertsCenterPage: React.FC = () => {
           </p>
         </div>
 
-        <button
+        <Button variant="primary"
           onClick={clearAllAlerts}
-          className="erp-btn-brand bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700"
+          className=""
         >
           <CheckCircle2 className="w-3.5 h-3.5" /> Mark All as Resolved
-        </button>
+        </Button>
       </div>
 
       {/* Threshold Configuration Card */}
-      <div className="erp-card bg-white p-5">
+      <Card padding="md" className="erp-card bg-white p-5">
         <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
           <Sliders className="w-4 h-4 text-slate-700" />
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
@@ -97,20 +98,20 @@ export const AlertsCenterPage: React.FC = () => {
               Job Overdue Alert Threshold (Days) <span className="text-red-500">*</span>
             </label>
             <div className="flex items-center gap-3">
-              <input
+              <Input
                 type="number"
                 min="1"
                 max="60"
                 value={thresholdDays}
                 onChange={(e) => setThresholdDays(e.target.value)}
-                className="erp-input w-28 font-mono font-bold text-sm"
+                className="w-28 font-mono"
               />
               <span className="text-xs text-slate-500 font-medium">
                 Days from Inward receipt (Default: <strong>5 days</strong>)
               </span>
-              <button type="submit" className="erp-btn-primary ml-auto">
+              <Button variant="primary" type="submit" className="ml-auto">
                 Save Threshold
-              </button>
+              </Button>
             </div>
             <p className="text-[11px] text-slate-500 mt-1.5">
               Any customer job lingering in 'In Process' or 'Inward Received' beyond this threshold automatically triggers an urgent Admin alert.
@@ -124,10 +125,10 @@ export const AlertsCenterPage: React.FC = () => {
             </div>
           )}
         </form>
-      </div>
+      </Card>
 
       {/* Active Alerts List */}
-      <div className="erp-card bg-white p-5 space-y-3">
+      <Card padding="md" className="erp-card bg-white p-5 space-y-3">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
             Active Plant Alerts ({operationalAlerts.length})
@@ -166,7 +167,7 @@ export const AlertsCenterPage: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <button
+                <Button variant="secondary"
                   onClick={() => {
                     markAlertRead(alert.id);
                     if (alert.targetModule === 'job_detail' && alert.targetId) {
@@ -175,15 +176,15 @@ export const AlertsCenterPage: React.FC = () => {
                       setCurrentPage(alert.targetModule as any);
                     }
                   }}
-                  className="erp-btn-secondary text-2xs"
+                  className="text-2xs"
                 >
                   Inspect Record <ArrowRight className="w-3 h-3" />
-                </button>
+                </Button>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

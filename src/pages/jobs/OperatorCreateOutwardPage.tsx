@@ -1,3 +1,5 @@
+import { DialogSurface } from '../../components/ui/DialogSurface';
+import { Button, Card, Input } from '../../components/ui/Primitives';
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
@@ -146,7 +148,7 @@ export const OperatorCreateOutwardPage: React.FC = () => {
   // SUCCESS CONFIRMATION SCREEN (Section 28)
   if (successResult) {
     return (
-      <div className="max-w-xl mx-auto my-8 p-6 sm:p-8 bg-white rounded-2xl border-2 border-emerald-400 shadow-xl text-center space-y-6 font-sans animate-in fade-in zoom-in-95 duration-200">
+      <Card padding="md" className="max-w-xl mx-auto my-8 p-6 sm:p-8 bg-white rounded-2xl border-2 border-emerald-400 shadow-xl text-center space-y-6 font-sans animate-in fade-in zoom-in-95 duration-200">
         <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-inner">
           <CheckCircle2 className="w-10 h-10" />
         </div>
@@ -185,22 +187,22 @@ export const OperatorCreateOutwardPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-          <button
+          <Button variant="primary"
             onClick={() => navigate(`/jobs/${successResult.jobId}`)}
-            className="h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+            className="h-12 flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <Eye className="w-4 h-4" />
             <span>View Job</span>
-          </button>
-          <button
+          </Button>
+          <Button variant="primary"
             onClick={handleProcessNext}
-            className="h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+            className="h-12 flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <ArrowRight className="w-4 h-4" />
             <span>Process Next Outward</span>
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -208,17 +210,17 @@ export const OperatorCreateOutwardPage: React.FC = () => {
     <div className="max-w-3xl mx-auto space-y-6 font-sans">
       {/* Top Navigation */}
       <div className="flex items-center justify-between">
-        <button
+        <Button variant="secondary"
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-xs cursor-pointer"
+          className="inline-flex items-center gap-1.5 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Outward Queue</span>
-        </button>
+        </Button>
         <span className="text-xs text-slate-500 font-medium">Factory Floor Dispatch Console</span>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between">
           <div>
@@ -251,7 +253,7 @@ export const OperatorCreateOutwardPage: React.FC = () => {
                 const isCompleted = job.status === 'Outward Completed';
 
                 return (
-                  <button
+                  <Button variant="surface"
                     key={job.id}
                     type="button"
                     onClick={() => {
@@ -292,7 +294,7 @@ export const OperatorCreateOutwardPage: React.FC = () => {
                     >
                       {formatWeight(job.inwardWeight)}
                     </p>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -358,7 +360,7 @@ export const OperatorCreateOutwardPage: React.FC = () => {
             </p>
 
             <div className="relative flex items-center">
-              <input
+              <Input
                 type="number"
                 step="0.001"
                 min="0.001"
@@ -368,7 +370,7 @@ export const OperatorCreateOutwardPage: React.FC = () => {
                   setOutwardWeight(e.target.value);
                   setErrorMsg('');
                 }}
-                className="w-full h-14 pl-4 pr-16 text-xl sm:text-2xl font-black font-mono tracking-wide rounded-xl border-2 border-slate-300 bg-white text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-500"
+                className="w-full h-14 pl-4 pr-16 text-xl sm:text-2xl font-mono tracking-wide"
               />
               <span className="absolute right-4 font-bold text-sm text-slate-600 bg-slate-100 px-2 py-1 rounded border border-slate-200">
                 kg
@@ -424,7 +426,7 @@ export const OperatorCreateOutwardPage: React.FC = () => {
 
           {/* 7. COMPLETE OUTWARD CTA */}
           <div className="pt-4 border-t border-slate-200">
-            <button
+            <Button variant="surface"
               type="button"
               onClick={handleReviewClick}
               disabled={selectedJob?.status === 'Outward Completed'}
@@ -436,15 +438,15 @@ export const OperatorCreateOutwardPage: React.FC = () => {
             >
               <span>Verify & Complete Outward</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* CONFIRMATION MODAL (Section 56) */}
       {isConfirmModalOpen && selectedJob && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-150">
+        <div className="ds-overlay fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <DialogSurface onClose={() => setIsConfirmModalOpen(false)} aria-label="Confirm outward dispatch"  className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-150">
             <div className="text-center pb-2 border-b border-slate-100">
               <span className="text-xs font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
                 Complete Outward Dispatch
@@ -493,22 +495,22 @@ export const OperatorCreateOutwardPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <button
+              <Button variant="secondary"
                 type="button"
                 onClick={() => setIsConfirmModalOpen(false)}
-                className="h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                className="transition-colors cursor-pointer"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button variant="primary"
                 type="button"
                 onClick={handleConfirmSubmit}
-                className="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold text-xs shadow-md transition-all cursor-pointer"
+                className="font-extrabold transition-all cursor-pointer"
               >
                 Complete Outward
-              </button>
+              </Button>
             </div>
-          </div>
+          </DialogSurface>
         </div>
       )}
     </div>

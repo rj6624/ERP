@@ -1,3 +1,4 @@
+import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { LabourBindingTask, LabourStatus } from '../../types/erp';
@@ -139,7 +140,7 @@ export const LabourBindingPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Layers className="w-4 h-4 text-indigo-600" /> Labour Binding Operations
@@ -148,12 +149,12 @@ export const LabourBindingPage: React.FC = () => {
             Chain wiring, copper contact binding, tar usage tracking, and automated piece/weight labour charges.
           </p>
         </div>
-        <button
+        <Button variant="primary"
           onClick={() => setIsAddModalOpen(true)}
-          className="erp-btn-brand self-start sm:self-auto"
+          className="self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" /> Create Binding Task
-        </button>
+        </Button>
       </div>
 
       {/* Binding Table */}
@@ -173,20 +174,20 @@ export const LabourBindingPage: React.FC = () => {
         maxWidth="lg"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleSubmit}
-              className="erp-btn-primary"
+              className=""
             >
               Confirm & Assign Binding
-            </button>
+            </Button>
           </>
         }
       >
@@ -196,34 +197,34 @@ export const LabourBindingPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Select Job ID <span className="text-red-500">*</span>
               </label>
-              <select
+              <Select
                 value={selectedJobId}
                 onChange={(e) => setSelectedJobId(e.target.value)}
-                className="erp-input"
+                className="w-full"
               >
                 {jobs.map((j) => (
                   <option key={j.id} value={j.id}>
                     {j.id} — {j.customerName} ({formatWeight(j.inwardWeight)})
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Assigned Labour Worker <span className="text-red-500">*</span>
               </label>
-              <select
+              <Select
                 value={selectedLabourId}
                 onChange={(e) => setSelectedLabourId(e.target.value)}
-                className="erp-input"
+                className="w-full"
               >
                 {labourList.map((l) => (
                   <option key={l.id} value={l.id}>
                     {l.name} ({l.labourType})
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
 
@@ -232,12 +233,12 @@ export const LabourBindingPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Inward Weight (kg) <span className="text-slate-400">(Auto)</span>
               </label>
-              <input
+              <Input
                 type="text"
                 readOnly
                 disabled
                 value={formatWeight(inwardWeight)}
-                className="erp-input-readonly font-mono font-bold"
+                className="font-mono w-full"
               />
             </div>
 
@@ -245,14 +246,14 @@ export const LabourBindingPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Labour Rate (₹/kg) <span className="text-red-500">*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 step="0.50"
                 min="0"
                 required
                 value={chargeRate}
                 onChange={(e) => setChargeRate(e.target.value)}
-                className="erp-input font-mono"
+                className="font-mono w-full"
               />
             </div>
 
@@ -260,12 +261,12 @@ export const LabourBindingPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Total Labour Charge <span className="text-slate-400">(Auto)</span>
               </label>
-              <input
+              <Input
                 type="text"
                 readOnly
                 disabled
                 value={formatCurrency(totalLabourCharge, true)}
-                className="erp-input-readonly font-mono font-bold text-slate-900 bg-slate-100"
+                className="font-mono w-full"
               />
             </div>
           </div>
@@ -275,13 +276,13 @@ export const LabourBindingPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Tar Consumption (Grams)
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 value={tarUsed}
                 onChange={(e) => setTarUsed(e.target.value)}
                 placeholder="120"
-                className="erp-input font-mono"
+                className="font-mono w-full"
               />
               <p className="text-[11px] text-slate-500 mt-0.5">Auto-deducts from active Tar Stock inventory.</p>
             </div>
@@ -290,15 +291,15 @@ export const LabourBindingPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Binding Status
               </label>
-              <select
+              <Select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as LabourStatus)}
-                className="erp-input"
+                className="w-full"
               >
                 <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>
-              </select>
+              </Select>
             </div>
           </div>
 
@@ -306,11 +307,11 @@ export const LabourBindingPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Start Date & Time
             </label>
-            <input
+            <Input
               type="datetime-local"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="erp-input text-xs"
+              className="w-full"
             />
           </div>
 
@@ -318,12 +319,12 @@ export const LabourBindingPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Remarks
             </label>
-            <input
+            <Input
               type="text"
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
               placeholder="e.g. Tightly bound with copper wiring"
-              className="erp-input"
+              className="w-full"
             />
           </div>
         </form>

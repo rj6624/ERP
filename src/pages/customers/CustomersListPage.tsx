@@ -1,3 +1,4 @@
+import { Button } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { Customer } from '../../types/erp';
@@ -121,27 +122,27 @@ export const CustomersListPage: React.FC = () => {
       align: 'right',
       cell: (row) => (
         <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-          <button
+          <Button variant="secondary" size="icon"
             onClick={() => navigateToCustomer(row.id)}
-            className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            className=""
             title="View Details"
           >
             <Eye className="w-3.5 h-3.5" />
-          </button>
-          <button
+          </Button>
+          <Button variant="secondary" size="icon"
             onClick={() => setEditingCustomer(row)}
-            className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            className=""
             title="Edit Customer"
           >
             <Edit2 className="w-3.5 h-3.5" />
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost" size="icon"
             onClick={() => setDeletingCustomer(row)}
-            className="p-1 rounded text-red-600 hover:text-red-800 hover:bg-red-50"
+            className=""
             title="Move to Recycle Bin"
           >
             <Trash2 className="w-3.5 h-3.5" />
-          </button>
+          </Button>
         </div>
       ),
     },
@@ -150,19 +151,19 @@ export const CustomersListPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* List Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900">Customer Management</h2>
           <p className="text-xs text-slate-500">
             Registered jewellery retailers, wholesalers, and manufacturers with automated job ID sequencing.
           </p>
         </div>
-        <button
+        <Button variant="primary"
           onClick={() => setIsAddModalOpen(true)}
-          className="erp-btn-brand self-start sm:self-auto"
+          className="self-start sm:self-auto"
         >
           <UserPlus className="w-3.5 h-3.5" /> Add Customer
-        </button>
+        </Button>
       </div>
 
       {/* Main Customers Table */}

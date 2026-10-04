@@ -1,3 +1,4 @@
+import { Button, Card, Select } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { JewelleryJob, PlatingType, JobPriority, JobStatus } from '../../types/erp';
@@ -103,16 +104,16 @@ export const InwardListPage: React.FC = () => {
       sortable: false,
       align: 'right',
       cell: (row) => (
-        <button
+        <Button variant="secondary"
           onClick={(e) => {
             e.stopPropagation();
             navigateToJob(row.id);
           }}
-          className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 inline-flex items-center gap-1 text-2xs font-semibold"
+          className="inline-flex items-center gap-1 text-2xs"
           title="View Job Lifecycle"
         >
           <Eye className="w-3.5 h-3.5" /> View
-        </button>
+        </Button>
       ),
     },
   ];
@@ -120,7 +121,7 @@ export const InwardListPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <ArrowDownLeft className="w-4 h-4 text-blue-600" /> Customer Inward Receipts
@@ -129,25 +130,25 @@ export const InwardListPage: React.FC = () => {
             Intake of unplated silver jewellery with digital scale verification and system-generated IDs.
           </p>
         </div>
-        <button
+        <Button variant="primary"
           onClick={() => setCurrentPage('create_inward')}
-          className="erp-btn-brand self-start sm:self-auto"
+          className="self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" /> Create Inward
-        </button>
+        </Button>
       </div>
 
       {/* Filter Toolbar */}
-      <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center gap-3 text-xs">
+      <Card padding="sm" className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center gap-3 text-xs">
         <div className="flex items-center gap-1.5 text-slate-500 font-semibold">
           <Filter className="w-3.5 h-3.5" /> Filters:
         </div>
 
         {/* Customer Filter */}
-        <select
+        <Select
           value={filterCustomer}
           onChange={(e) => setFilterCustomer(e.target.value)}
-          className="erp-input w-auto py-1 text-xs"
+          className="w-auto"
         >
           <option value="ALL">All Customers</option>
           {customers.map((c) => (
@@ -155,13 +156,13 @@ export const InwardListPage: React.FC = () => {
               {c.name}
             </option>
           ))}
-        </select>
+        </Select>
 
         {/* Plating Type */}
-        <select
+        <Select
           value={filterPlating}
           onChange={(e) => setFilterPlating(e.target.value)}
-          className="erp-input w-auto py-1 text-xs"
+          className="w-auto"
         >
           <option value="ALL">All Plating Types</option>
           <option value="White Gold">White Gold</option>
@@ -172,49 +173,49 @@ export const InwardListPage: React.FC = () => {
           <option value="Rose Gold">Rose Gold</option>
           <option value="Damar Gold">Damar Gold</option>
           <option value="Dal Chhol Gold">Dal Chhol Gold</option>
-        </select>
+        </Select>
 
         {/* Priority Filter */}
-        <select
+        <Select
           value={filterPriority}
           onChange={(e) => setFilterPriority(e.target.value)}
-          className="erp-input w-auto py-1 text-xs"
+          className="w-auto"
         >
           <option value="ALL">All Priorities</option>
           <option value="Regular">Regular</option>
           <option value="Fast Forward">Fast Forward Only</option>
-        </select>
+        </Select>
 
         {/* Status Filter */}
-        <select
+        <Select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="erp-input w-auto py-1 text-xs"
+          className="w-auto"
         >
           <option value="ALL">All Statuses</option>
           <option value="Inward Received">Inward Received</option>
           <option value="In Process">In Process</option>
           <option value="Ready for Outward">Ready for Outward</option>
           <option value="Outward Completed">Outward Completed</option>
-        </select>
+        </Select>
 
         {(filterCustomer !== 'ALL' ||
           filterPlating !== 'ALL' ||
           filterPriority !== 'ALL' ||
           filterStatus !== 'ALL') && (
-          <button
+          <Button variant="ghost"
             onClick={() => {
               setFilterCustomer('ALL');
               setFilterPlating('ALL');
               setFilterPriority('ALL');
               setFilterStatus('ALL');
             }}
-            className="text-xs text-red-600 hover:underline font-medium ml-auto"
+            className="hover:underline ml-auto"
           >
             Reset Filters
-          </button>
+          </Button>
         )}
-      </div>
+      </Card>
 
       {/* Inward Table */}
       <DataTable

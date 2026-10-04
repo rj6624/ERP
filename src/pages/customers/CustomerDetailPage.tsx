@@ -1,3 +1,4 @@
+import { Button, Card, TabButton } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -143,15 +144,15 @@ export const CustomerDetailPage: React.FC = () => {
       accessorKey: 'id',
       align: 'center',
       cell: (row) => (
-        <button
+        <Button variant="ghost"
           onClick={(e) => {
             e.stopPropagation();
             navigateToJob(row.id);
           }}
-          className="text-xs text-brand-600 hover:text-brand-800 font-semibold inline-flex items-center gap-1"
+          className="inline-flex items-center gap-1"
         >
           <Eye className="w-3.5 h-3.5" /> Details
-        </button>
+        </Button>
       ),
     },
   ];
@@ -160,23 +161,23 @@ export const CustomerDetailPage: React.FC = () => {
     <div className="space-y-4 font-sans">
       {/* Top Breadcrumb & Action */}
       <div className="flex items-center justify-between">
-        <button
+        <Button variant="ghost"
           onClick={() => setCurrentPage('customers')}
-          className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 font-medium"
+          className="inline-flex items-center gap-1.5"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Customers
-        </button>
+        </Button>
 
-        <button
+        <Button variant="primary"
           onClick={() => setCurrentPage('create_inward')}
-          className="erp-btn-brand"
+          className=""
         >
           <Plus className="w-3.5 h-3.5" /> Create Inward for {customer.name}
-        </button>
+        </Button>
       </div>
 
       {/* Customer Profile Header (Section 12: Customer Name, Mobile Number, Address, Status) */}
-      <div className="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
+      <Card padding="md" className="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2.5">
@@ -244,11 +245,11 @@ export const CustomerDetailPage: React.FC = () => {
             </p>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Tabs Navigation (Section 12: Overview, Jobs, Inward, Outward, Labour, Activity) */}
-      <div className="border-b border-slate-200 bg-white px-4 rounded-t-lg">
-        <div className="flex items-center gap-6 text-xs font-semibold">
+      <div className="ds-tabs" role="group" aria-label="Customer views">
+        <div>
           {[
             { key: 'jobs', label: `Jobs History (${customerJobs.length})`, icon: Briefcase },
             { key: 'overview', label: 'Operational Overview', icon: Sparkles },
@@ -260,18 +261,14 @@ export const CustomerDetailPage: React.FC = () => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
             return (
-              <button
+              <TabButton active={isActive}
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as any)}
-                className={`py-3 flex items-center gap-1.5 border-b-2 transition-all ${
-                  isActive
-                    ? 'border-brand-600 text-brand-600 font-bold'
-                    : 'border-transparent text-slate-500 hover:text-slate-800'
-                }`}
+                className=""
               >
                 <Icon className="w-3.5 h-3.5" />
                 <span>{tab.label}</span>
-              </button>
+              </TabButton>
             );
           })}
         </div>
@@ -290,7 +287,7 @@ export const CustomerDetailPage: React.FC = () => {
       {/* Tab 2: OPERATIONAL OVERVIEW */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="erp-card space-y-3">
+          <Card padding="md" className="erp-card space-y-3">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">
               Plating Specifications & Preferences
             </h3>
@@ -312,9 +309,9 @@ export const CustomerDetailPage: React.FC = () => {
                 <span className="text-slate-700">Strict visual mirror shine polish inspection prior to outward</span>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="erp-card space-y-3">
+          <Card padding="md" className="erp-card space-y-3">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">
               Recent Production Summary
             </h3>
@@ -336,7 +333,7 @@ export const CustomerDetailPage: React.FC = () => {
                 <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">Active Partner</span>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       )}
 
@@ -345,7 +342,7 @@ export const CustomerDetailPage: React.FC = () => {
         <div className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {customerJobs.map((j) => (
-              <div key={j.id} className="erp-card p-4 flex gap-4 items-start">
+              <Card padding="md" key={j.id} className="erp-card p-4 flex gap-4 items-start">
                 <img
                   src={j.itemPhotoUrl}
                   alt={j.id}
@@ -366,7 +363,7 @@ export const CustomerDetailPage: React.FC = () => {
                     Received: {formatDateTime(j.inwardDate)}
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
@@ -377,7 +374,7 @@ export const CustomerDetailPage: React.FC = () => {
         <div className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {customerJobs.filter(j => j.status === 'Outward Completed').map((j) => (
-              <div key={j.id} className="erp-card p-4 flex gap-4 items-start border-emerald-200 bg-emerald-50/10">
+              <Card padding="md" key={j.id} className="erp-card p-4 flex gap-4 items-start border-emerald-200 bg-emerald-50/10">
                 <img
                   src={j.outwardPhotoUrl || j.itemPhotoUrl}
                   alt={j.id}
@@ -400,7 +397,7 @@ export const CustomerDetailPage: React.FC = () => {
                     Dispatched: {formatDateTime(j.outwardDate)}
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
@@ -409,7 +406,7 @@ export const CustomerDetailPage: React.FC = () => {
       {/* Tab 5: LABOUR ASSIGNMENTS */}
       {activeTab === 'labour' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="erp-card space-y-3">
+          <Card padding="md" className="erp-card space-y-3">
             <h4 className="text-xs font-bold text-indigo-950 uppercase tracking-wider flex items-center gap-1.5 border-b border-indigo-100 pb-2">
               <Layers className="w-3.5 h-3.5 text-indigo-600" /> Binding Tasks ({customerBindingTasks.length})
             </h4>
@@ -427,9 +424,9 @@ export const CustomerDetailPage: React.FC = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
 
-          <div className="erp-card space-y-3">
+          <Card padding="md" className="erp-card space-y-3">
             <h4 className="text-xs font-bold text-orange-950 uppercase tracking-wider flex items-center gap-1.5 border-b border-orange-100 pb-2">
               <Unlock className="w-3.5 h-3.5 text-orange-600" /> Open Tasks ({customerOpenTasks.length})
             </h4>
@@ -447,13 +444,13 @@ export const CustomerDetailPage: React.FC = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
       )}
 
       {/* Tab 6: PRODUCTION ACTIVITY TIMELINE */}
       {activeTab === 'activity' && (
-        <div className="erp-card p-4">
+        <Card padding="md" className="erp-card p-4">
           <div className="divide-y divide-slate-100 text-xs">
             {customerTimeline.map((item) => (
               <div key={item.id} className="py-2.5 flex items-start justify-between gap-4">
@@ -473,7 +470,7 @@ export const CustomerDetailPage: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

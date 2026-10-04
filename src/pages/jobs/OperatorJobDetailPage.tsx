@@ -1,3 +1,4 @@
+import { Button, Card } from '../../components/ui/Primitives';
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
@@ -27,9 +28,9 @@ export const OperatorJobDetailPage: React.FC = () => {
 
   if (!job) {
     return (
-      <div className="max-w-4xl mx-auto my-12 p-8 bg-white rounded-2xl border border-slate-200 text-center font-sans text-xs text-slate-500">
+      <Card padding="md" className="max-w-4xl mx-auto my-12 p-8 bg-white rounded-2xl border border-slate-200 text-center font-sans text-xs text-slate-500">
         Job record not found.
-      </div>
+      </Card>
     );
   }
 
@@ -48,27 +49,27 @@ export const OperatorJobDetailPage: React.FC = () => {
     <div className="max-w-4xl mx-auto space-y-6 font-sans">
       {/* Top Bar */}
       <div className="flex items-center justify-between">
-        <button
+        <Button variant="secondary"
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-xs cursor-pointer"
+          className="inline-flex items-center gap-1.5 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back</span>
-        </button>
+        </Button>
 
         {job.status !== 'Outward Completed' && (
-          <button
+          <Button variant="primary"
             onClick={() => navigate(`/outward/new?jobId=${job.id}`)}
-            className="h-10 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 transition-all cursor-pointer"
           >
             <ArrowUpRight className="w-4 h-4" />
             <span>Process Outward for this Job</span>
-          </button>
+          </Button>
         )}
       </div>
 
       {/* Main Job Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         {/* Header */}
         <div className="erp-light-panel p-6 border-b border-slate-200 bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -282,7 +283,7 @@ export const OperatorJobDetailPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import { DialogSurface } from '../ui/DialogSurface';
+import { Button, Input } from '../ui/Primitives';
 import React, { useState, useRef } from 'react';
 import { Camera, Upload, RefreshCw, X, Check, Image as ImageIcon, Eye } from 'lucide-react';
 
@@ -67,7 +69,7 @@ export const CameraPhotoUpload: React.FC<CameraPhotoUploadProps> = ({
       {sublabel && <p className="text-[11px] text-slate-500 leading-tight">{sublabel}</p>}
 
       {/* Hidden native file/camera input */}
-      <input
+      <Input
         ref={fileInputRef}
         type="file"
         accept="image/*"
@@ -90,30 +92,30 @@ export const CameraPhotoUpload: React.FC<CameraPhotoUploadProps> = ({
               <span className="text-[10px] text-emerald-300 font-medium">Ready for transaction</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <button
+              <Button variant="secondary" size="icon"
                 type="button"
                 onClick={() => setIsPreviewModalOpen(true)}
-                className="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-colors"
+                className="backdrop-blur-md transition-colors"
                 title="Zoom & Inspect"
               >
                 <Eye className="w-4 h-4" />
-              </button>
-              <button
+              </Button>
+              <Button variant="secondary" size="icon"
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-colors"
+                className="backdrop-blur-md transition-colors"
                 title="Replace Photo"
               >
                 <RefreshCw className="w-4 h-4" />
-              </button>
-              <button
+              </Button>
+              <Button variant="danger" size="icon"
                 type="button"
                 onClick={() => onChange('')}
-                className="p-1.5 rounded-lg bg-red-600/80 hover:bg-red-600 text-white backdrop-blur-md transition-colors"
+                className="backdrop-blur-md transition-colors"
                 title="Remove Photo"
               >
                 <X className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -131,22 +133,22 @@ export const CameraPhotoUpload: React.FC<CameraPhotoUploadProps> = ({
 
             {/* Action Buttons: Big, touch-friendly min-44px */}
             <div className="grid grid-cols-2 gap-2 w-full pt-1">
-              <button
+              <Button variant="primary"
                 type="button"
                 onClick={() => handleSimulatedCapture(label.toLowerCase().includes('scale'))}
-                className="h-11 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                className="flex items-center justify-center gap-1.5 transition-all cursor-pointer"
               >
                 <Camera className="w-4 h-4" />
                 <span>Take Photo</span>
-              </button>
-              <button
+              </Button>
+              <Button variant="secondary"
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="h-11 px-3 rounded-lg bg-white hover:bg-slate-100 active:bg-slate-200 border border-slate-300 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                className="flex items-center justify-center gap-1.5 transition-all cursor-pointer"
               >
                 <Upload className="w-4 h-4 text-slate-500" />
                 <span>Upload</span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -154,21 +156,21 @@ export const CameraPhotoUpload: React.FC<CameraPhotoUploadProps> = ({
 
       {/* Fullscreen Photo Modal Preview */}
       {isPreviewModalOpen && value && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="relative max-w-2xl w-full bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+        <div className="ds-overlay fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <DialogSurface onClose={() => setIsPreviewModalOpen(false)} aria-label="Photo preview" className="relative max-w-2xl w-full bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 text-white">
               <span className="text-xs font-bold">{label} Preview</span>
-              <button
+              <Button variant="ghost" size="icon"
                 onClick={() => setIsPreviewModalOpen(false)}
-                className="p-1 rounded-md text-slate-400 hover:text-white"
+                className="" aria-label="Close dialog"
               >
                 <X className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
             <div className="p-4 bg-black flex items-center justify-center">
               <img src={value} alt={label} className="max-h-[70vh] object-contain rounded-lg" />
             </div>
-          </div>
+          </DialogSurface>
         </div>
       )}
     </div>

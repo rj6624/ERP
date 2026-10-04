@@ -1,3 +1,4 @@
+import { Button, Card } from './components/ui/Primitives';
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { ERPProvider, useERP } from './context/ERPContext';
@@ -58,21 +59,21 @@ import { ShieldAlert } from 'lucide-react';
 const AccessDeniedView: React.FC<{ title: string; message: string }> = ({ title, message }) => {
   const navigate = useNavigate();
   return (
-    <div className="max-w-lg mx-auto my-12 p-8 bg-white rounded-2xl border border-red-200 shadow-sm text-center space-y-3 font-sans">
+    <Card padding="md" className="max-w-lg mx-auto my-12 p-8 bg-white rounded-2xl border border-red-200 shadow-sm text-center space-y-3 font-sans">
       <div className="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto">
         <ShieldAlert className="w-6 h-6" />
       </div>
       <h3 className="text-base font-bold text-slate-900">{title}</h3>
       <p className="text-xs text-slate-500 leading-relaxed">{message}</p>
       <div className="pt-2">
-        <button
+        <Button variant="primary"
           onClick={() => navigate('/dashboard')}
-          className="erp-btn-primary"
+          className=""
         >
           Return to Dashboard
-        </button>
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 };
 

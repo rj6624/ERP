@@ -1,3 +1,4 @@
+import { Button } from '../ui/Primitives';
 import React, { useState, useEffect, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { LabourSidebar } from './LabourSidebar';
@@ -43,7 +44,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div className="erp-shell flex h-screen w-screen overflow-hidden font-sans">
       {!collapsed && (
-        <button type="button" aria-label="Close navigation" className="erp-nav-backdrop md:hidden fixed inset-0 z-30 bg-slate-950/40" onClick={() => setCollapsed(true)} />
+        <Button variant="surface" type="button" aria-label="Close navigation" className="erp-nav-backdrop md:hidden fixed inset-0 z-30 bg-slate-950/40" onClick={() => setCollapsed(true)} />
       )}
       {/* Role-Specific Sidebar */}
       {currentRole === 'Labour' ? (

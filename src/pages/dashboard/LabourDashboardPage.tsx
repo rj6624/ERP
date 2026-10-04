@@ -1,3 +1,4 @@
+import { Button, Card } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import {
@@ -119,7 +120,7 @@ export const LabourDashboardPage: React.FC = () => {
   return (
     <div className="space-y-6 font-sans">
       {/* 1. Header Greeting & Station Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+      <Card padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <div className="flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 border border-amber-500/20 flex items-center justify-center shrink-0">
             <Hammer className="w-6 h-6" />
@@ -145,12 +146,12 @@ export const LabourDashboardPage: React.FC = () => {
             Active Tasks: <span className="text-amber-600 font-bold">{inProgressCount} In Progress</span>
           </span>
         </div>
-      </div>
+      </Card>
 
       {/* 2. 5 KPI CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
         {/* Assigned Work */}
-        <div
+        <Card padding="sm"
           onClick={() => navigate('/my-work')}
           className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-400 transition-colors cursor-pointer group"
         >
@@ -162,10 +163,10 @@ export const LabourDashboardPage: React.FC = () => {
             {assignedWorkCount}
           </div>
           <p className="text-[11px] text-slate-400 mt-0.5">Active queued jobs</p>
-        </div>
+        </Card>
 
         {/* Pending Binding */}
-        <div
+        <Card padding="sm"
           onClick={() => navigate('/labour/binding')}
           className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-amber-400 transition-colors cursor-pointer group"
         >
@@ -177,10 +178,10 @@ export const LabourDashboardPage: React.FC = () => {
             {pendingBindingCount}
           </div>
           <p className="text-[11px] text-amber-700/80 mt-0.5">Awaiting start</p>
-        </div>
+        </Card>
 
         {/* Pending Open */}
-        <div
+        <Card padding="sm"
           onClick={() => navigate('/labour/open')}
           className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-emerald-400 transition-colors cursor-pointer group"
         >
@@ -192,10 +193,10 @@ export const LabourDashboardPage: React.FC = () => {
             {pendingOpenCount}
           </div>
           <p className="text-[11px] text-emerald-700/80 mt-0.5">Untying queue</p>
-        </div>
+        </Card>
 
         {/* In Progress */}
-        <div
+        <Card padding="sm"
           onClick={() => navigate('/my-work')}
           className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-indigo-400 transition-colors cursor-pointer group"
         >
@@ -207,10 +208,10 @@ export const LabourDashboardPage: React.FC = () => {
             {inProgressCount}
           </div>
           <p className="text-[11px] text-indigo-700/80 mt-0.5">On current bench</p>
-        </div>
+        </Card>
 
         {/* Completed Today */}
-        <div
+        <Card padding="sm"
           onClick={() => navigate('/labour/reports')}
           className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-emerald-400 transition-colors cursor-pointer group col-span-2 sm:col-span-1"
         >
@@ -222,12 +223,12 @@ export const LabourDashboardPage: React.FC = () => {
             {completedTodayCount}
           </div>
           <p className="text-[11px] text-slate-400 mt-0.5">Done & verified</p>
-        </div>
+        </Card>
       </div>
 
       {/* 3. QUICK ACTIONS (Large touch buttons) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <button
+        <Button variant="surface"
           onClick={() => navigate('/my-work')}
           className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-xs hover:border-blue-400 hover:bg-blue-50/30 transition-all text-left group"
         >
@@ -243,9 +244,9 @@ export const LabourDashboardPage: React.FC = () => {
             </div>
           </div>
           <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
-        </button>
+        </Button>
 
-        <button
+        <Button variant="surface"
           onClick={() => navigate('/labour/binding')}
           className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-xs hover:border-amber-400 hover:bg-amber-50/30 transition-all text-left group"
         >
@@ -261,9 +262,9 @@ export const LabourDashboardPage: React.FC = () => {
             </div>
           </div>
           <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-700 group-hover:translate-x-0.5 transition-all" />
-        </button>
+        </Button>
 
-        <button
+        <Button variant="surface"
           onClick={() => navigate('/labour/open')}
           className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-xs hover:border-emerald-400 hover:bg-emerald-50/30 transition-all text-left group"
         >
@@ -279,11 +280,11 @@ export const LabourDashboardPage: React.FC = () => {
             </div>
           </div>
           <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 transition-all" />
-        </button>
+        </Button>
       </div>
 
       {/* 4. CURRENT WORK (In Progress Bench) */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
@@ -294,12 +295,12 @@ export const LabourDashboardPage: React.FC = () => {
               {inProgressTasks.length} active
             </span>
           </div>
-          <button
+          <Button variant="ghost"
             onClick={() => navigate('/my-work')}
-            className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
+            className="flex items-center gap-1"
           >
             View All Work <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </Button>
         </div>
 
         {inProgressTasks.length === 0 ? (
@@ -362,22 +363,22 @@ export const LabourDashboardPage: React.FC = () => {
 
                 {/* Complete Action Button */}
                 <div className="flex items-center gap-2 sm:self-center">
-                  <button
+                  <Button variant="primary"
                     onClick={() => setCompleteModalTask(task)}
-                    className="w-full sm:w-auto h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs hover:shadow transition-all flex items-center justify-center gap-1.5"
+                    className="w-full sm:w-auto transition-all flex items-center justify-center gap-1.5"
                   >
                     <CheckCircle className="w-4 h-4" />
                     Complete Work
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </div>
+      </Card>
 
       {/* 5. PENDING WORK QUEUE */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-2">
             <h2 className="text-sm font-bold text-slate-900">
@@ -442,32 +443,32 @@ export const LabourDashboardPage: React.FC = () => {
 
                 {/* Start Work Action Button */}
                 <div className="flex items-center gap-2 sm:self-center">
-                  <button
+                  <Button variant="primary"
                     onClick={() => handleStartWork(task)}
-                    className="w-full sm:w-auto h-10 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs hover:shadow transition-all flex items-center justify-center gap-1.5"
+                    className="w-full sm:w-auto transition-all flex items-center justify-center gap-1.5"
                   >
                     <Play className="w-4 h-4 fill-current" />
                     Start Work
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </div>
+      </Card>
 
       {/* 6. RECENT COMPLETED WORK */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <h2 className="text-sm font-bold text-slate-900">
             Recently Completed Work
           </h2>
-          <button
+          <Button variant="ghost"
             onClick={() => navigate('/labour/reports')}
-            className="text-xs text-slate-600 hover:text-slate-900 font-medium"
+            className=""
           >
             Work History →
-          </button>
+          </Button>
         </div>
 
         {completedTasks.length === 0 ? (
@@ -503,7 +504,7 @@ export const LabourDashboardPage: React.FC = () => {
             ))}
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Complete Modal */}
       {completeModalTask && (

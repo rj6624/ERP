@@ -1,3 +1,4 @@
+import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { AcidItem } from '../../types/erp';
@@ -101,24 +102,24 @@ export const AcidStockPage: React.FC = () => {
       align: 'right',
       cell: (row) => (
         <div className="flex items-center justify-end gap-1">
-          <button
+          <Button variant="ghost"
             onClick={() => {
               setSelectedAcidId(row.id);
               setIsStockInModalOpen(true);
             }}
-            className="p-1 rounded text-emerald-700 hover:bg-emerald-50 text-2xs font-semibold flex items-center gap-0.5 border border-emerald-200"
+            className="text-2xs flex items-center gap-0.5"
           >
             <ArrowDown className="w-3 h-3" /> +In
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             onClick={() => {
               setSelectedAcidId(row.id);
               setIsUsageModalOpen(true);
             }}
-            className="p-1 rounded text-amber-700 hover:bg-amber-50 text-2xs font-semibold flex items-center gap-0.5 border border-amber-200"
+            className="text-2xs flex items-center gap-0.5"
           >
             <ArrowUp className="w-3 h-3" /> -Use
-          </button>
+          </Button>
         </div>
       ),
     },
@@ -127,7 +128,7 @@ export const AcidStockPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Flame className="w-4 h-4 text-orange-600" /> Acid Stock & Pickling Inventory
@@ -138,18 +139,18 @@ export const AcidStockPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button variant="primary"
             onClick={() => setIsStockInModalOpen(true)}
-            className="erp-btn-brand bg-emerald-700 hover:bg-emerald-800"
+            className=""
           >
             <ArrowDown className="w-3.5 h-3.5" /> Record Acid In
-          </button>
-          <button
+          </Button>
+          <Button variant="secondary"
             onClick={() => setIsUsageModalOpen(true)}
-            className="erp-btn-secondary"
+            className=""
           >
             <ArrowUp className="w-3.5 h-3.5" /> Record Usage
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -168,20 +169,20 @@ export const AcidStockPage: React.FC = () => {
         maxWidth="md"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsStockInModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleStockInSubmit}
-              className="erp-btn-brand"
+              className=""
             >
               Confirm Stock In
-            </button>
+            </Button>
           </>
         }
       >
@@ -190,31 +191,31 @@ export const AcidStockPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Select Acid
             </label>
-            <select
+            <Select
               value={selectedAcidId}
               onChange={(e) => setSelectedAcidId(e.target.value)}
-              className="erp-input"
+              className="w-full"
             >
               {acids.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.name} (Current: {a.currentStock.toFixed(2)} {a.unit})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Carboys / Quantity Received
             </label>
-            <input
+            <Input
               type="number"
               step="1"
               min="1"
               required
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="erp-input font-mono"
+              className="font-mono w-full"
             />
           </div>
         </form>
@@ -228,20 +229,20 @@ export const AcidStockPage: React.FC = () => {
         maxWidth="md"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsUsageModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleUsageSubmit}
-              className="erp-btn-primary"
+              className=""
             >
               Confirm Usage
-            </button>
+            </Button>
           </>
         }
       >
@@ -250,31 +251,31 @@ export const AcidStockPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Select Acid
             </label>
-            <select
+            <Select
               value={selectedAcidId}
               onChange={(e) => setSelectedAcidId(e.target.value)}
-              className="erp-input"
+              className="w-full"
             >
               {acids.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.name} (Current: {a.currentStock.toFixed(2)} {a.unit})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Carboys / Quantity Consumed
             </label>
-            <input
+            <Input
               type="number"
               step="1"
               min="1"
               required
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="erp-input font-mono"
+              className="font-mono w-full"
             />
           </div>
         </form>

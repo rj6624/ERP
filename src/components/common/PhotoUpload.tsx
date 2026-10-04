@@ -1,3 +1,4 @@
+import { Button, Input } from '../ui/Primitives';
 import React, { useState, useRef } from 'react';
 import { Upload, Camera, Trash2, Eye, RefreshCw } from 'lucide-react';
 import { Modal } from './Modal';
@@ -68,7 +69,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
         )}
       </div>
 
-      <input
+      <Input
         type="file"
         ref={fileInputRef}
         onChange={handleFileChange}
@@ -88,32 +89,32 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
           </div>
 
           <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsPreviewOpen(true)}
-              className="p-1.5 bg-white/90 text-slate-800 rounded-md hover:bg-white text-xs font-medium flex items-center gap-1 shadow"
+              className="flex items-center gap-1"
               title="Preview Image"
             >
               <Eye className="w-3.5 h-3.5" /> Preview
-            </button>
+            </Button>
             {!readOnly && (
               <>
-                <button
+                <Button variant="secondary"
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="p-1.5 bg-white/90 text-slate-800 rounded-md hover:bg-white text-xs font-medium flex items-center gap-1 shadow"
+                  className="flex items-center gap-1"
                   title="Replace"
                 >
                   <RefreshCw className="w-3.5 h-3.5" /> Replace
-                </button>
-                <button
+                </Button>
+                <Button variant="danger" size="icon"
                   type="button"
                   onClick={() => onChange('')}
-                  className="p-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-xs font-medium flex items-center gap-1 shadow"
+                  className="flex items-center gap-1"
                   title="Remove"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                </Button>
               </>
             )}
           </div>
@@ -141,22 +142,22 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
         >
           <div className="flex flex-col items-center justify-center gap-1">
             <div className="flex items-center gap-2">
-              <button
+              <Button variant="secondary"
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={readOnly}
-                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white text-slate-700 border border-slate-300 rounded shadow-sm hover:bg-slate-50"
+                className="inline-flex items-center gap-1"
               >
                 <Upload className="w-3.5 h-3.5 text-slate-500" /> Upload File
-              </button>
-              <button
+              </Button>
+              <Button variant="primary"
                 type="button"
                 onClick={handleSimulateCamera}
                 disabled={readOnly}
-                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-slate-900 text-white rounded shadow-sm hover:bg-slate-800"
+                className="inline-flex items-center gap-1"
               >
                 <Camera className="w-3.5 h-3.5" /> Camera
-              </button>
+              </Button>
             </div>
             <p className="text-[11px] text-slate-500 mt-1">
               {helperText || 'Drag & drop scale or item photo'}

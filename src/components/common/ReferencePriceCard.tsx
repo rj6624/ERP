@@ -1,3 +1,4 @@
+import { Button, Card } from '../ui/Primitives';
 import React from 'react';
 import { Scale, TrendingUp, Sparkles, MoreHorizontal } from 'lucide-react';
 
@@ -21,7 +22,7 @@ export const ReferencePriceCard: React.FC<ReferencePriceCardProps> = ({
   onMoreClick,
 }) => {
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4 font-sans text-xs">
+    <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4 font-sans text-xs">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -30,12 +31,12 @@ export const ReferencePriceCard: React.FC<ReferencePriceCardProps> = ({
           </div>
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
         </div>
-        <button
+        <Button variant="secondary"
           onClick={onMoreClick}
-          className="px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+          className="transition-colors"
         >
           More
-        </button>
+        </Button>
       </div>
 
       {/* Metrics Row */}
@@ -78,6 +79,6 @@ export const ReferencePriceCard: React.FC<ReferencePriceCardProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };

@@ -1,3 +1,4 @@
+import { Button, Input, Textarea } from '../../components/ui/Primitives';
 import React, { useState, useEffect } from 'react';
 import { Customer } from '../../types/erp';
 import { Modal } from '../../components/common/Modal';
@@ -56,12 +57,12 @@ export const CustomerFormModal: React.FC<CustomerFormModalProps> = ({
       maxWidth="md"
       footer={
         <>
-          <button type="button" onClick={onClose} className="erp-btn-secondary">
+          <Button variant="secondary" type="button" onClick={onClose} className="">
             Cancel
-          </button>
-          <button type="button" onClick={handleSubmit} className="erp-btn-primary">
+          </Button>
+          <Button variant="primary" type="button" onClick={handleSubmit} className="">
             {initialData ? 'Save Changes' : 'Create Customer'}
-          </button>
+          </Button>
         </>
       }
     >
@@ -76,13 +77,13 @@ export const CustomerFormModal: React.FC<CustomerFormModalProps> = ({
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Customer Name <span className="text-red-500">*</span>
           </label>
-          <input
+          <Input
             type="text"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Darshan, Maganlal, Rajesh Jewellers"
-            className="erp-input"
+            className="w-full"
           />
           <p className="text-[11px] text-slate-500 mt-1">
             Automatic Job IDs will use this name as the prefix (e.g. {name ? name.toUpperCase().replace(/\s+/g, '') + '1' : 'DARSHAN1'}).
@@ -93,13 +94,13 @@ export const CustomerFormModal: React.FC<CustomerFormModalProps> = ({
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Mobile Number <span className="text-red-500">*</span>
           </label>
-          <input
+          <Input
             type="tel"
             required
             value={mobile}
             onChange={(e) => setMobile(e.target.value)}
             placeholder="+91 98250 12345"
-            className="erp-input"
+            className="w-full"
           />
         </div>
 
@@ -107,12 +108,12 @@ export const CustomerFormModal: React.FC<CustomerFormModalProps> = ({
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Workshop / Showroom Address
           </label>
-          <textarea
+          <Textarea
             rows={2}
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             placeholder="Shop / Unit number, Bazaar area, City"
-            className="erp-input"
+            className="w-full"
           />
         </div>
 

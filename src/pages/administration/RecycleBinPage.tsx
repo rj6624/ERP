@@ -1,3 +1,4 @@
+import { Button } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { RecycleBinItem } from '../../types/erp';
@@ -63,19 +64,19 @@ export const RecycleBinPage: React.FC = () => {
       align: 'right',
       cell: (row) => (
         <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
-          <button
+          <Button variant="ghost"
             onClick={() => setRestoringItem(row)}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-2xs font-semibold hover:bg-emerald-100 transition-colors"
+            className="inline-flex items-center gap-1 text-2xs transition-colors"
           >
             <RotateCcw className="w-3 h-3" /> Restore Record
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost" size="icon"
             onClick={() => setPurgingItem(row)}
-            className="p-1 rounded text-red-600 hover:text-red-800 hover:bg-red-50 transition-colors"
+            className="transition-colors"
             title="Permanent Delete"
           >
             <Trash2 className="w-3.5 h-3.5" />
-          </button>
+          </Button>
         </div>
       ),
     },
@@ -98,12 +99,12 @@ export const RecycleBinPage: React.FC = () => {
         </div>
 
         {recycleBin.length > 0 && (
-          <button
+          <Button variant="danger"
             onClick={() => setIsEmptyingBin(true)}
-            className="erp-btn-danger self-start sm:self-auto"
+            className="self-start sm:self-auto"
           >
             <Trash2 className="w-3.5 h-3.5" /> Empty Recycle Bin
-          </button>
+          </Button>
         )}
       </div>
 

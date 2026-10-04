@@ -1,3 +1,4 @@
+import { Button, Card, Input } from '../../components/ui/Primitives';
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
@@ -50,7 +51,7 @@ export const OperatorCustomerJobsPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto font-sans">
       {/* Header */}
-      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-black text-slate-900 tracking-tight">
             Customer Job History Lookup
@@ -60,25 +61,25 @@ export const OperatorCustomerJobsPage: React.FC = () => {
           </p>
         </div>
 
-        <button
+        <Button variant="primary"
           onClick={() => navigate('/inward/new')}
-          className="h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
+          className="flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
         >
           <span>+ New Inward for Customer</span>
-        </button>
-      </div>
+        </Button>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Customer List / Search (4 cols) */}
-        <div className="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-xs p-4 space-y-3">
+        <Card padding="sm" className="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-xs p-4 space-y-3">
           <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-            <input
+            <Input
               type="text"
               placeholder="Search customer name or mobile..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full pl-9 pr-3 ds-control-leading"
             />
           </div>
 
@@ -88,7 +89,7 @@ export const OperatorCustomerJobsPage: React.FC = () => {
               const count = jobs.filter((j) => j.customerId === cust.id).length;
 
               return (
-                <button
+                <Button variant="surface"
                   key={cust.id}
                   onClick={() => setSelectedCustomerId(cust.id)}
                   className={`w-full py-3 px-3 rounded-xl text-left transition-all flex items-center justify-between cursor-pointer ${
@@ -106,11 +107,11 @@ export const OperatorCustomerJobsPage: React.FC = () => {
                   <span className="text-[11px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full shrink-0">
                     {count} jobs
                   </span>
-                </button>
+                </Button>
               );
             })}
           </div>
-        </div>
+        </Card>
 
         {/* Right: Selected Customer Jobs (8 cols) */}
         <div className="lg:col-span-8 space-y-4">
@@ -141,7 +142,7 @@ export const OperatorCustomerJobsPage: React.FC = () => {
               <div className="space-y-3">
                 {customerJobs.length > 0 ? (
                   customerJobs.map((job) => (
-                    <div
+                    <Card padding="sm"
                       key={job.id}
                       className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs hover:border-slate-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                     >
@@ -190,27 +191,27 @@ export const OperatorCustomerJobsPage: React.FC = () => {
                           {job.status}
                         </span>
 
-                        <button
+                        <Button variant="secondary"
                           onClick={() => navigate(`/jobs/${job.id}`)}
-                          className="h-9 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1 cursor-pointer transition-colors"
+                          className="flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <span>Open</span>
                           <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
+                        </Button>
                       </div>
-                    </div>
+                    </Card>
                   ))
                 ) : (
-                  <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-500">
+                  <Card padding="md" className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-500">
                     No jobs recorded for this customer yet.
-                  </div>
+                  </Card>
                 )}
               </div>
             </>
           ) : (
-            <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-500">
+            <Card padding="md" className="p-12 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-500">
               Select a customer to view their operational job history.
-            </div>
+            </Card>
           )}
         </div>
       </div>

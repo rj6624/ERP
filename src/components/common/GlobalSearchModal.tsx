@@ -1,3 +1,5 @@
+import { DialogSurface } from '../ui/DialogSurface';
+import { Button, Card, Input } from '../ui/Primitives';
 import React, { useState, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { Search, User, Briefcase, Box, Users, X, ArrowRight, ShieldCheck, Flame, FlaskConical, Hammer } from 'lucide-react';
@@ -51,26 +53,26 @@ export const GlobalSearchModal: React.FC = () => {
   const totalResults = matchingCustomers.length + matchingJobs.length + matchingStock.length + matchingLabour.length;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-start justify-center pt-3 sm:pt-20 px-3 sm:px-4 font-sans">
-      <div role="dialog" aria-modal="true" aria-label="Search records" className="flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-6rem)] w-full max-w-2xl bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="ds-overlay fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-start justify-center pt-3 sm:pt-20 px-3 sm:px-4 font-sans">
+      <DialogSurface onClose={() => setIsSearchModalOpen(false)}  role="dialog" aria-modal="true" aria-label="Search records" className="flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-6rem)] w-full max-w-2xl bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Search Input Bar */}
         <div className="shrink-0 p-3 sm:p-4 border-b border-slate-200 flex items-center gap-2 bg-slate-50/50">
           <Search className="w-5 h-5 text-slate-400 shrink-0" />
-          <input
+          <Input
             type="text"
             aria-label="Search customers, jobs and stock"
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search Customers, Job IDs (e.g. DARSHAN1), Labour, Materials, Stock..."
-            className="min-w-0 w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
+            className="min-w-0 w-full placeholder-slate-400"
           />
           {query && (
-            <button aria-label="Clear search" onClick={() => setQuery('')} className="shrink-0 text-slate-400 hover:text-slate-600">
+            <Button variant="ghost" size="icon" aria-label="Clear search" onClick={() => setQuery('')} className="shrink-0">
               <X className="w-4 h-4" />
-            </button>
+            </Button>
           )}
-          <button aria-label="Close search" onClick={() => setIsSearchModalOpen(false)} className="shrink-0 px-2 text-sm font-semibold text-slate-600">Close</button>
+          <Button variant="ghost" aria-label="Close search" onClick={() => setIsSearchModalOpen(false)} className="shrink-0">Close</Button>
         </div>
 
         {/* Results Container */}
@@ -246,7 +248,7 @@ export const GlobalSearchModal: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
+      </DialogSurface>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { PaymentMode } from '../../types/erp';
@@ -94,12 +95,12 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
       maxWidth="lg"
       footer={
         <>
-          <button type="button" onClick={onClose} className="erp-btn-secondary">
+          <Button variant="secondary" type="button" onClick={onClose} className="">
             Cancel
-          </button>
-          <button type="button" onClick={handleSubmit} className="erp-btn-brand bg-emerald-700 hover:bg-emerald-800">
+          </Button>
+          <Button variant="primary" type="button" onClick={handleSubmit} className="">
             <CreditCard className="w-3.5 h-3.5" /> Save Payment {nextPaymentNumber}
-          </button>
+          </Button>
         </>
       }
     >
@@ -122,29 +123,29 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Select Bill / Customer <span className="text-red-500">*</span>
             </label>
-            <select
+            <Select
               value={selectedBillId}
               onChange={(e) => setSelectedBillId(e.target.value)}
-              className="erp-input text-xs font-medium"
+              className="w-full"
             >
               {pendingBills.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.billNumber} — {b.customerName} (Bal: {formatCurrency(b.pendingAmount, true)})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Payment Date <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="date"
               required
               value={paymentDate}
               onChange={(e) => setPaymentDate(e.target.value)}
-              className="erp-input text-xs"
+              className="w-full"
             />
           </div>
         </div>
@@ -171,14 +172,14 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Amount Received (₹) <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="number"
               step="0.01"
               min="1"
               required
               value={amountReceived}
               onChange={(e) => setAmountReceived(e.target.value)}
-              className="erp-input font-mono font-bold text-sm text-slate-900"
+              className="font-mono w-full"
             />
           </div>
 
@@ -186,17 +187,17 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Payment Mode <span className="text-red-500">*</span>
             </label>
-            <select
+            <Select
               value={paymentMode}
               onChange={(e) => setPaymentMode(e.target.value as PaymentMode)}
-              className="erp-input"
+              className="w-full"
             >
               <option value="Bank Transfer">Bank Transfer (NEFT/RTGS/IMPS)</option>
               <option value="UPI">UPI / QR Code</option>
               <option value="Cash">Cash (Factory Counter)</option>
               <option value="Cheque">Cheque</option>
               <option value="Other">Other</option>
-            </select>
+            </Select>
           </div>
         </div>
 
@@ -205,12 +206,12 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Reference No / UTR / Cheque No
             </label>
-            <input
+            <Input
               type="text"
               value={referenceNumber}
               onChange={(e) => setReferenceNumber(e.target.value)}
               placeholder="e.g. HDFC-NEFT-994821 / CHQ #441209"
-              className="erp-input font-mono text-xs"
+              className="font-mono w-full"
             />
           </div>
 
@@ -218,11 +219,11 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Promise Date for Remaining Balance (If Part Payment)
             </label>
-            <input
+            <Input
               type="date"
               value={promiseDate}
               onChange={(e) => setPromiseDate(e.target.value)}
-              className="erp-input text-xs"
+              className="w-full"
             />
           </div>
         </div>
@@ -231,11 +232,11 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Payment Remarks
           </label>
-          <input
+          <Input
             type="text"
             value={remarks}
             onChange={(e) => setRemarks(e.target.value)}
-            className="erp-input text-xs"
+            className="w-full"
           />
         </div>
       </form>

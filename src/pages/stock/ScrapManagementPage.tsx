@@ -1,3 +1,4 @@
+import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { ScrapRecord } from '../../types/erp';
@@ -133,7 +134,7 @@ export const ScrapManagementPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Recycle className="w-4 h-4 text-emerald-600" /> Scrap Recovery & Precious Sludge Refining
@@ -142,12 +143,12 @@ export const ScrapManagementPage: React.FC = () => {
             Filter dragout recovery, buffing lint smelting, and chemical precipitation logs with strict 3-decimal gross weights.
           </p>
         </div>
-        <button
+        <Button variant="primary"
           onClick={() => setIsAddModalOpen(true)}
-          className="erp-btn-brand self-start sm:self-auto"
+          className="self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" /> Record Scrap Batch
-        </button>
+        </Button>
       </div>
 
       <DataTable
@@ -166,20 +167,20 @@ export const ScrapManagementPage: React.FC = () => {
         maxWidth="lg"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleSubmit}
-              className="erp-btn-primary"
+              className=""
             >
               Save Scrap Record
-            </button>
+            </Button>
           </>
         }
       >
@@ -189,29 +190,29 @@ export const ScrapManagementPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Source Customer / Factory Batch
               </label>
-              <select
+              <Select
                 value={sourceCustomer}
                 onChange={(e) => setSourceCustomer(e.target.value)}
-                className="erp-input"
+                className="w-full"
               >
                 {customers.map((c) => (
                   <option key={c.id} value={c.name}>
                     {c.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Job ID (Optional)
               </label>
-              <input
+              <Input
                 type="text"
                 value={jobId}
                 onChange={(e) => setJobId(e.target.value)}
                 placeholder="e.g. DARSHAN1"
-                className="erp-input font-mono"
+                className="font-mono w-full"
               />
             </div>
           </div>
@@ -221,14 +222,14 @@ export const ScrapManagementPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Gross Weight (kg) <span className="text-red-500">*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 step="0.001"
                 min="0.001"
                 required
                 value={grossWeight}
                 onChange={(e) => setGrossWeight(e.target.value)}
-                className="erp-input font-mono"
+                className="font-mono w-full"
               />
             </div>
 
@@ -236,14 +237,14 @@ export const ScrapManagementPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Recoverable Weight (kg) <span className="text-red-500">*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 step="0.001"
                 min="0"
                 required
                 value={recoverableWeight}
                 onChange={(e) => setRecoverableWeight(e.target.value)}
-                className="erp-input font-mono"
+                className="font-mono w-full"
               />
             </div>
 
@@ -251,12 +252,12 @@ export const ScrapManagementPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Non-Recoverable (kg)
               </label>
-              <input
+              <Input
                 type="text"
                 readOnly
                 disabled
                 value={formatWeight(nonRecNum)}
-                className="erp-input-readonly font-mono"
+                className="font-mono w-full"
               />
             </div>
           </div>
@@ -266,28 +267,28 @@ export const ScrapManagementPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Scrap Type
               </label>
-              <select
+              <Select
                 value={scrapType}
                 onChange={(e) => setScrapType(e.target.value)}
-                className="erp-input"
+                className="w-full"
               >
                 <option value="Filter Sludge & Rinse Dragout">Filter Sludge & Rinse Dragout</option>
                 <option value="Polishing Dust / Buffing Lint">Polishing Dust / Buffing Lint</option>
                 <option value="Defective Binding Wire & Drops">Defective Binding Wire & Drops</option>
                 <option value="Anode Stubs">Anode Stubs</option>
-              </select>
+              </Select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Metal Type
               </label>
-              <input
+              <Input
                 type="text"
                 value={metalType}
                 onChange={(e) => setMetalType(e.target.value)}
                 placeholder="Silver, Gold, Copper"
-                className="erp-input"
+                className="w-full"
               />
             </div>
 
@@ -295,12 +296,12 @@ export const ScrapManagementPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Estimated Purity
               </label>
-              <input
+              <Input
                 type="text"
                 value={purity}
                 onChange={(e) => setPurity(e.target.value)}
                 placeholder="e.g. 75.5%"
-                className="erp-input font-mono"
+                className="font-mono w-full"
               />
             </div>
           </div>
@@ -309,12 +310,12 @@ export const ScrapManagementPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Remarks
             </label>
-            <input
+            <Input
               type="text"
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
               placeholder="e.g. Acid precipitated sludge batch"
-              className="erp-input"
+              className="w-full"
             />
           </div>
         </form>

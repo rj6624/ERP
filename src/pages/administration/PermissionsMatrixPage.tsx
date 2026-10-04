@@ -1,3 +1,4 @@
+import { Button, Card } from '../../components/ui/Primitives';
 import React from 'react';
 import { useERP } from '../../context/ERPContext';
 import { KeyRound, ShieldCheck, Lock, Check, X, ShieldAlert } from 'lucide-react';
@@ -117,16 +118,16 @@ export const PermissionsMatrixPage: React.FC = () => {
           </p>
         </div>
 
-        <button
+        <Button variant="primary"
           onClick={() => setCurrentPage('admin_users')}
-          className="erp-btn-brand bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
+          className=""
         >
           Manage Users
-        </button>
+        </Button>
       </div>
 
       {/* Permissions Matrix Table */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+      <Card padding="none" className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
         <table className="erp-table">
           <thead>
             <tr>
@@ -196,7 +197,7 @@ export const PermissionsMatrixPage: React.FC = () => {
             ))}
           </tbody>
         </table>
-      </div>
+      </Card>
 
       <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
         <span>Matrix Key: View • Create • Edit • Delete Permissions</span>

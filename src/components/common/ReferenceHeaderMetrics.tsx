@@ -1,3 +1,4 @@
+import { Card } from '../ui/Primitives';
 import React from 'react';
 import { TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
@@ -15,7 +16,7 @@ interface ReferenceHeaderMetricsProps {
 
 export const ReferenceHeaderMetrics: React.FC<ReferenceHeaderMetricsProps> = ({ metrics }) => {
   return (
-    <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-wrap items-center justify-between gap-4 font-sans">
+    <Card padding="md" className="erp-metrics bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-wrap items-center justify-between gap-4 font-sans">
       {metrics.map((m, idx) => (
         <div key={idx} className="flex-1 min-w-[140px] flex flex-col justify-center">
           <div className="text-[11px] font-medium text-slate-400 truncate tracking-tight mb-1">
@@ -47,6 +48,6 @@ export const ReferenceHeaderMetrics: React.FC<ReferenceHeaderMetricsProps> = ({ 
           )}
         </div>
       ))}
-    </div>
+    </Card>
   );
 };

@@ -1,3 +1,4 @@
+import { Button, Card } from '../ui/Primitives';
 import React from 'react';
 import { ChevronDown, Building2, User, Scale, Sparkles, Layers } from 'lucide-react';
 
@@ -32,7 +33,7 @@ export const ReferenceEntityCard: React.FC<ReferenceEntityCardProps> = ({
   onStatusClick,
 }) => {
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4 font-sans text-xs">
+    <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4 font-sans text-xs">
       {/* Title */}
       <h2 className="text-base font-bold text-slate-900">
         {title || `Application #${id}`}
@@ -98,9 +99,9 @@ export const ReferenceEntityCard: React.FC<ReferenceEntityCardProps> = ({
         <div className="grid grid-cols-12 items-center gap-2 pt-1 border-t border-slate-100">
           <div className="col-span-5 text-slate-400 font-medium text-[11px]">Status</div>
           <div className="col-span-7">
-            <button
+            <Button variant="secondary"
               onClick={onStatusClick}
-              className="w-full flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/70 border border-slate-200/80 text-xs font-semibold text-slate-800 transition-colors"
+              className="w-full flex items-center justify-between transition-colors"
             >
               <span className="truncate">{status}</span>
               <div className="flex items-center gap-1 shrink-0 ml-1">
@@ -109,10 +110,10 @@ export const ReferenceEntityCard: React.FC<ReferenceEntityCardProps> = ({
                   ⌘C
                 </kbd>
               </div>
-            </button>
+            </Button>
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };

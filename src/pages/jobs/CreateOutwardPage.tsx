@@ -1,3 +1,4 @@
+import { Button, Card, Input, Select } from '../../components/ui/Primitives';
 import React, { useState, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { PhotoUpload } from '../../components/common/PhotoUpload';
@@ -76,15 +77,15 @@ export const CreateOutwardPage: React.FC = () => {
     <div className="max-w-4xl mx-auto space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <button
+        <Button variant="ghost"
           onClick={() => setCurrentPage('outward_list')}
-          className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 font-medium"
+          className="inline-flex items-center gap-1.5"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Outward List
-        </button>
+        </Button>
       </div>
 
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+      <Card padding="none" className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
         {/* Header Banner */}
         <div className="erp-light-panel p-4 bg-slate-900 text-white flex items-center justify-between">
           <div>
@@ -130,21 +131,21 @@ export const CreateOutwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Select Job ID / Customer <span className="text-red-500">*</span>
                 </label>
-                <select
+                <Select
                   required
                   value={selectedJobId}
                   onChange={(e) => {
                     setSelectedJobId(e.target.value);
                     setError('');
                   }}
-                  className="erp-input text-xs font-medium"
+                  className="w-full"
                 >
                   {availableJobs.map((j) => (
                     <option key={j.id} value={j.id}>
                       {j.id} — {j.customerName} ({formatWeight(j.inwardWeight)} • {j.platingType} • {j.priority})
                     </option>
                   ))}
-                </select>
+                </Select>
                 {selectedJob && (
                   <div className="p-2.5 mt-2 rounded bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
                     <div className="flex justify-between">
@@ -167,12 +168,12 @@ export const CreateOutwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Inward Weight (kg) <span className="text-slate-400">(Auto-Fetched • Read-Only)</span>
                 </label>
-                <input
+                <Input
                   type="text"
                   readOnly
                   disabled
                   value={formatWeight(inwardWeight)}
-                  className="erp-input-readonly font-mono font-bold text-sm text-slate-900"
+                  className="font-mono w-full"
                 />
                 <p className="text-[11px] text-slate-500 mt-1">
                   Fetched from original inward intake receipt. Cannot be modified in Outward.
@@ -192,7 +193,7 @@ export const CreateOutwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Outward Weight (kg) <span className="text-red-500">*</span>
                 </label>
-                <input
+                <Input
                   type="number"
                   step="0.001"
                   min="0.001"
@@ -203,7 +204,7 @@ export const CreateOutwardPage: React.FC = () => {
                     setError('');
                   }}
                   placeholder="10.800"
-                  className="erp-input font-mono font-bold text-sm text-slate-900"
+                  className="font-mono w-full"
                 />
                 <p className="text-[11px] text-slate-500 mt-1">
                   Input: <strong>{formatWeight(parsedOutwardWeight)}</strong> (Strict 3 decimal places)
@@ -214,12 +215,12 @@ export const CreateOutwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Plating per KG (g/kg) <span className="text-slate-400">(Auto-Calculated • Read-Only)</span>
                 </label>
-                <input
+                <Input
                   type="text"
                   readOnly
                   disabled
                   value={formatPlating(calculatedPlating)}
-                  className="erp-input-readonly font-mono font-bold text-sm text-purple-700 bg-purple-50/50 border-purple-200"
+                  className="font-mono text-purple-700 w-full"
                 />
                 <p className="text-[11px] text-slate-500 mt-1">
                   Formula: <code>((Outward - Inward) / Inward) × 1000</code>
@@ -232,12 +233,12 @@ export const CreateOutwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Outward Date & Time
                 </label>
-                <input
+                <Input
                   type="datetime-local"
                   required
                   value={outwardDate}
                   onChange={(e) => setOutwardDate(e.target.value)}
-                  className="erp-input text-xs"
+                  className="w-full"
                 />
               </div>
 
@@ -245,12 +246,12 @@ export const CreateOutwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Outward Remarks / Quality Check
                 </label>
-                <input
+                <Input
                   type="text"
                   value={outwardRemarks}
                   onChange={(e) => setOutwardRemarks(e.target.value)}
                   placeholder="e.g. High luster inspection passed, packed in anti-tarnish pouch"
-                  className="erp-input text-xs"
+                  className="w-full"
                 />
               </div>
             </div>
@@ -275,19 +276,19 @@ export const CreateOutwardPage: React.FC = () => {
 
           {/* Actions */}
           <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setCurrentPage('outward_list')}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button type="submit" className="erp-btn-brand">
+            </Button>
+            <Button variant="primary" type="submit" className="">
               <ArrowUpRight className="w-3.5 h-3.5" /> Complete Outward Dispatch
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
+      </Card>
     </div>
   );
 };

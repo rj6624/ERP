@@ -1,3 +1,4 @@
+import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { MetalItem } from '../../types/erp';
@@ -111,24 +112,24 @@ export const MetalStockPage: React.FC = () => {
       align: 'right',
       cell: (row) => (
         <div className="flex items-center justify-end gap-1">
-          <button
+          <Button variant="ghost"
             onClick={() => {
               setSelectedMetalId(row.id);
               setIsStockInModalOpen(true);
             }}
-            className="p-1 rounded text-emerald-700 hover:bg-emerald-50 text-2xs font-semibold flex items-center gap-0.5 border border-emerald-200"
+            className="text-2xs flex items-center gap-0.5"
           >
             <ArrowDown className="w-3 h-3" /> +In
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             onClick={() => {
               setSelectedMetalId(row.id);
               setIsUsageModalOpen(true);
             }}
-            className="p-1 rounded text-amber-700 hover:bg-amber-50 text-2xs font-semibold flex items-center gap-0.5 border border-amber-200"
+            className="text-2xs flex items-center gap-0.5"
           >
             <ArrowUp className="w-3 h-3" /> -Use
-          </button>
+          </Button>
         </div>
       ),
     },
@@ -137,7 +138,7 @@ export const MetalStockPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600" /> Precious Metal Inventory & Anodes
@@ -148,18 +149,18 @@ export const MetalStockPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button variant="primary"
             onClick={() => setIsStockInModalOpen(true)}
-            className="erp-btn-brand bg-emerald-700 hover:bg-emerald-800"
+            className=""
           >
             <ArrowDown className="w-3.5 h-3.5" /> Record Metal In
-          </button>
-          <button
+          </Button>
+          <Button variant="secondary"
             onClick={() => setIsUsageModalOpen(true)}
-            className="erp-btn-secondary"
+            className=""
           >
             <ArrowUp className="w-3.5 h-3.5" /> Record Usage
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -178,20 +179,20 @@ export const MetalStockPage: React.FC = () => {
         maxWidth="md"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsStockInModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleStockInSubmit}
-              className="erp-btn-brand"
+              className=""
             >
               Confirm Stock In
-            </button>
+            </Button>
           </>
         }
       >
@@ -200,31 +201,31 @@ export const MetalStockPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Select Metal
             </label>
-            <select
+            <Select
               value={selectedMetalId}
               onChange={(e) => setSelectedMetalId(e.target.value)}
-              className="erp-input"
+              className="w-full"
             >
               {metals.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.name} ({m.purity} • Current: {m.currentStock.toFixed(3)} {m.unit})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Weight Received (3 Decimal Places)
             </label>
-            <input
+            <Input
               type="number"
               step="0.001"
               min="0.001"
               required
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="erp-input font-mono"
+              className="font-mono w-full"
             />
           </div>
         </form>
@@ -238,20 +239,20 @@ export const MetalStockPage: React.FC = () => {
         maxWidth="md"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsUsageModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleUsageSubmit}
-              className="erp-btn-primary"
+              className=""
             >
               Confirm Metal Usage
-            </button>
+            </Button>
           </>
         }
       >
@@ -260,31 +261,31 @@ export const MetalStockPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Select Metal
             </label>
-            <select
+            <Select
               value={selectedMetalId}
               onChange={(e) => setSelectedMetalId(e.target.value)}
-              className="erp-input"
+              className="w-full"
             >
               {metals.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.name} ({m.purity} • Current: {m.currentStock.toFixed(3)} {m.unit})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Weight Consumed (3 Decimals)
             </label>
-            <input
+            <Input
               type="number"
               step="0.001"
               min="0.001"
               required
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="erp-input font-mono"
+              className="font-mono w-full"
             />
           </div>
         </form>

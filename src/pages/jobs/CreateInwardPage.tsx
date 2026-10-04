@@ -1,3 +1,4 @@
+import { Button, Card, Input, Select, TabButton } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { PlatingType, JobPriority } from '../../types/erp';
@@ -68,15 +69,15 @@ export const CreateInwardPage: React.FC = () => {
     <div className="max-w-4xl mx-auto space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <button
+        <Button variant="ghost"
           onClick={() => setCurrentPage('inward_list')}
-          className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 font-medium"
+          className="inline-flex items-center gap-1.5"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Inward List
-        </button>
+        </Button>
       </div>
 
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+      <Card padding="none" className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
         {/* Banner */}
         <div className="erp-light-panel p-4 bg-slate-900 text-white flex items-center justify-between">
           <div>
@@ -115,18 +116,18 @@ export const CreateInwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Customer <span className="text-red-500">*</span>
                 </label>
-                <select
+                <Select
                   required
                   value={customerId}
                   onChange={(e) => setCustomerId(e.target.value)}
-                  className="erp-input text-xs"
+                  className="w-full"
                 >
                   {customers.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name} ({c.mobile})
                     </option>
                   ))}
-                </select>
+                </Select>
                 {selectedCustomerObj && (
                   <p className="text-[11px] text-slate-500 mt-1">
                     Previous completed jobs: <strong>{selectedCustomerObj.completedJobs}</strong> • Total weight: <strong>{formatWeight(selectedCustomerObj.totalInwardWeight)}</strong>
@@ -138,12 +139,12 @@ export const CreateInwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   System Job ID (Auto-Generated) <span className="text-slate-400">(Read-Only)</span>
                 </label>
-                <input
+                <Input
                   type="text"
                   readOnly
                   disabled
                   value={nextJobIdPreview}
-                  className="erp-input-readonly font-mono font-bold text-slate-900"
+                  className="font-mono w-full"
                 />
                 <p className="text-[11px] text-slate-500 mt-1">
                   System-managed sequential key. Operators cannot overwrite ID.
@@ -163,7 +164,7 @@ export const CreateInwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Inward Weight (kg) <span className="text-red-500">*</span>
                 </label>
-                <input
+                <Input
                   type="number"
                   step="0.001"
                   min="0.001"
@@ -171,7 +172,7 @@ export const CreateInwardPage: React.FC = () => {
                   value={inwardWeight}
                   onChange={(e) => setInwardWeight(e.target.value)}
                   placeholder="10.250"
-                  className="erp-input font-mono font-bold text-sm text-slate-900"
+                  className="font-mono w-full"
                 />
                 <p className="text-[11px] text-slate-500 mt-1">
                   Formatted: <strong>{formatWeight(parseFloat(inwardWeight) || 0)}</strong> (3 decimals required)
@@ -182,11 +183,11 @@ export const CreateInwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Plating Type <span className="text-red-500">*</span>
                 </label>
-                <select
+                <Select
                   required
                   value={platingType}
                   onChange={(e) => setPlatingType(e.target.value as PlatingType)}
-                  className="erp-input text-xs"
+                  className="w-full"
                 >
                   <option value="White Gold">White Gold</option>
                   <option value="Golden Brass">Golden Brass</option>
@@ -196,7 +197,7 @@ export const CreateInwardPage: React.FC = () => {
                   <option value="Rose Gold">Rose Gold</option>
                   <option value="Damar Gold">Damar Gold</option>
                   <option value="Dal Chhol Gold">Dal Chhol Gold</option>
-                </select>
+                </Select>
               </div>
 
               <div>
@@ -204,28 +205,20 @@ export const CreateInwardPage: React.FC = () => {
                   Priority <span className="text-red-500">*</span>
                 </label>
                 <div className="flex gap-2">
-                  <button
+                  <TabButton active={priority === 'Regular'}
                     type="button"
                     onClick={() => setPriority('Regular')}
-                    className={`flex-1 py-1.5 px-3 rounded-md text-xs font-semibold border ${
-                      priority === 'Regular'
-                        ? 'bg-slate-900 text-white border-slate-900'
-                        : 'bg-white text-slate-700 border-slate-300'
-                    }`}
+                    className="flex-1"
                   >
                     Regular
-                  </button>
-                  <button
+                  </TabButton>
+                  <TabButton active={priority === 'Fast Forward'}
                     type="button"
                     onClick={() => setPriority('Fast Forward')}
-                    className={`flex-1 py-1.5 px-3 rounded-md text-xs font-semibold border flex items-center justify-center gap-1 ${
-                      priority === 'Fast Forward'
-                        ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-sm'
-                        : 'bg-white text-amber-700 border-amber-300'
-                    }`}
+                    className="flex-1"
                   >
                     <Zap className="w-3.5 h-3.5 fill-current" /> Fast Forward
-                  </button>
+                  </TabButton>
                 </div>
               </div>
             </div>
@@ -235,12 +228,12 @@ export const CreateInwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Inward Date & Time
                 </label>
-                <input
+                <Input
                   type="datetime-local"
                   required
                   value={inwardDate}
                   onChange={(e) => setInwardDate(e.target.value)}
-                  className="erp-input text-xs"
+                  className="w-full"
                 />
               </div>
 
@@ -248,12 +241,12 @@ export const CreateInwardPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Inward Remarks / Batch Notes
                 </label>
-                <input
+                <Input
                   type="text"
                   value={inwardRemarks}
                   onChange={(e) => setInwardRemarks(e.target.value)}
                   placeholder="e.g. Silver chains for rhodium flash, check hooks"
-                  className="erp-input text-xs"
+                  className="w-full"
                 />
               </div>
             </div>
@@ -286,19 +279,19 @@ export const CreateInwardPage: React.FC = () => {
 
           {/* Footer Actions */}
           <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setCurrentPage('inward_list')}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button type="submit" className="erp-btn-brand">
+            </Button>
+            <Button variant="primary" type="submit" className="">
               <ArrowDownLeft className="w-3.5 h-3.5" /> Submit Inward & Generate {nextJobIdPreview}
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
+      </Card>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { Button, Card } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
@@ -178,7 +179,7 @@ export const OperatorDashboardPage: React.FC = () => {
   return (
     <div className="space-y-5 font-sans max-w-[1600px] mx-auto text-slate-800">
       {/* 1. Top Header Actions & Station Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -197,19 +198,19 @@ export const OperatorDashboardPage: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2.5">
-          <button
+          <Button variant="secondary"
             onClick={() => navigate('/outward/new')}
-            className="ref-btn-secondary flex items-center gap-2"
+            className="flex items-center gap-2"
           >
             <span>Process Outward</span>
-          </button>
-          <button
+          </Button>
+          <Button variant="primary"
             onClick={() => navigate('/inward/new')}
-            className="ref-btn-primary flex items-center gap-2"
+            className="flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             <span>New Customer Inward</span>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -276,7 +277,7 @@ export const OperatorDashboardPage: React.FC = () => {
           />
 
           {/* Touch Actions Promo Box */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-3">
+          <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-3">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold text-slate-900">Physical Station Workflows</h3>
@@ -285,7 +286,7 @@ export const OperatorDashboardPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-3 pt-1">
-              <button
+              <Button variant="surface"
                 onClick={() => navigate('/inward/new')}
                 className="p-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex flex-col justify-between h-24 text-left transition-all shadow-xs cursor-pointer group"
               >
@@ -296,9 +297,9 @@ export const OperatorDashboardPage: React.FC = () => {
                   <div className="font-bold text-white text-xs">New Inward</div>
                   <div className="text-[10px] text-slate-400 font-normal">Dual Photo Capture</div>
                 </div>
-              </button>
+              </Button>
 
-              <button
+              <Button variant="surface"
                 onClick={() => navigate('/outward/new')}
                 className="p-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex flex-col justify-between h-24 text-left transition-all shadow-xs cursor-pointer group"
               >
@@ -309,9 +310,9 @@ export const OperatorDashboardPage: React.FC = () => {
                   <div className="font-bold text-white text-xs">Process Outward</div>
                   <div className="text-[10px] text-blue-100 font-normal">Plating per KG Auto</div>
                 </div>
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* RIGHT COLUMN: Filter Checkbox List & Fast Forward Urgent Queue (3 Cols) */}
@@ -324,7 +325,7 @@ export const OperatorDashboardPage: React.FC = () => {
           />
 
           {/* Urgent Fast Forward Priority Card */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-3 font-sans text-xs">
+          <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-3 font-sans text-xs">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <div className="flex items-center gap-1.5 font-bold text-slate-900">
                 <Zap className="w-4 h-4 text-amber-500 fill-amber-500/20" />
@@ -341,12 +342,12 @@ export const OperatorDashboardPage: React.FC = () => {
                   <div className="font-mono font-bold text-blue-700 text-xs">MAGANLAL3</div>
                   <div className="text-[11px] font-bold text-slate-800">8.500 kg • Rose Gold</div>
                 </div>
-                <button
+                <Button variant="ghost" size="sm"
                   onClick={() => navigate('/outward/new')}
-                  className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] shadow-xs cursor-pointer"
+                  className="cursor-pointer"
                 >
                   Process
-                </button>
+                </Button>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between">
@@ -354,25 +355,25 @@ export const OperatorDashboardPage: React.FC = () => {
                   <div className="font-mono font-bold text-blue-700 text-xs">DARSHAN4</div>
                   <div className="text-[11px] font-bold text-slate-800">10.250 kg • Teen Gold</div>
                 </div>
-                <button
+                <Button variant="ghost" size="sm"
                   onClick={() => navigate('/jobs/DARSHAN4')}
-                  className="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-[11px] cursor-pointer"
+                  className="cursor-pointer"
                 >
                   Open
-                </button>
+                </Button>
               </div>
             </div>
 
-            <button
+            <Button variant="ghost"
               onClick={() => navigate('/fast-forward')}
-              className="w-full text-center py-1.5 text-xs text-blue-600 hover:text-blue-800 font-bold block transition-colors cursor-pointer"
+              className="w-full text-center block transition-colors cursor-pointer"
             >
               View Full Priority Queue →
-            </button>
-          </div>
+            </Button>
+          </Card>
 
           {/* Scale Calibration Hardware Card */}
-          <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-2 text-xs">
+          <Card padding="sm" className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-2 text-xs">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
                 <Scale className="w-3.5 h-3.5" />
@@ -382,7 +383,7 @@ export const OperatorDashboardPage: React.FC = () => {
             <p className="text-[11px] text-slate-500">
               Mettler Toledo Balance #S01 calibrated at ±0.001 kg precision. Dual camera link active.
             </p>
-          </div>
+          </Card>
         </div>
       </div>
     </div>

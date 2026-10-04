@@ -1,3 +1,4 @@
+import { Button } from '../ui/Primitives';
 import React from 'react';
 import { useERP } from '../../context/ERPContext';
 import {
@@ -68,31 +69,31 @@ export const LabourSidebar: React.FC<LabourSidebarProps> = ({ collapsed, setColl
             </div>
           )}
         </div>
-        <button
+        <Button variant="surface"
           onClick={() => setCollapsed(!collapsed)}
           className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
+        </Button>
       </div>
 
       {/* Nav Content */}
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-6 custom-scrollbar text-xs">
         {/* DASHBOARD */}
         <div>
-          <button
+          <Button variant="surface"
             onClick={() => navigate('/dashboard')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
               isActive('/dashboard')
-                ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 shadow-xs'
+                ? 'erp-nav-active bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 shadow-xs'
                 : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
             }`}
             title="Work Dashboard"
           >
             <LayoutDashboard className="w-4 h-4 shrink-0 text-amber-400" />
             {!collapsed && <span>Work Dashboard</span>}
-          </button>
+          </Button>
         </div>
 
         {/* MY WORK QUEUE */}
@@ -104,11 +105,11 @@ export const LabourSidebar: React.FC<LabourSidebarProps> = ({ collapsed, setColl
           )}
 
           {/* All My Work */}
-          <button
+          <Button variant="surface"
             onClick={() => navigate('/my-work')}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg font-medium transition-colors ${
               isActive('/my-work')
-                ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30'
+                ? 'erp-nav-active bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30'
                 : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
             }`}
             title="All Assigned Work"
@@ -122,14 +123,14 @@ export const LabourSidebar: React.FC<LabourSidebarProps> = ({ collapsed, setColl
                 {inProgressTotal} active
               </span>
             )}
-          </button>
+          </Button>
 
           {/* Binding Work */}
-          <button
+          <Button variant="surface"
             onClick={() => navigate('/labour/binding')}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg font-medium transition-colors ${
               isActive('/labour/binding')
-                ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30'
+                ? 'erp-nav-active bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30'
                 : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
             }`}
             title="Binding Work"
@@ -143,14 +144,14 @@ export const LabourSidebar: React.FC<LabourSidebarProps> = ({ collapsed, setColl
                 {pendingBinding} pending
               </span>
             )}
-          </button>
+          </Button>
 
           {/* Open Work */}
-          <button
+          <Button variant="surface"
             onClick={() => navigate('/labour/open')}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg font-medium transition-colors ${
               isActive('/labour/open')
-                ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30'
+                ? 'erp-nav-active bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30'
                 : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
             }`}
             title="Open Work"
@@ -164,7 +165,7 @@ export const LabourSidebar: React.FC<LabourSidebarProps> = ({ collapsed, setColl
                 {pendingOpen} pending
               </span>
             )}
-          </button>
+          </Button>
         </div>
 
         {/* WORK REPORTS */}
@@ -175,18 +176,18 @@ export const LabourSidebar: React.FC<LabourSidebarProps> = ({ collapsed, setColl
             </div>
           )}
 
-          <button
+          <Button variant="surface"
             onClick={() => navigate('/labour/reports')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
               isActive('/labour/reports')
-                ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30'
+                ? 'erp-nav-active bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30'
                 : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
             }`}
             title="My Work Reports"
           >
             <FileText className="w-4 h-4 shrink-0 text-slate-400" />
             {!collapsed && <span>My Work Reports</span>}
-          </button>
+          </Button>
         </div>
       </div>
 

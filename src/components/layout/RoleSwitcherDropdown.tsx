@@ -1,3 +1,4 @@
+import { Button } from '../ui/Primitives';
 import React, { useState, useRef, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import {
@@ -139,7 +140,7 @@ export const RoleSwitcherDropdown: React.FC = () => {
   return (
     <div className="erp-role-switcher relative inline-block text-left" ref={dropdownRef}>
       {/* Role Pill Button */}
-      <button
+      <Button variant="surface"
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg border transition-all duration-150 cursor-pointer shadow-xs whitespace-nowrap ${activeRole.theme.bg} ${activeRole.theme.border} ${activeRole.theme.text}`}
@@ -148,7 +149,7 @@ export const RoleSwitcherDropdown: React.FC = () => {
         <div className={`p-1 rounded-md ${activeRole.theme.iconBg}`}>
           <ActiveIcon className="w-3.5 h-3.5" />
         </div>
-        
+
         <div className="flex items-center gap-1.5 text-xs font-semibold">
           <span className="hidden sm:inline font-bold">{activeRole.name}</span>
           <span className="sm:hidden font-bold">{activeRole.badge}</span>
@@ -164,11 +165,11 @@ export const RoleSwitcherDropdown: React.FC = () => {
             isOpen ? 'rotate-180' : ''
           }`}
         />
-      </button>
+      </Button>
 
       {/* Role Selector Popover */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border border-slate-200/90 py-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
+        <div className="ds-popover absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border border-slate-200/90 py-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right">
           {/* Header */}
           <div className="px-3.5 pb-2.5 mb-1.5 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
@@ -187,7 +188,7 @@ export const RoleSwitcherDropdown: React.FC = () => {
               const isSelected = role.id === currentRole;
 
               return (
-                <button
+                <Button variant="surface"
                   key={role.id}
                   type="button"
                   onClick={() => handleSelectRole(role.id)}
@@ -230,7 +231,7 @@ export const RoleSwitcherDropdown: React.FC = () => {
                       {role.description}
                     </div>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>

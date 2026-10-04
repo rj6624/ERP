@@ -1,3 +1,4 @@
+import { Button, Card } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -55,34 +56,34 @@ export const BillDetailPage: React.FC = () => {
     <div className="max-w-4xl mx-auto space-y-4">
       {/* Header Controls (Hidden on Print) */}
       <div className="flex items-center justify-between no-print">
-        <button
+        <Button variant="ghost"
           onClick={() => setCurrentPage('bills_list')}
-          className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 font-medium"
+          className="inline-flex items-center gap-1.5"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Bills
-        </button>
+        </Button>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button variant="secondary"
             onClick={triggerPrint}
-            className="erp-btn-secondary"
+            className=""
           >
             <Printer className="w-3.5 h-3.5" /> Print Invoice
-          </button>
+          </Button>
 
           {bill.pendingAmount > 0 && (
-            <button
+            <Button variant="primary"
               onClick={() => setIsPaymentModalOpen(true)}
-              className="erp-btn-brand"
+              className=""
             >
               <CreditCard className="w-3.5 h-3.5" /> Record Payment
-            </button>
+            </Button>
           )}
         </div>
       </div>
 
       {/* Invoice Card / Printable Document */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+      <Card padding="md" className="bg-white rounded-lg border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
         {/* Invoice Top Header */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-slate-200 pb-6">
           <div className="space-y-1">
@@ -239,7 +240,7 @@ export const BillDetailPage: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
+      </Card>
 
       {isPaymentModalOpen && (
         <RecordPaymentModal

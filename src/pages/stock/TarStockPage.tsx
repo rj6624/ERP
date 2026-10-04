@@ -1,3 +1,4 @@
+import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { TarTransaction } from '../../types/erp';
@@ -157,12 +158,12 @@ export const TarStockPage: React.FC = () => {
             </span>
           </div>
 
-          <button
+          <Button variant="primary"
             onClick={() => setIsAddModalOpen(true)}
-            className="erp-btn-brand"
+            className=""
           >
             <Plus className="w-3.5 h-3.5" /> Record Transaction
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -183,20 +184,20 @@ export const TarStockPage: React.FC = () => {
         maxWidth="md"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleSubmit}
-              className="erp-btn-primary"
+              className=""
             >
               Save Tar Transaction
-            </button>
+            </Button>
           </>
         }
       >
@@ -205,15 +206,15 @@ export const TarStockPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Transaction Type <span className="text-red-500">*</span>
             </label>
-            <select
+            <Select
               value={type}
               onChange={(e) => setType(e.target.value as any)}
-              className="erp-input"
+              className="w-full"
             >
               <option value="Purchase">Purchase (Stock In)</option>
               <option value="Usage">Direct Factory Usage (Stock Out)</option>
               <option value="Adjustment">Residue Adjustment (±)</option>
-            </select>
+            </Select>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -221,13 +222,13 @@ export const TarStockPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Quantity (kg) <span className="text-red-500">*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 step="0.001"
                 required
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="erp-input font-mono"
+                className="font-mono w-full"
               />
             </div>
 
@@ -235,13 +236,13 @@ export const TarStockPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Rate (₹ / kg) <span className="text-red-500">*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 step="1"
                 required
                 value={rate}
                 onChange={(e) => setRate(e.target.value)}
-                className="erp-input font-mono"
+                className="font-mono w-full"
               />
             </div>
           </div>
@@ -252,10 +253,10 @@ export const TarStockPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Labour Worker
                 </label>
-                <select
+                <Select
                   value={labourName}
                   onChange={(e) => setLabourName(e.target.value)}
-                  className="erp-input"
+                  className="w-full"
                 >
                   <option value="">Select Worker</option>
                   {labourList.map((l) => (
@@ -263,19 +264,19 @@ export const TarStockPage: React.FC = () => {
                       {l.name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Job ID Reference
                 </label>
-                <input
+                <Input
                   type="text"
                   value={jobId}
                   onChange={(e) => setJobId(e.target.value)}
                   placeholder="e.g. DARSHAN4"
-                  className="erp-input font-mono"
+                  className="font-mono w-full"
                 />
               </div>
             </div>
@@ -285,12 +286,12 @@ export const TarStockPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Remarks / Supplier / Batch Notes
             </label>
-            <input
+            <Input
               type="text"
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
               placeholder="e.g. Bulk drum batch purchase"
-              className="erp-input"
+              className="w-full"
             />
           </div>
         </form>

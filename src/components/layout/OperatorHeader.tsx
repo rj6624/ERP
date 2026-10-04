@@ -1,3 +1,4 @@
+import { Button } from '../ui/Primitives';
 import React, { useState, useRef, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -96,14 +97,14 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) 
     <header className="erp-header h-15 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-3 sm:px-5 flex items-center justify-between z-20 shrink-0 font-sans sticky top-0">
       {/* Left: Sidebar Toggle + Title */}
       <div className="flex items-center gap-3 min-w-0 mr-2">
-        <button
+        <Button variant="secondary" size="icon"
           type="button"
           onClick={() => setCollapsed((prev) => !prev)}
-          className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer shrink-0"
+          className="transition-colors cursor-pointer shrink-0"
           title="Toggle Navigation"
         >
           <Menu className="w-4 h-4" />
-        </button>
+        </Button>
 
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -134,11 +135,11 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) 
         </div>
 
         {/* Global Search Button */}
-        <button
+        <Button variant="secondary"
           type="button"
           onClick={() => setIsSearchModalOpen(true)}
           aria-label="Search records"
-          className="erp-header-search flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50/90 text-slate-500 hover:bg-white hover:text-slate-800 hover:border-slate-300 text-xs font-medium transition-all cursor-pointer whitespace-nowrap shadow-2xs"
+          className="erp-header-search flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap"
           title="Search Job IDs (Cmd+K)"
         >
           <Search className="w-3.5 h-3.5 text-slate-400" />
@@ -146,31 +147,31 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) 
           <kbd className="font-mono text-[10px] bg-slate-200/80 text-slate-700 px-1.5 py-0.5 rounded font-semibold border border-slate-300/60">
             ⌘K
           </kbd>
-        </button>
+        </Button>
 
         {/* Direct Inward Quick Action Button */}
-        <button
+        <Button variant="primary"
           type="button"
           onClick={() => navigate('/inward/new')}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer whitespace-nowrap active:scale-[0.98]"
+          className="inline-flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap active:scale-[0.98]"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>New Inward</span>
-        </button>
+        </Button>
 
         {/* Operational Notifications */}
         <div className="relative">
-          <button
+          <Button variant="secondary"
             type="button"
             onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-            className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 relative transition-colors cursor-pointer"
+            className="relative transition-colors cursor-pointer"
             title="Operational Alerts"
           >
             <Bell className="w-4 h-4" />
             {unreadAlertsCount > 0 && (
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white"></span>
             )}
-          </button>
+          </Button>
           <NotificationsPopover
             isOpen={isNotificationsOpen}
             onClose={() => setIsNotificationsOpen(false)}
@@ -182,7 +183,7 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) 
 
         {/* Operator Profile Menu */}
         <div className="relative pl-1 border-l border-slate-200" ref={profileRef}>
-          <button
+          <Button variant="surface"
             type="button"
             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
             className="flex items-center gap-2 p-1 rounded-lg hover:bg-slate-100 transition-colors text-left cursor-pointer"
@@ -199,11 +200,11 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) 
               </span>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
-          </button>
+          </Button>
 
           {/* Profile Dropdown */}
           {isProfileMenuOpen && (
-            <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-slate-200/90 py-2 z-50 text-xs animate-in fade-in zoom-in-95 duration-150 origin-top-right">
+            <div className="ds-popover absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-slate-200/90 py-2 z-50 text-xs animate-in fade-in zoom-in-95 duration-150 origin-top-right">
               <div className="px-3.5 py-2.5 border-b border-slate-100">
                 <p className="font-bold text-slate-900 text-sm">{currentUser?.name || 'Ramesh Patel'}</p>
                 <p className="text-[11px] text-slate-500">{currentUser?.email || 'ramesh.operator@platingerp.in'}</p>
@@ -213,14 +214,14 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ setCollapsed }) 
               </div>
 
               <div className="pt-1 px-1 border-t border-slate-100">
-                <button
+                <Button variant="surface"
                   type="button"
                   onClick={() => setIsProfileMenuOpen(false)}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-red-50 text-red-700 text-left font-medium transition-colors cursor-pointer"
                 >
                   <LogOut className="w-3.5 h-3.5 text-red-500" />
                   <span>Sign Out</span>
-                </button>
+                </Button>
               </div>
             </div>
           )}

@@ -1,3 +1,4 @@
+import { Button, Card, Input, TabButton } from '../../components/ui/Primitives';
 import React, { useState, useMemo } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { formatWeight, formatPlating } from '../../utils/formatters';
@@ -80,7 +81,7 @@ export const OperatorReportsPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto font-sans">
       {/* Header */}
-      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-black text-slate-900 tracking-tight">
             Operational Daily Reports
@@ -93,27 +94,23 @@ export const OperatorReportsPage: React.FC = () => {
         <div className="text-xs text-slate-500 font-semibold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
           Showing {reportRows.length} Operational Records
         </div>
-      </div>
+      </Card>
 
       {/* Report Tabs (Touch-Friendly Buttons) */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      <div className="ds-tabs" role="group" aria-label="Report views">
         {reportTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeReport === tab.key;
 
           return (
-            <button
+            <TabButton active={isActive}
               key={tab.key}
               onClick={() => setActiveReport(tab.key)}
-              className={`h-12 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                isActive
-                  ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
-              }`}
+              className=""
             >
               <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-500'}`} />
-              <span className="truncate">{tab.label}</span>
-            </button>
+              <span>{tab.label}</span>
+            </TabButton>
           );
         })}
       </div>
@@ -141,21 +138,21 @@ export const OperatorReportsPage: React.FC = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs">
+      <Card padding="sm" className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs">
         <div className="relative">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-          <input
+          <Input
             type="text"
             placeholder="Search report records by Job ID, Customer, or Plating..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900"
+            className="w-full pl-9 pr-3 ds-control-leading"
           />
         </div>
-      </div>
+      </Card>
 
       {/* Report Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
@@ -226,7 +223,7 @@ export const OperatorReportsPage: React.FC = () => {
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

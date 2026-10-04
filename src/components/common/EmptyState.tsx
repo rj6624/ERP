@@ -1,3 +1,4 @@
+import { Button, Card } from '../ui/Primitives';
 import React from 'react';
 import { LucideIcon, Inbox } from 'lucide-react';
 
@@ -17,17 +18,17 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onAction,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center p-8 text-center bg-white rounded-lg border border-dashed border-slate-300 my-4">
+    <Card padding="md" className="flex flex-col items-center justify-center p-8 text-center bg-white rounded-lg border border-dashed border-slate-300 my-4">
       <div className="p-3 bg-slate-100 rounded-full text-slate-500 mb-3">
         <Icon className="w-6 h-6" />
       </div>
       <h3 className="text-sm font-semibold text-slate-800">{title}</h3>
       <p className="mt-1 text-xs text-slate-500 max-w-sm">{description}</p>
       {actionText && onAction && (
-        <button onClick={onAction} className="mt-4 erp-btn-primary">
+        <Button variant="primary" onClick={onAction} className="mt-4">
           {actionText}
-        </button>
+        </Button>
       )}
-    </div>
+    </Card>
   );
 };

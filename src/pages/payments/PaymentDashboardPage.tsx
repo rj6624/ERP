@@ -1,3 +1,4 @@
+import { Button } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { StatCard } from '../../components/common/StatCard';
@@ -99,16 +100,16 @@ export const PaymentDashboardPage: React.FC = () => {
       sortable: false,
       align: 'right',
       cell: (row) => (
-        <button
+        <Button variant="secondary" size="icon"
           onClick={(e) => {
             e.stopPropagation();
             navigateToBill(row.id);
           }}
-          className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+          className=""
           title="View Invoice"
         >
           <Eye className="w-3.5 h-3.5" />
-        </button>
+        </Button>
       ),
     },
   ];
@@ -132,12 +133,12 @@ export const PaymentDashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button variant="primary"
             onClick={() => setIsRecordModalOpen(true)}
-            className="erp-btn-brand bg-emerald-600 hover:bg-emerald-700"
+            className=""
           >
             <Plus className="w-3.5 h-3.5" /> Record Payment Receipt
-          </button>
+          </Button>
         </div>
       </div>
 

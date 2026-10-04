@@ -1,3 +1,4 @@
+import { Button } from '../ui/Primitives';
 import React from 'react';
 import { useERP } from '../../context/ERPContext';
 import { Modal } from './Modal';
@@ -113,7 +114,7 @@ export const QuickActionModal: React.FC = () => {
         {quickActions.map((item, idx) => {
           const Icon = item.icon;
           return (
-            <button
+            <Button variant="surface"
               key={idx}
               onClick={item.action}
               className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-left transition-all group"
@@ -129,7 +130,7 @@ export const QuickActionModal: React.FC = () => {
                   {item.description}
                 </p>
               </div>
-            </button>
+            </Button>
           );
         })}
       </div>

@@ -1,3 +1,4 @@
+import { Button, Card } from '../../components/ui/Primitives';
 import React from 'react';
 import { useERP } from '../../context/ERPContext';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -60,27 +61,27 @@ export const JobDetailPage: React.FC = () => {
     <div className="max-w-5xl mx-auto space-y-5 font-sans">
       {/* Top Navigation */}
       <div className="flex items-center justify-between">
-        <button
+        <Button variant="ghost"
           onClick={() => setCurrentPage('inward_list')}
-          className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 font-medium"
+          className="inline-flex items-center gap-1.5"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Inward List
-        </button>
+        </Button>
 
         <div className="flex items-center gap-2">
           {job.status !== 'Outward Completed' && (
-            <button
+            <Button variant="primary"
               onClick={() => setCurrentPage('create_outward')}
-              className="erp-btn-brand"
+              className=""
             >
               <ArrowUpRight className="w-3.5 h-3.5" /> Process Outward
-            </button>
+            </Button>
           )}
         </div>
       </div>
 
       {/* 1. HEADER (Section 17: DARSHAN1, Darshan, White Gold, 10.250 kg, Status, Priority) */}
-      <div className="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
+      <Card padding="md" className="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2.5 flex-wrap">
@@ -120,35 +121,35 @@ export const JobDetailPage: React.FC = () => {
             <span className="text-sm font-bold text-slate-800">{job.status}</span>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* 2. JOB SUMMARY & SPECIFICATIONS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <div className="erp-card bg-white p-3.5">
+        <Card padding="md" className="erp-card bg-white p-3.5">
           <span className="text-2xs font-semibold text-slate-500 uppercase block">Inward Gross Weight</span>
           <span className="text-lg font-bold font-mono text-slate-900 mt-1 block">
             {formatWeight(job.inwardWeight)}
           </span>
           <span className="text-[11px] text-slate-500">Initial verified scale tare</span>
-        </div>
+        </Card>
 
-        <div className="erp-card bg-white p-3.5">
+        <Card padding="md" className="erp-card bg-white p-3.5">
           <span className="text-2xs font-semibold text-slate-500 uppercase block">Outward Net Weight</span>
           <span className="text-lg font-bold font-mono text-emerald-700 mt-1 block">
             {job.outwardWeight ? formatWeight(job.outwardWeight) : 'Pending Outward'}
           </span>
           <span className="text-[11px] text-slate-500">Finished plated jewellery</span>
-        </div>
+        </Card>
 
-        <div className="erp-card bg-white p-3.5 border-purple-200 bg-purple-50/20">
+        <Card padding="md" className="erp-card bg-white p-3.5 border-purple-200 bg-purple-50/20">
           <span className="text-2xs font-semibold text-purple-800 uppercase block">Plating per KG</span>
           <span className="text-lg font-bold font-mono text-purple-700 mt-1 block">
             {job.platingPerKg ? formatPlating(job.platingPerKg) : 'Awaiting Outward'}
           </span>
           <span className="text-[11px] text-purple-600 font-mono">((Out - In) / In) × 1000</span>
-        </div>
+        </Card>
 
-        <div className="erp-card bg-white p-3.5">
+        <Card padding="md" className="erp-card bg-white p-3.5">
           <span className="text-2xs font-semibold text-slate-500 uppercase block">Priority Level</span>
           <div className="mt-1 flex items-center gap-1.5">
             {job.priority === 'Fast Forward' ? (
@@ -162,11 +163,11 @@ export const JobDetailPage: React.FC = () => {
             )}
           </div>
           <span className="text-[11px] text-slate-500 mt-1 block">Factory turnaround profile</span>
-        </div>
+        </Card>
       </div>
 
       {/* 3. INWARD SECTION (Inward Weight, Date, Plating Type, Item Photo, Scale Photo) */}
-      <div className="erp-card p-5 space-y-4">
+      <Card padding="md" className="erp-card p-5 space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
             <Scale className="w-4 h-4 text-brand-600" /> Inward Intake Verification & Scale Records
@@ -215,10 +216,10 @@ export const JobDetailPage: React.FC = () => {
             <strong>Intake Remarks:</strong> {job.inwardRemarks}
           </div>
         )}
-      </div>
+      </Card>
 
       {/* 4. LABOUR SECTION (Binding & Open) */}
-      <div className="erp-card p-5 space-y-4">
+      <Card padding="md" className="erp-card p-5 space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
             <Hammer className="w-4 h-4 text-indigo-600" /> Labour Work & Tar Consumption
@@ -283,10 +284,10 @@ export const JobDetailPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* 5. OUTWARD SECTION (Outward Weight, Plating per KG, Date, Outward Photo) */}
-      <div className="erp-card p-5 space-y-4">
+      <Card padding="md" className="erp-card p-5 space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
             <ArrowUpRight className="w-4 h-4 text-emerald-600" /> Outward Dispatch & Quality Certification
@@ -336,18 +337,18 @@ export const JobDetailPage: React.FC = () => {
             <p className="text-2xs text-slate-500">
               When plating baths and untying are completed, proceed to Customer Outward to record final scale weight.
             </p>
-            <button
+            <Button variant="primary"
               onClick={() => setCurrentPage('create_outward')}
-              className="erp-btn-brand mt-2"
+              className="mt-2"
             >
               <ArrowUpRight className="w-3.5 h-3.5" /> Open Outward Processing
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* 6. ACTIVITY TIMELINE (Section 46: Job Created, Labour Assigned, Processing, Ready, Outward Completed) */}
-      <div className="erp-card p-5">
+      <Card padding="md" className="erp-card p-5">
         <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2 flex items-center gap-2">
           <Clock className="w-4 h-4 text-slate-500" /> Complete Production Traceability Timeline
         </h3>
@@ -411,7 +412,7 @@ export const JobDetailPage: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { Modal } from '../../components/common/Modal';
@@ -76,12 +77,12 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
       maxWidth="lg"
       footer={
         <>
-          <button type="button" onClick={onClose} className="erp-btn-secondary">
+          <Button variant="secondary" type="button" onClick={onClose} className="">
             Cancel
-          </button>
-          <button type="button" onClick={handleSubmit} className="erp-btn-brand">
+          </Button>
+          <Button variant="primary" type="button" onClick={handleSubmit} className="">
             <FileText className="w-3.5 h-3.5" /> Generate {nextBillNumber}
-          </button>
+          </Button>
         </>
       }
     >
@@ -97,12 +98,12 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Bill Number (System Generated)
             </label>
-            <input
+            <Input
               type="text"
               readOnly
               disabled
               value={nextBillNumber}
-              className="erp-input-readonly font-mono font-bold text-slate-900"
+              className="font-mono w-full"
             />
           </div>
 
@@ -110,12 +111,12 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Bill Date
             </label>
-            <input
+            <Input
               type="date"
               required
               value={billDate}
               onChange={(e) => setBillDate(e.target.value)}
-              className="erp-input text-xs"
+              className="w-full"
             />
           </div>
         </div>
@@ -125,29 +126,29 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Select Job ID / Customer <span className="text-red-500">*</span>
             </label>
-            <select
+            <Select
               value={selectedJobId}
               onChange={(e) => setSelectedJobId(e.target.value)}
-              className="erp-input text-xs font-medium"
+              className="w-full"
             >
               {unbilledJobs.map((j) => (
                 <option key={j.id} value={j.id}>
                   {j.id} — {j.customerName} ({formatWeight(j.inwardWeight)} • {j.platingType})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Customer Name
             </label>
-            <input
+            <Input
               type="text"
               readOnly
               disabled
               value={selectedJob?.customerName || '-'}
-              className="erp-input-readonly font-bold text-slate-900"
+              className="w-full"
             />
           </div>
         </div>
@@ -158,12 +159,12 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Inward Weight (kg) <span className="text-slate-400">(Auto)</span>
             </label>
-            <input
+            <Input
               type="text"
               readOnly
               disabled
               value={formatWeight(inwardWeight)}
-              className="erp-input-readonly font-mono font-bold text-slate-900"
+              className="font-mono w-full"
             />
           </div>
 
@@ -171,7 +172,7 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Price per KG (₹) <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="number"
               step="1"
               min="1"
@@ -179,7 +180,7 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
               value={pricePerKg}
               onChange={(e) => setPricePerKg(e.target.value)}
               placeholder="100.00"
-              className="erp-input font-mono font-bold text-slate-900"
+              className="font-mono w-full"
             />
           </div>
 
@@ -187,12 +188,12 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Total Amount (₹) <span className="text-slate-400">(Read-Only)</span>
             </label>
-            <input
+            <Input
               type="text"
               readOnly
               disabled
               value={formatCurrency(totalAmount, true)}
-              className="erp-input-readonly font-mono font-extrabold text-slate-950 bg-emerald-50 border-emerald-300"
+              className="font-mono font-extrabold w-full"
             />
           </div>
         </div>
@@ -201,11 +202,11 @@ export const CreateBillModal: React.FC<CreateBillModalProps> = ({
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Bill Remarks / Payment Terms
           </label>
-          <input
+          <Input
             type="text"
             value={remarks}
             onChange={(e) => setRemarks(e.target.value)}
-            className="erp-input text-xs"
+            className="w-full"
           />
         </div>
       </form>

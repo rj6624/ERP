@@ -1,3 +1,4 @@
+import { Button, Card, Input } from '../ui/Primitives';
 import React, { useState } from 'react';
 import { MessageSquare, ArrowUp, Download, Eye, FileText, MoreHorizontal } from 'lucide-react';
 
@@ -52,7 +53,7 @@ export const ReferenceCommentsCard: React.FC<ReferenceCommentsCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4 font-sans text-xs flex flex-col justify-between">
+    <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4 font-sans text-xs flex flex-col justify-between">
       <div>
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -83,9 +84,9 @@ export const ReferenceCommentsCard: React.FC<ReferenceCommentsCardProps> = ({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-slate-400 font-medium">{comment.date}</span>
-                  <button className="text-slate-400 hover:text-slate-600 p-0.5">
+                  <Button variant="ghost" size="icon" className="" aria-label="More actions">
                     <MoreHorizontal className="w-3.5 h-3.5" />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -106,20 +107,20 @@ export const ReferenceCommentsCard: React.FC<ReferenceCommentsCardProps> = ({
                   </div>
 
                   <div className="flex items-center gap-1">
-                    <button
+                    <Button variant="ghost" size="icon"
                       type="button"
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+                      className="transition-colors"
                       title="Download Evidence File"
                     >
                       <Download className="w-3.5 h-3.5" />
-                    </button>
-                    <button
+                    </Button>
+                    <Button variant="ghost" size="icon"
                       type="button"
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+                      className="transition-colors"
                       title="Preview Scale Evidence"
                     >
                       <Eye className="w-3.5 h-3.5" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
@@ -130,21 +131,22 @@ export const ReferenceCommentsCard: React.FC<ReferenceCommentsCardProps> = ({
 
       {/* Input Box at Bottom (Matching Image 1 & 5) */}
       <form onSubmit={handleSend} className="pt-3 border-t border-slate-100 flex items-center gap-2">
-        <input
+        <Input
           type="text"
           placeholder={placeholder}
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          className="min-w-0 flex-1 h-10 px-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          className="min-w-0 flex-1 transition-all"
         />
-        <button
+        <Button variant="primary" size="icon"
           type="submit"
+          aria-label="Post comment"
           disabled={!inputText.trim()}
-          className="w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center shadow-xs transition-all cursor-pointer"
+          className="w-10 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-all cursor-pointer"
         >
           <ArrowUp className="w-4 h-4 stroke-[2.5]" />
-        </button>
+        </Button>
       </form>
-    </div>
+    </Card>
   );
 };

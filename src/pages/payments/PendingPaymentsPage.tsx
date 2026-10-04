@@ -1,3 +1,4 @@
+import { Button } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { Bill } from '../../types/erp';
@@ -95,19 +96,19 @@ export const PendingPaymentsPage: React.FC = () => {
       align: 'right',
       cell: (row) => (
         <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
-          <button
+          <Button variant="secondary" size="icon"
             onClick={() => navigateToBill(row.id)}
-            className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            className=""
             title="View Bill"
           >
             <Eye className="w-3.5 h-3.5" />
-          </button>
-          <button
+          </Button>
+          <Button variant="primary"
             onClick={() => setSelectedBillForPayment(row.id)}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-900 text-white hover:bg-slate-800 text-2xs font-semibold"
+            className="inline-flex items-center gap-1 text-2xs"
           >
             <CreditCard className="w-3 h-3" /> Settle
-          </button>
+          </Button>
         </div>
       ),
     },

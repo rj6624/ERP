@@ -1,3 +1,4 @@
+import { Button } from '../ui/Primitives';
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
@@ -85,24 +86,24 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
       <div className="flex-1 overflow-y-auto p-2.5 space-y-4 custom-scrollbar">
         {/* 1. DASHBOARD */}
         <div>
-          <button
+          <Button variant="surface"
             onClick={() => navigate('/dashboard')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold transition-colors ${
               isNavActive('/dashboard')
-                ? 'bg-emerald-600 text-white shadow-sm'
+                ? 'erp-nav-active bg-emerald-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900'
             }`}
             title="Operator Dashboard"
           >
             <LayoutDashboard className="w-4 h-4 shrink-0" />
             {!collapsed && <span>Dashboard</span>}
-          </button>
+          </Button>
         </div>
 
         {/* 2. WORK SECTION */}
         <div>
           {!collapsed && (
-            <button
+            <Button variant="surface"
               onClick={() => toggleSection('work')}
               className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
             >
@@ -112,17 +113,17 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
               ) : (
                 <ChevronRight className="w-3.5 h-3.5" />
               )}
-            </button>
+            </Button>
           )}
 
           {(openSections.work || collapsed) && (
             <div className="mt-1 space-y-1">
               {/* Inward */}
-              <button
+              <Button variant="surface"
                 onClick={() => navigate('/inward')}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
                   isNavActive('/inward')
-                    ? 'bg-slate-800 text-white border-l-3 border-emerald-500'
+                    ? 'erp-nav-active bg-slate-800 text-white border-l-3 border-emerald-500'
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/80'
                 }`}
                 title="Customer Inward Intake"
@@ -131,14 +132,14 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
                   <ArrowDownLeft className="w-4 h-4 text-emerald-400 shrink-0" />
                   {!collapsed && <span className="truncate">Inward Intake</span>}
                 </div>
-              </button>
+              </Button>
 
               {/* Outward */}
-              <button
+              <Button variant="surface"
                 onClick={() => navigate('/outward')}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
                   isNavActive('/outward')
-                    ? 'bg-slate-800 text-white border-l-3 border-emerald-500'
+                    ? 'erp-nav-active bg-slate-800 text-white border-l-3 border-emerald-500'
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/80'
                 }`}
                 title="Customer Outward Dispatch"
@@ -152,14 +153,14 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
                     {outwardPendingCount}
                   </span>
                 )}
-              </button>
+              </Button>
 
               {/* Fast Forward Queue */}
-              <button
+              <Button variant="surface"
                 onClick={() => navigate('/fast-forward')}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
                   isNavActive('/fast-forward')
-                    ? 'bg-amber-950/60 text-amber-200 border-l-3 border-amber-500'
+                    ? 'erp-nav-active bg-amber-950/60 text-amber-200 border-l-3 border-amber-500'
                     : 'text-amber-400/90 hover:text-amber-200 hover:bg-amber-950/30'
                 }`}
                 title="Fast Forward Priority Queue"
@@ -173,7 +174,7 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
                     {fastForwardPendingCount}
                   </span>
                 )}
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -181,7 +182,7 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
         {/* 3. CUSTOMERS SECTION */}
         <div>
           {!collapsed && (
-            <button
+            <Button variant="surface"
               onClick={() => toggleSection('customers')}
               className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
             >
@@ -191,36 +192,36 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
               ) : (
                 <ChevronRight className="w-3.5 h-3.5" />
               )}
-            </button>
+            </Button>
           )}
 
           {(openSections.customers || collapsed) && (
             <div className="mt-1 space-y-1">
-              <button
+              <Button variant="surface"
                 onClick={() => navigate('/customers')}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
                   isNavActive('/customers')
-                    ? 'bg-slate-800 text-white border-l-3 border-emerald-500'
+                    ? 'erp-nav-active bg-slate-800 text-white border-l-3 border-emerald-500'
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/80'
                 }`}
                 title="Customer Directory"
               >
                 <Users className="w-4 h-4 text-slate-400 shrink-0" />
                 {!collapsed && <span className="truncate">Customers</span>}
-              </button>
+              </Button>
 
-              <button
+              <Button variant="surface"
                 onClick={() => navigate('/customer-jobs')}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
                   isNavActive('/customer-jobs')
-                    ? 'bg-slate-800 text-white border-l-3 border-emerald-500'
+                    ? 'erp-nav-active bg-slate-800 text-white border-l-3 border-emerald-500'
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/80'
                 }`}
                 title="Customer Jobs History"
               >
                 <Briefcase className="w-4 h-4 text-slate-400 shrink-0" />
                 {!collapsed && <span className="truncate">Customer Jobs</span>}
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -228,7 +229,7 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
         {/* 4. OPERATIONAL REPORTS */}
         <div>
           {!collapsed && (
-            <button
+            <Button variant="surface"
               onClick={() => toggleSection('reports')}
               className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
             >
@@ -238,23 +239,23 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
               ) : (
                 <ChevronRight className="w-3.5 h-3.5" />
               )}
-            </button>
+            </Button>
           )}
 
           {(openSections.reports || collapsed) && (
             <div className="mt-1 space-y-1">
-              <button
+              <Button variant="surface"
                 onClick={() => navigate('/reports')}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
                   isNavActive('/reports')
-                    ? 'bg-slate-800 text-white border-l-3 border-emerald-500'
+                    ? 'erp-nav-active bg-slate-800 text-white border-l-3 border-emerald-500'
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/80'
                 }`}
                 title="Operational Daily Reports"
               >
                 <FileSpreadsheet className="w-4 h-4 text-slate-400 shrink-0" />
                 {!collapsed && <span className="truncate">Operational Reports</span>}
-              </button>
+              </Button>
             </div>
           )}
         </div>

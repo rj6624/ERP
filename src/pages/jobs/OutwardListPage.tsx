@@ -1,3 +1,4 @@
+import { Button } from '../../components/ui/Primitives';
 import React from 'react';
 import { useERP } from '../../context/ERPContext';
 import { JewelleryJob } from '../../types/erp';
@@ -98,16 +99,16 @@ export const OutwardListPage: React.FC = () => {
       sortable: false,
       align: 'right',
       cell: (row) => (
-        <button
+        <Button variant="secondary"
           onClick={(e) => {
             e.stopPropagation();
             navigateToJob(row.id);
           }}
-          className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 inline-flex items-center gap-1 text-2xs font-semibold"
+          className="inline-flex items-center gap-1 text-2xs"
           title="View Job Lifecycle"
         >
           <Eye className="w-3.5 h-3.5" /> View
-        </button>
+        </Button>
       ),
     },
   ];
@@ -115,7 +116,7 @@ export const OutwardListPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <ArrowUpRight className="w-4 h-4 text-emerald-600" /> Customer Outward Dispatches
@@ -124,12 +125,12 @@ export const OutwardListPage: React.FC = () => {
             Finished goods dispatch record with verified scale weight and automatically calculated Plating per KG.
           </p>
         </div>
-        <button
+        <Button variant="primary"
           onClick={() => setCurrentPage('create_outward')}
-          className="erp-btn-brand self-start sm:self-auto"
+          className="self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" /> Process Outward
-        </button>
+        </Button>
       </div>
 
       {/* Outward Table */}

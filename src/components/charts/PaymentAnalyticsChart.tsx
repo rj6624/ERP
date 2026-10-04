@@ -1,3 +1,4 @@
+import { Card } from '../ui/Primitives';
 import React from 'react';
 import { useERP } from '../../context/ERPContext';
 import { formatCurrency } from '../../utils/formatters';
@@ -22,7 +23,7 @@ export const PaymentAnalyticsChart: React.FC = () => {
   ];
 
   return (
-    <div className="erp-card bg-white p-4">
+    <Card padding="md" className="erp-card bg-white p-4">
       <div className="flex items-center justify-between mb-3">
         <div>
           <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
@@ -67,6 +68,6 @@ export const PaymentAnalyticsChart: React.FC = () => {
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 };

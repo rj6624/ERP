@@ -1,3 +1,4 @@
+import { Card } from '../ui/Primitives';
 import React from 'react';
 import { formatWeight } from '../../utils/formatters';
 
@@ -15,7 +16,7 @@ export const WeightTrendChart: React.FC = () => {
   const maxVal = 260.000;
 
   return (
-    <div className="erp-card bg-white p-4">
+    <Card padding="md" className="erp-card erp-chart-card bg-white p-4">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
           <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
@@ -36,7 +37,7 @@ export const WeightTrendChart: React.FC = () => {
       </div>
 
       {/* Bar graph visualizer */}
-      <div className="h-44 flex items-end justify-between gap-2 pt-6 pb-2 border-b border-slate-200">
+      <div className="erp-weight-plot h-44 flex items-end justify-between gap-2 pt-6 pb-2 border-b border-slate-200">
         {dailyData.map((d, idx) => {
           const inwardH = (d.inward / maxVal) * 100;
           const outwardH = (d.outward / maxVal) * 100;
@@ -80,6 +81,6 @@ export const WeightTrendChart: React.FC = () => {
         <span>Today's Weight Difference: <strong className="text-emerald-700 font-mono">+6.650 kg</strong></span>
         <span>Average Efficiency: <strong className="text-slate-800 font-mono">98.4%</strong></span>
       </div>
-    </div>
+    </Card>
   );
 };

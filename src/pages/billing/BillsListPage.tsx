@@ -1,3 +1,4 @@
+import { Button } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { Bill } from '../../types/erp';
@@ -109,20 +110,20 @@ export const BillsListPage: React.FC = () => {
       align: 'right',
       cell: (row) => (
         <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
-          <button
+          <Button variant="secondary" size="icon"
             onClick={() => navigateToBill(row.id)}
-            className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            className=""
             title="View Invoice"
           >
             <Eye className="w-3.5 h-3.5" />
-          </button>
+          </Button>
           {row.pendingAmount > 0 && (
-            <button
+            <Button variant="ghost"
               onClick={() => setSelectedBillForPayment(row.id)}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-2xs font-semibold hover:bg-emerald-100"
+              className="inline-flex items-center gap-1 text-2xs"
             >
               <CreditCard className="w-3 h-3" /> Pay
-            </button>
+            </Button>
           )}
         </div>
       ),
@@ -132,7 +133,7 @@ export const BillsListPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <FileText className="w-4 h-4 text-slate-700" /> Manufacturing Bills & Invoicing
@@ -141,12 +142,12 @@ export const BillsListPage: React.FC = () => {
             Automated invoices calculated on Inward Weight × Price per KG with integrated payment balance tracking.
           </p>
         </div>
-        <button
+        <Button variant="primary"
           onClick={() => setIsCreateModalOpen(true)}
-          className="erp-btn-brand self-start sm:self-auto"
+          className="self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" /> Generate New Bill
-        </button>
+        </Button>
       </div>
 
       <DataTable

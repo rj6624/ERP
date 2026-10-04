@@ -1,3 +1,4 @@
+import { Button, Card } from '../../components/ui/Primitives';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
@@ -55,7 +56,7 @@ export const OperatorFastForwardPage: React.FC = () => {
       <div className="space-y-3">
         {pendingFastForwardJobs.length > 0 ? (
           pendingFastForwardJobs.map((job) => (
-            <div
+            <Card padding="md"
               key={job.id}
               className="bg-white rounded-2xl border-2 border-amber-400 shadow-md p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-lg transition-all"
             >
@@ -99,26 +100,26 @@ export const OperatorFastForwardPage: React.FC = () => {
 
               {/* Action Buttons: Big & Touch-Friendly */}
               <div className="flex items-center gap-2 shrink-0">
-                <button
+                <Button variant="secondary"
                   onClick={() => navigate(`/jobs/${job.id}`)}
-                  className="h-11 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs border border-slate-300 transition-colors cursor-pointer"
+                  className="transition-colors cursor-pointer"
                 >
                   <Eye className="w-4 h-4 inline mr-1" />
                   <span>Inspect</span>
-                </button>
+                </Button>
 
-                <button
+                <Button variant="ghost"
                   onClick={() => navigate(`/outward/new?jobId=${job.id}`)}
-                  className="h-11 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black text-xs shadow-md flex items-center gap-2 transition-all cursor-pointer"
+                  className="flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <ArrowUpRight className="w-4 h-4" />
                   <span>Process Outward</span>
-                </button>
+                </Button>
               </div>
-            </div>
+            </Card>
           ))
         ) : (
-          <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3">
+          <Card padding="md" className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3">
             <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-6 h-6" />
             </div>
@@ -128,7 +129,7 @@ export const OperatorFastForwardPage: React.FC = () => {
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
               All high-priority jobs have been processed or dispatched. Normal priority work can continue.
             </p>
-          </div>
+          </Card>
         )}
       </div>
     </div>

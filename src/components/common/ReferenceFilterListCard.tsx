@@ -1,3 +1,4 @@
+import { Card } from '../ui/Primitives';
 import React from 'react';
 import { Check } from 'lucide-react';
 
@@ -21,7 +22,7 @@ export const ReferenceFilterListCard: React.FC<ReferenceFilterListCardProps> = (
   onToggle,
 }) => {
   return (
-    <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-2.5 font-sans text-xs">
+    <Card padding="sm" className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-2.5 font-sans text-xs">
       {items.map((item) => (
         <div
           key={item.id}
@@ -54,6 +55,6 @@ export const ReferenceFilterListCard: React.FC<ReferenceFilterListCardProps> = (
           <span className="text-slate-400 font-mono text-[11px] font-medium">{item.count}</span>
         </div>
       ))}
-    </div>
+    </Card>
   );
 };

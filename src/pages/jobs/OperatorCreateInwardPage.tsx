@@ -1,3 +1,5 @@
+import { DialogSurface } from '../../components/ui/DialogSurface';
+import { Button, Card, Input, TabButton } from '../../components/ui/Primitives';
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
@@ -147,7 +149,7 @@ export const OperatorCreateInwardPage: React.FC = () => {
   // SUCCESS CONFIRMATION SCREEN (Section 20)
   if (successJob) {
     return (
-      <div className="max-w-xl mx-auto my-8 p-6 sm:p-8 bg-white rounded-2xl border-2 border-emerald-400 shadow-xl text-center space-y-6 font-sans animate-in fade-in zoom-in-95 duration-200">
+      <Card padding="md" className="max-w-xl mx-auto my-8 p-6 sm:p-8 bg-white rounded-2xl border-2 border-emerald-400 shadow-xl text-center space-y-6 font-sans animate-in fade-in zoom-in-95 duration-200">
         <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-inner">
           <CheckCircle2 className="w-10 h-10" />
         </div>
@@ -197,22 +199,22 @@ export const OperatorCreateInwardPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-          <button
+          <Button variant="primary"
             onClick={() => navigate(`/jobs/${successJob.id}`)}
-            className="h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+            className="h-12 flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <Eye className="w-4 h-4" />
             <span>View Job</span>
-          </button>
-          <button
+          </Button>
+          <Button variant="primary"
             onClick={handleCreateAnother}
-            className="h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+            className="h-12 flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Create Another Inward</span>
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -220,17 +222,17 @@ export const OperatorCreateInwardPage: React.FC = () => {
     <div className="max-w-3xl mx-auto space-y-6 font-sans">
       {/* Top Navigation */}
       <div className="flex items-center justify-between">
-        <button
+        <Button variant="secondary"
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-xs cursor-pointer"
+          className="inline-flex items-center gap-1.5 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Dashboard</span>
-        </button>
+        </Button>
         <span className="text-xs text-slate-500 font-medium">Factory Floor Inward Intake</span>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         {/* Form Header */}
         <div className="px-6 py-5 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between">
           <div>
@@ -261,12 +263,12 @@ export const OperatorCreateInwardPage: React.FC = () => {
             {/* Quick search input */}
             <div className="relative">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-              <input
+              <Input
                 type="text"
                 placeholder="Search customer by name or mobile (e.g. Darshan, Maganlal)..."
                 value={customerSearchQuery}
                 onChange={(e) => setCustomerSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full pl-9 pr-3 ds-control-leading"
               />
             </div>
 
@@ -274,7 +276,7 @@ export const OperatorCreateInwardPage: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-1 border border-slate-200 rounded-xl bg-slate-50/50">
               {filteredCustomers.length > 0 ? (
                 filteredCustomers.map((cust) => (
-                  <button
+                  <Button variant="surface"
                     key={cust.id}
                     type="button"
                     onClick={() => {
@@ -295,7 +297,7 @@ export const OperatorCreateInwardPage: React.FC = () => {
                     >
                       {cust.mobile}
                     </p>
-                  </button>
+                  </Button>
                 ))
               ) : (
                 <div className="col-span-full py-4 text-center text-xs text-slate-500 font-medium">
@@ -341,7 +343,7 @@ export const OperatorCreateInwardPage: React.FC = () => {
 
             {/* Giant Touch-Friendly Weight Box */}
             <div className="relative flex items-center">
-              <input
+              <Input
                 type="number"
                 step="0.001"
                 min="0.001"
@@ -395,18 +397,14 @@ export const OperatorCreateInwardPage: React.FC = () => {
                 'Damar Gold',
                 'Dal Chhol Gold',
               ].map((type) => (
-                <button
+                <TabButton active={platingType === type}
                   key={type}
                   type="button"
                   onClick={() => setPlatingType(type as PlatingType)}
-                  className={`h-11 px-3 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center cursor-pointer ${
-                    platingType === type
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                      : 'bg-white text-slate-700 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
-                  }`}
+                  className=""
                 >
                   {type}
-                </button>
+                </TabButton>
               ))}
             </div>
           </div>
@@ -417,30 +415,22 @@ export const OperatorCreateInwardPage: React.FC = () => {
               6. Priority <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button
+              <TabButton active={priority === 'Regular'}
                 type="button"
                 onClick={() => setPriority('Regular')}
-                className={`h-12 px-4 rounded-xl border-2 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${
-                  priority === 'Regular'
-                    ? 'border-slate-900 bg-slate-900 text-white shadow-sm'
-                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400'
-                }`}
+                className=""
               >
                 <span>Regular Priority</span>
-              </button>
+              </TabButton>
 
-              <button
+              <TabButton active={priority === 'Fast Forward'}
                 type="button"
                 onClick={() => setPriority('Fast Forward')}
-                className={`h-12 px-4 rounded-xl border-2 text-xs font-black flex items-center justify-center gap-2 cursor-pointer transition-all ${
-                  priority === 'Fast Forward'
-                    ? 'border-amber-500 bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-300'
-                    : 'border-amber-300 bg-amber-50/60 text-amber-900 hover:bg-amber-100'
-                }`}
+                className=""
               >
                 <Zap className="w-4 h-4 fill-slate-950 text-slate-950" />
                 <span>⚡ FAST FORWARD</span>
-              </button>
+              </TabButton>
             </div>
             {priority === 'Fast Forward' && (
               <p className="text-[11px] text-amber-800 font-bold bg-amber-50 border border-amber-200 p-2 rounded-lg flex items-center gap-1.5">
@@ -495,42 +485,42 @@ export const OperatorCreateInwardPage: React.FC = () => {
 
           {/* 8. SUBMISSION CTA */}
           <div className="pt-4 border-t border-slate-200">
-            <button
+            <Button variant="primary"
               type="button"
               onClick={handleReviewClick}
-              className="w-full h-13 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-extrabold text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full h-13 font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <span>Review & Create Inward</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* REFERENCE MODAL MATCHING IMAGE 4 */}
       {isReviewModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-6 animate-in zoom-in-95 duration-150 font-sans">
+        <div className="ds-overlay fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <DialogSurface onClose={() => setIsReviewModalOpen(false)} aria-label="Review inward intake" className="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-6 animate-in zoom-in-95 duration-150 font-sans">
             {/* Modal Header matching Image 4 */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
               <h3 className="text-base sm:text-lg font-black text-slate-900">
                 Do you really confirm the customer jewellery inward intake?
               </h3>
               <div className="flex items-center gap-2 shrink-0">
-                <button
+                <Button variant="secondary"
                   type="button"
                   onClick={() => setIsReviewModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                  className="transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button variant="primary"
                   type="button"
                   onClick={handleConfirmSubmit}
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all"
+                  className="transition-all"
                 >
                   Yes, confirm
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -618,7 +608,7 @@ export const OperatorCreateInwardPage: React.FC = () => {
                 </table>
               </div>
             </div>
-          </div>
+          </DialogSurface>
         </div>
       )}
     </div>

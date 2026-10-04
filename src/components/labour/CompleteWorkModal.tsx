@@ -1,3 +1,5 @@
+import { DialogSurface } from '../ui/DialogSurface';
+import { Button, Card, Input, Textarea } from '../ui/Primitives';
 import React, { useState } from 'react';
 import { X, CheckCircle, Scale, Clock, Layers, Sparkles, AlertCircle } from 'lucide-react';
 
@@ -42,8 +44,8 @@ export const CompleteWorkModal: React.FC<CompleteWorkModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs font-sans animate-in fade-in duration-150">
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
+    <div className="ds-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs font-sans animate-in fade-in duration-150">
+      <DialogSurface onClose={onClose} aria-label="Complete work"  className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
         {/* Header */}
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2.5">
@@ -61,12 +63,12 @@ export const CompleteWorkModal: React.FC<CompleteWorkModalProps> = ({
               <p className="text-[11px] text-slate-500">Record completion and tar usage</p>
             </div>
           </div>
-          <button
+          <Button variant="ghost" size="icon"
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition-colors"
+            className="transition-colors" aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Form Body */}
@@ -107,7 +109,7 @@ export const CompleteWorkModal: React.FC<CompleteWorkModalProps> = ({
               <span className="text-[11px] text-slate-500 font-medium">Unit: grams</span>
             </div>
             <div className="relative">
-              <input
+              <Input
                 id="tarUsedInput"
                 type="number"
                 step="1"
@@ -118,7 +120,7 @@ export const CompleteWorkModal: React.FC<CompleteWorkModalProps> = ({
                   setTarUsed(e.target.value);
                   setError('');
                 }}
-                className="w-full h-11 px-3.5 text-sm font-semibold rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 pr-16 bg-white"
+                className="w-full pr-16"
               />
               <span className="absolute right-3.5 top-3 text-xs font-bold text-slate-400 select-none">
                 grams
@@ -134,13 +136,13 @@ export const CompleteWorkModal: React.FC<CompleteWorkModalProps> = ({
             <label htmlFor="remarksInput" className="text-xs font-bold text-slate-800">
               Work Remarks / Notes (Optional)
             </label>
-            <textarea
+            <Textarea
               id="remarksInput"
               rows={2}
               placeholder={`Notes on ${workType.toLowerCase()} quality, wire count, or untying batch...`}
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
-              className="w-full p-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none bg-white"
+              className="w-full resize-none"
             />
           </div>
 
@@ -153,23 +155,23 @@ export const CompleteWorkModal: React.FC<CompleteWorkModalProps> = ({
 
           {/* Action Buttons */}
           <div className="pt-2 flex items-center gap-2.5">
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={onClose}
-              className="flex-1 h-11 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-colors"
+              className="flex-1 transition-colors"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="submit"
-              className="flex-1 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2"
+              className="flex-1 transition-all flex items-center justify-center gap-2"
             >
               <CheckCircle className="w-4 h-4" />
               Complete Work
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
+      </DialogSurface>
     </div>
   );
 };

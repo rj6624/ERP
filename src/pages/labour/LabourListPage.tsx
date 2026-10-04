@@ -1,3 +1,4 @@
+import { Button, Input, Select, Textarea } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { LabourRecord, LabourType } from '../../types/erp';
@@ -116,7 +117,7 @@ export const LabourListPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Hammer className="w-4 h-4 text-slate-700" /> Labour Master & Staff Directory
@@ -125,12 +126,12 @@ export const LabourListPage: React.FC = () => {
             Contract workers, binding specialists, and untying operators with default charge rates.
           </p>
         </div>
-        <button
+        <Button variant="primary"
           onClick={() => setIsAddModalOpen(true)}
-          className="erp-btn-brand self-start sm:self-auto"
+          className="self-start sm:self-auto"
         >
           <UserPlus className="w-3.5 h-3.5" /> Add Labour Worker
-        </button>
+        </Button>
       </div>
 
       {/* Labour Table */}
@@ -150,20 +151,20 @@ export const LabourListPage: React.FC = () => {
         maxWidth="md"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleAddLabourSubmit}
-              className="erp-btn-primary"
+              className=""
             >
               Save Labour Record
-            </button>
+            </Button>
           </>
         }
       >
@@ -172,13 +173,13 @@ export const LabourListPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Labour Name <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Ramesh Patel"
-              className="erp-input"
+              className="w-full"
             />
           </div>
 
@@ -186,13 +187,13 @@ export const LabourListPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Mobile Number <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="tel"
               required
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
               placeholder="+91 98251 44332"
-              className="erp-input"
+              className="w-full"
             />
           </div>
 
@@ -201,23 +202,23 @@ export const LabourListPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Labour Type <span className="text-red-500">*</span>
               </label>
-              <select
+              <Select
                 value={labourType}
                 onChange={(e) => setLabourType(e.target.value as LabourType)}
-                className="erp-input"
+                className="w-full"
               >
                 <option value="Binding">Binding Specialist</option>
                 <option value="Open">Open (Untying) Operator</option>
                 <option value="Polishing">Polishing Master</option>
                 <option value="General">General Plant Labour</option>
-              </select>
+              </Select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Default Rate (₹ / kg) <span className="text-red-500">*</span>
               </label>
-              <input
+              <Input
                 type="number"
                 step="0.50"
                 min="0"
@@ -225,7 +226,7 @@ export const LabourListPage: React.FC = () => {
                 value={defaultChargeRate}
                 onChange={(e) => setDefaultChargeRate(e.target.value)}
                 placeholder="15.00"
-                className="erp-input font-mono"
+                className="font-mono w-full"
               />
             </div>
           </div>
@@ -234,12 +235,12 @@ export const LabourListPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Residential / Colony Address
             </label>
-            <textarea
+            <Textarea
               rows={2}
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="Area / Colony, Rajkot"
-              className="erp-input"
+              className="w-full"
             />
           </div>
         </form>

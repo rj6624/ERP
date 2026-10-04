@@ -1,3 +1,4 @@
+import { Button, Input, Select } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { ChemicalItem } from '../../types/erp';
@@ -112,26 +113,26 @@ export const ChemicalStockPage: React.FC = () => {
       align: 'right',
       cell: (row) => (
         <div className="flex items-center justify-end gap-1">
-          <button
+          <Button variant="ghost"
             onClick={() => {
               setSelectedChemicalId(row.id);
               setIsStockInModalOpen(true);
             }}
-            className="p-1 rounded text-emerald-700 hover:bg-emerald-50 text-2xs font-semibold flex items-center gap-0.5 border border-emerald-200"
+            className="text-2xs flex items-center gap-0.5"
             title="Stock In"
           >
             <ArrowDown className="w-3 h-3" /> +In
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             onClick={() => {
               setSelectedChemicalId(row.id);
               setIsUsageModalOpen(true);
             }}
-            className="p-1 rounded text-amber-700 hover:bg-amber-50 text-2xs font-semibold flex items-center gap-0.5 border border-amber-200"
+            className="text-2xs flex items-center gap-0.5"
             title="Record Usage"
           >
             <ArrowUp className="w-3 h-3" /> -Use
-          </button>
+          </Button>
         </div>
       ),
     },
@@ -140,7 +141,7 @@ export const ChemicalStockPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <FlaskConical className="w-4 h-4 text-purple-600" /> Chemical Baths & Salt Inventory
@@ -151,18 +152,18 @@ export const ChemicalStockPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button variant="primary"
             onClick={() => setIsStockInModalOpen(true)}
-            className="erp-btn-brand bg-emerald-700 hover:bg-emerald-800"
+            className=""
           >
             <ArrowDown className="w-3.5 h-3.5" /> Record Stock In
-          </button>
-          <button
+          </Button>
+          <Button variant="secondary"
             onClick={() => setIsUsageModalOpen(true)}
-            className="erp-btn-secondary"
+            className=""
           >
             <ArrowUp className="w-3.5 h-3.5" /> Record Usage
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -191,20 +192,20 @@ export const ChemicalStockPage: React.FC = () => {
         maxWidth="md"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsStockInModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleStockInSubmit}
-              className="erp-btn-brand"
+              className=""
             >
               Confirm Stock In
-            </button>
+            </Button>
           </>
         }
       >
@@ -213,31 +214,31 @@ export const ChemicalStockPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Select Chemical <span className="text-red-500">*</span>
             </label>
-            <select
+            <Select
               value={selectedChemicalId}
               onChange={(e) => setSelectedChemicalId(e.target.value)}
-              className="erp-input"
+              className="w-full"
             >
               {chemicals.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name} (Current: {c.currentStock.toFixed(2)} {c.unit})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Quantity Received <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="number"
               step="0.1"
               min="0.1"
               required
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="erp-input font-mono"
+              className="font-mono w-full"
             />
           </div>
 
@@ -245,12 +246,12 @@ export const ChemicalStockPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Purchase Reference / Supplier Invoice Notes
             </label>
-            <input
+            <Input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="e.g. Batch ref #U-9948 / Delivery challan"
-              className="erp-input"
+              className="w-full"
             />
           </div>
         </form>
@@ -264,20 +265,20 @@ export const ChemicalStockPage: React.FC = () => {
         maxWidth="md"
         footer={
           <>
-            <button
+            <Button variant="secondary"
               type="button"
               onClick={() => setIsUsageModalOpen(false)}
-              className="erp-btn-secondary"
+              className=""
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="button"
               onClick={handleUsageSubmit}
-              className="erp-btn-primary"
+              className=""
             >
               Confirm Usage Deduction
-            </button>
+            </Button>
           </>
         }
       >
@@ -286,31 +287,31 @@ export const ChemicalStockPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Select Chemical <span className="text-red-500">*</span>
             </label>
-            <select
+            <Select
               value={selectedChemicalId}
               onChange={(e) => setSelectedChemicalId(e.target.value)}
-              className="erp-input"
+              className="w-full"
             >
               {chemicals.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name} (Current: {c.currentStock.toFixed(2)} {c.unit})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Quantity Consumed <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="number"
               step="0.1"
               min="0.1"
               required
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="erp-input font-mono"
+              className="font-mono w-full"
             />
           </div>
 
@@ -318,12 +319,12 @@ export const ChemicalStockPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Bath / Tank Reference / Purpose
             </label>
-            <input
+            <Input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="e.g. Tank 02 weekly top-up"
-              className="erp-input"
+              className="w-full"
             />
           </div>
         </form>

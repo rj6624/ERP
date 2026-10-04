@@ -1,3 +1,4 @@
+import { Button } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { Payment } from '../../types/erp';
@@ -95,7 +96,7 @@ export const PaymentReceivedPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-emerald-600" /> Payment Received Register (Admin Only)
@@ -104,12 +105,12 @@ export const PaymentReceivedPage: React.FC = () => {
             Audit register of all funds deposited via Bank Transfer, Cash, UPI, and Cheque clearances.
           </p>
         </div>
-        <button
+        <Button variant="primary"
           onClick={() => setIsRecordModalOpen(true)}
-          className="erp-btn-brand self-start sm:self-auto"
+          className="self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" /> Record Payment
-        </button>
+        </Button>
       </div>
 
       <DataTable

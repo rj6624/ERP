@@ -1,4 +1,6 @@
-import React, { useEffect, useId, ReactNode } from 'react';
+import { DialogSurface } from '../ui/DialogSurface';
+import { Button } from '../ui/Primitives';
+import React, { useId, ReactNode } from 'react';
 import { X } from 'lucide-react';
 
 interface ModalProps {
@@ -21,16 +23,6 @@ export const Modal: React.FC<ModalProps> = ({
   footer,
 }) => {
   const titleId = useId();
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
   if (!isOpen) return null;
 
   const maxWidthClass = {
@@ -44,8 +36,8 @@ export const Modal: React.FC<ModalProps> = ({
   }[maxWidth];
 
   return (
-    <div className="erp-modal fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
-      <div
+    <div className="ds-overlay erp-modal fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
+      <DialogSurface onClose={onClose}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -57,13 +49,13 @@ export const Modal: React.FC<ModalProps> = ({
             <h3 id={titleId} className="text-sm font-bold text-slate-900">{title}</h3>
             {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
           </div>
-          <button
+          <Button variant="ghost" size="icon"
             aria-label="Close dialog"
             onClick={onClose}
-            className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition-colors"
+            className="transition-colors"
           >
             <X className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
 
         {/* Body */}
@@ -77,7 +69,7 @@ export const Modal: React.FC<ModalProps> = ({
             {footer}
           </div>
         )}
-      </div>
+      </DialogSurface>
     </div>
   );
 };

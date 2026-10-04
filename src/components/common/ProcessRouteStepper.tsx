@@ -1,3 +1,4 @@
+import { Button, Card } from '../ui/Primitives';
 import React from 'react';
 import { GitCommit, Clock, MessageSquare, Check, Sparkles, Layers, ArrowRight } from 'lucide-react';
 
@@ -27,7 +28,7 @@ export const ProcessRouteStepper: React.FC<ProcessRouteStepperProps> = ({
   stops,
 }) => {
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4 font-sans text-xs">
+    <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4 font-sans text-xs">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -39,12 +40,12 @@ export const ProcessRouteStepper: React.FC<ProcessRouteStepperProps> = ({
           </h3>
         </div>
         {actionText && (
-          <button
+          <Button variant="ghost"
             onClick={onAction}
-            className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+            className="transition-colors cursor-pointer"
           >
             {actionText}
-          </button>
+          </Button>
         )}
       </div>
 
@@ -111,6 +112,6 @@ export const ProcessRouteStepper: React.FC<ProcessRouteStepperProps> = ({
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 };

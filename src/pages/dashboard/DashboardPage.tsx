@@ -1,3 +1,4 @@
+import { Button, Card } from '../../components/ui/Primitives';
 import React from 'react';
 import { useERP } from '../../context/ERPContext';
 import { StatCard } from '../../components/common/StatCard';
@@ -44,7 +45,7 @@ export const DashboardPage: React.FC = () => {
   );
 
   return (
-    <div className="space-y-5">
+    <div className="erp-dashboard space-y-5">
       {/* Top Banner with Quick Actions & Status */}
       <div className="erp-page-intro erp-light-panel bg-slate-900 text-white rounded-xl p-5 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 border border-slate-800">
         <div className="space-y-1">
@@ -63,24 +64,24 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <button
+          <Button variant="primary"
             onClick={() => setCurrentPage('create_inward')}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow transition-colors"
+            className="inline-flex items-center gap-1.5 transition-colors"
           >
             <ArrowDownLeft className="w-3.5 h-3.5" /> + New Inward
-          </button>
-          <button
+          </Button>
+          <Button variant="secondary"
             onClick={() => setCurrentPage('create_outward')}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-semibold shadow transition-colors"
+            className="inline-flex items-center gap-1.5 transition-colors"
           >
             <ArrowUpRight className="w-3.5 h-3.5" /> Process Outward
-          </button>
-          <button
+          </Button>
+          <Button variant="secondary"
             onClick={() => setIsQuickActionOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-slate-900 hover:bg-slate-100 text-xs font-semibold shadow transition-colors"
+            className="inline-flex items-center gap-1.5 transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Actions Menu
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -148,7 +149,7 @@ export const DashboardPage: React.FC = () => {
           <span className="text-[11px] text-slate-500 font-mono">Strict 3-Decimal Precision (0.000 kg)</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="erp-card bg-white p-4 border-l-4 border-l-blue-600">
+          <Card padding="md" className="erp-card bg-white p-4 border-l-4 border-l-blue-600">
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Today's Inward Weight</p>
             <div className="text-2xl font-bold font-mono text-slate-900 mt-1">
               {formatWeight(dashboardMetrics.todayInwardWeight)}
@@ -157,9 +158,9 @@ export const DashboardPage: React.FC = () => {
               <span>Gross unplated jewellery</span>
               <span className="text-blue-600 font-semibold font-mono">42 Batches</span>
             </p>
-          </div>
+          </Card>
 
-          <div className="erp-card bg-white p-4 border-l-4 border-l-emerald-600">
+          <Card padding="md" className="erp-card bg-white p-4 border-l-4 border-l-emerald-600">
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Today's Outward Weight</p>
             <div className="text-2xl font-bold font-mono text-slate-900 mt-1">
               {formatWeight(dashboardMetrics.todayOutwardWeight)}
@@ -168,9 +169,9 @@ export const DashboardPage: React.FC = () => {
               <span>Finished dispatched weight</span>
               <span className="text-emerald-600 font-semibold font-mono">37 Batches</span>
             </p>
-          </div>
+          </Card>
 
-          <div className="erp-card bg-white p-4 border-l-4 border-l-purple-600">
+          <Card padding="md" className="erp-card bg-white p-4 border-l-4 border-l-purple-600">
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Average Plating per KG</p>
             <div className="text-2xl font-bold font-mono text-purple-700 mt-1">
               {formatPlating(dashboardMetrics.avgPlatingPerKg)}
@@ -181,7 +182,7 @@ export const DashboardPage: React.FC = () => {
                 Strict Standard
               </span>
             </p>
-          </div>
+          </Card>
         </div>
       </div>
 
@@ -194,7 +195,7 @@ export const DashboardPage: React.FC = () => {
       {/* Fast Forward Urgent Queue & Labour Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Fast Forward Queue widget */}
-        <div className="erp-card bg-white p-4 lg:col-span-2 border-amber-300 bg-amber-50/10">
+        <Card padding="md" className="erp-card bg-white p-4 lg:col-span-2 border-amber-300 bg-amber-50/10">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded bg-amber-500 text-slate-950">
@@ -207,12 +208,12 @@ export const DashboardPage: React.FC = () => {
                 <p className="text-[11px] text-slate-500">Urgent customer batches requiring immediate turn-around</p>
               </div>
             </div>
-            <button
+            <Button variant="ghost"
               onClick={() => setCurrentPage('fast_forward')}
-              className="text-xs text-amber-800 font-semibold hover:underline flex items-center gap-1"
+              className="hover:underline flex items-center gap-1"
             >
               View Full Queue <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            </Button>
           </div>
 
           {fastForwardJobs.length === 0 ? (
@@ -243,24 +244,24 @@ export const DashboardPage: React.FC = () => {
                     <span className="text-[11px] px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
                       {job.status}
                     </span>
-                    <button
+                    <Button variant="primary" size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
                         setCurrentPage('create_outward');
                       }}
-                      className="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-semibold"
+                      className=""
                     >
                       Process Outward
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </Card>
 
         {/* Labour Operations Widget */}
-        <div className="erp-card bg-white p-4 flex flex-col justify-between">
+        <Card padding="md" className="erp-card bg-white p-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -269,12 +270,12 @@ export const DashboardPage: React.FC = () => {
                   Labour Summary
                 </h3>
               </div>
-              <button
+              <Button variant="ghost" size="sm"
                 onClick={() => setCurrentPage('labour_binding')}
-                className="text-[11px] text-slate-600 hover:underline"
+                className="hover:underline"
               >
                 Manage →
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-2.5">
@@ -314,7 +315,7 @@ export const DashboardPage: React.FC = () => {
             <span>Tar Usage tracking active</span>
             <span className="text-emerald-700 font-semibold font-mono">100% Logged</span>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Stock Alerts & Inventory Health */}
@@ -324,12 +325,12 @@ export const DashboardPage: React.FC = () => {
             <FlaskConical className="w-4 h-4 text-slate-600" />
             Stock & Chemical Baths Warning Center
           </h3>
-          <button
+          <Button variant="ghost"
             onClick={() => setCurrentPage('stock_chemical')}
-            className="text-xs text-slate-700 font-semibold hover:underline"
+            className="hover:underline"
           >
             All Inventory Modules →
-          </button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -373,7 +374,7 @@ export const DashboardPage: React.FC = () => {
             </div>
           </div>
 
-          <div
+          <Card padding="md"
             onClick={() => setCurrentPage('stock_metal')}
             className="erp-card bg-white p-3 cursor-pointer hover:shadow-md transition-all"
           >
@@ -387,9 +388,9 @@ export const DashboardPage: React.FC = () => {
                 Healthy
               </span>
             </div>
-          </div>
+          </Card>
 
-          <div
+          <Card padding="md"
             onClick={() => setCurrentPage('stock_tar')}
             className="erp-card bg-white p-3 cursor-pointer hover:shadow-md transition-all"
           >
@@ -403,7 +404,7 @@ export const DashboardPage: React.FC = () => {
                 Optimal
               </span>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
 
@@ -419,12 +420,12 @@ export const DashboardPage: React.FC = () => {
               <p className="text-[11px] text-slate-400">Strictly restricted to Admin role</p>
             </div>
           </div>
-          <button
+          <Button variant="ghost"
             onClick={() => setCurrentPage('payments_dashboard')}
-            className="text-xs text-emerald-400 font-semibold hover:underline flex items-center gap-1 self-start sm:self-auto"
+            className="hover:underline flex items-center gap-1 self-start sm:self-auto"
           >
             Open Full Payment Dashboard <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -466,7 +467,7 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Live System Activity Timeline Feed */}
-      <div className="erp-card bg-white p-4">
+      <Card padding="md" className="erp-card bg-white p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
             Live Manufacturing Activity Stream
@@ -495,7 +496,7 @@ export const DashboardPage: React.FC = () => {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

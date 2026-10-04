@@ -1,3 +1,4 @@
+import { Button, Card, Input, TabButton } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import {
@@ -86,7 +87,7 @@ export const LabourReportsPage: React.FC = () => {
   return (
     <div className="space-y-5 font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+      <Card padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <div>
           <h1 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <FileText className="w-5 h-5 text-amber-600" />
@@ -98,60 +99,48 @@ export const LabourReportsPage: React.FC = () => {
         </div>
 
         {/* Report Sub-Tabs */}
-        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs">
-          <button
+        <div className="ds-tabs min-w-0" role="group" aria-label="Work report views">
+          <TabButton active={activeReportTab === 'History'}
             onClick={() => setActiveReportTab('History')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${
-              activeReportTab === 'History'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
+            className=""
           >
             My Work History ({allTasks.length})
-          </button>
-          <button
+          </TabButton>
+          <TabButton active={activeReportTab === 'Pending'}
             onClick={() => setActiveReportTab('Pending')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1.5 ${
-              activeReportTab === 'Pending'
-                ? 'bg-amber-500 text-white shadow-xs'
-                : 'text-slate-600 hover:text-amber-800'
-            }`}
+            className=""
           >
             <Clock className="w-3.5 h-3.5" />
             My Pending Work ({pendingCount})
-          </button>
-          <button
+          </TabButton>
+          <TabButton active={activeReportTab === 'Completed'}
             onClick={() => setActiveReportTab('Completed')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1.5 ${
-              activeReportTab === 'Completed'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-emerald-800'
-            }`}
+            className=""
           >
             <CheckCircle2 className="w-3.5 h-3.5" />
             My Completed Work ({completedCount})
-          </button>
+          </TabButton>
         </div>
-      </div>
+      </Card>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
+      <Card padding="sm" className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
-          <input
+          <Input
             type="text"
             placeholder="Search report by Customer ID or Customer Name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-9 pl-9 pr-3 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full pl-9 pr-3 ds-control-leading"
           />
           {searchQuery && (
-            <button
+            <Button variant="ghost" size="icon"
               onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600"
+              className="absolute right-2.5 top-2" aria-label="Clear search"
             >
               <X className="w-4 h-4" />
-            </button>
+            </Button>
           )}
         </div>
 
@@ -160,23 +149,19 @@ export const LabourReportsPage: React.FC = () => {
             <Filter className="w-3 h-3" /> Operation:
           </span>
           {(['All', 'Binding', 'Open'] as const).map((type) => (
-            <button
+            <TabButton active={workTypeFilter === type}
               key={type}
               onClick={() => setWorkTypeFilter(type)}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
-                workTypeFilter === type
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
+              className=""
             >
               {type}
-            </button>
+            </TabButton>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Report Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         {filteredTasks.length === 0 ? (
           <div className="p-12 text-center text-slate-400 text-xs space-y-2">
             <FileText className="w-10 h-10 mx-auto text-slate-300" />
@@ -279,7 +264,7 @@ export const LabourReportsPage: React.FC = () => {
             </table>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { Button, Card, Input, Select } from '../ui/Primitives';
 import React, { useState, useMemo } from 'react';
 import {
   ChevronLeft,
@@ -155,7 +156,7 @@ export function DataTable<T extends { id?: string | number }>({
   const rowPadding = density === 'compact' ? 'py-2 px-3 text-xs' : 'py-3 px-3.5 text-xs';
 
   return (
-    <div className="erp-data-table min-w-0 bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+    <Card padding="none" data-density={density} className="erp-data-table min-w-0 bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
       {/* Table Header Controls */}
       <div className="p-3.5 border-b border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -167,7 +168,7 @@ export function DataTable<T extends { id?: string | number }>({
           {/* Search */}
           <div className="relative w-full sm:w-auto">
             <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
+            <Input
               type="text"
               value={searchTerm}
               onChange={(e) => {
@@ -176,28 +177,28 @@ export function DataTable<T extends { id?: string | number }>({
               }}
               placeholder={searchPlaceholder}
               aria-label={searchPlaceholder}
-              className="pl-8 pr-3 py-1.5 rounded-md border border-slate-300 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 w-full sm:w-56"
+              className="pl-8 pr-3 w-full sm:w-56 ds-control-leading"
             />
           </div>
 
           {/* Density switch */}
-          <button
+          <Button variant="secondary" size="icon"
             onClick={() => setDensity(density === 'compact' ? 'normal' : 'compact')}
-            className="hidden sm:block p-1.5 rounded-md border border-slate-300 text-slate-600 hover:bg-slate-50"
+            className="hidden sm:block"
             title="Toggle Row Density"
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
-          </button>
+          </Button>
 
           {/* CSV Export */}
-          <button
+          <Button variant="secondary" size="sm"
             onClick={handleExportCSV}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-medium"
+            className="inline-flex items-center gap-1.5"
             title="Export CSV"
           >
             <Download className="w-3.5 h-3.5 text-slate-500" />
             <span>Export</span>
-          </button>
+          </Button>
 
           {actions}
         </div>
@@ -206,9 +207,9 @@ export function DataTable<T extends { id?: string | number }>({
       {/* Table Element */}
       <div className="sm:hidden p-3 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
-          <select
+          <Select
             aria-label="Sort records"
-            className="erp-input flex-1 min-w-0"
+            className="flex-1 min-w-0 w-full"
             value={sortKey ? String(sortKey) : ''}
             onChange={(event) => {
               setSortKey((event.target.value || null) as keyof T | null);
@@ -216,16 +217,16 @@ export function DataTable<T extends { id?: string | number }>({
             }}
           >
             <option value="">Original order</option>
-            {columns.filter((col) => col.accessorKey && col.sortable !== false).map((col) => (
-              <option key={String(col.accessorKey)} value={String(col.accessorKey)}>{col.header}</option>
+            {columns.filter((col) => col.accessorKey && col.sortable !== false).map((col, index) => (
+              <option key={`${String(col.accessorKey)}-${index}`} value={String(col.accessorKey)}>{col.header}</option>
             ))}
-          </select>
-          {sortKey && <button type="button" className="erp-btn-secondary" onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} aria-label="Reverse sort order">{sortOrder === 'asc' ? 'Ascending' : 'Descending'}</button>}
-          {enableSelection && <label className="flex items-center gap-2 w-full py-2"><input type="checkbox" checked={paginatedData.length > 0 && paginatedData.every((item) => selectedIds.has(item.id ?? JSON.stringify(item)))} onChange={handleSelectAll} /> Select this page</label>}
+          </Select>
+          {sortKey && <Button variant="secondary" size="sm" type="button" className="" onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} aria-label="Reverse sort order">{sortOrder === 'asc' ? 'Ascending' : 'Descending'}</Button>}
+          {enableSelection && <label className="flex items-center gap-2 w-full py-2"><Input type="checkbox" checked={paginatedData.length > 0 && paginatedData.every((item) => selectedIds.has(item.id ?? JSON.stringify(item)))} onChange={handleSelectAll} /> Select this page</label>}
         </div>
         {paginatedData.length ? paginatedData.map((row, index) => (
           <article key={row.id ?? index} className="rounded-lg border border-slate-200 p-3 space-y-2 bg-slate-50/50">
-            {enableSelection && <label className="flex items-center gap-2 py-2"><input type="checkbox" checked={selectedIds.has(row.id ?? JSON.stringify(row))} onChange={() => handleSelectRow(row)} /> Select record {index + 1}</label>}
+            {enableSelection && <label className="flex items-center gap-2 py-2"><Input type="checkbox" checked={selectedIds.has(row.id ?? JSON.stringify(row))} onChange={() => handleSelectRow(row)} /> Select record {index + 1}</label>}
             <dl className="space-y-2">
               {columns.map((col, columnIndex) => (
                 <div key={columnIndex} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-3 items-start">
@@ -236,7 +237,7 @@ export function DataTable<T extends { id?: string | number }>({
                 </div>
               ))}
             </dl>
-            {onRowClick && <button type="button" className="erp-btn-secondary w-full" onClick={() => onRowClick(row)}>View details <ChevronRight className="w-4 h-4" /></button>}
+            {onRowClick && <Button variant="secondary" size="sm" type="button" className="w-full" onClick={() => onRowClick(row)}>View details <ChevronRight className="w-4 h-4" /></Button>}
           </article>
         )) : <EmptyState title={emptyTitle} description={emptyDescription} />}
       </div>
@@ -246,7 +247,7 @@ export function DataTable<T extends { id?: string | number }>({
             <tr>
               {enableSelection && (
                 <th className="erp-th w-10 text-center">
-                  <input
+                  <Input
                     type="checkbox"
                     checked={paginatedData.length > 0 && paginatedData.every((i) => selectedIds.has(i.id ?? JSON.stringify(i)))}
                     onChange={handleSelectAll}
@@ -316,7 +317,7 @@ export function DataTable<T extends { id?: string | number }>({
                         className="erp-td text-center w-10"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <input
+                        <Input
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => handleSelectRow(row)}
@@ -369,45 +370,45 @@ export function DataTable<T extends { id?: string | number }>({
           </span>
           <div className="flex items-center gap-1.5 ml-2">
             <span className="text-slate-500">Rows:</span>
-            <select
+            <Select
               aria-label="Records per page"
               value={pageSize}
               onChange={(e) => {
                 setPageSize(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="rounded border border-slate-300 py-0.5 px-1.5 text-xs bg-white focus:outline-none"
+              className=""
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
               <option value={25}>25</option>
               <option value={50}>50</option>
-            </select>
+            </Select>
           </div>
         </div>
 
         <div className="flex items-center gap-1">
-          <button
+          <Button variant="secondary" size="icon"
             aria-label="Previous page"
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="p-1 rounded border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
-          </button>
+          </Button>
           <span className="px-2 py-0.5 text-xs font-semibold text-slate-800">
             Page {currentPage} of {totalPages}
           </span>
-          <button
+          <Button variant="secondary" size="icon"
             aria-label="Next page"
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="p-1 rounded border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
