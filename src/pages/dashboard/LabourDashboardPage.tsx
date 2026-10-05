@@ -1,6 +1,12 @@
-import { Button, Card } from '../../components/ui/Primitives';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
+import { Button, Card } from '../../components/ui/Primitives';
+import { StatCard } from '../../components/common/StatCard';
+import { DataTable, ColumnDef } from '../../components/common/DataTable';
+import { StatusBadge } from '../../components/common/StatusBadge';
+import { CompleteWorkModal } from '../../components/labour/CompleteWorkModal';
+import { formatWeight, formatDateTime } from '../../utils/formatters';
 import {
   Briefcase,
   Layers,
@@ -9,14 +15,23 @@ import {
   CheckCircle2,
   Play,
   CheckCircle,
-  ArrowRight,
-  Scale,
-  Calendar,
-  AlertCircle,
+  FileText,
   Hammer,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { CompleteWorkModal } from '../../components/labour/CompleteWorkModal';
+
+interface UnifiedTask {
+  id: string;
+  jobId: string;
+  customerName: string;
+  customerId?: string;
+  workType: 'Binding' | 'Open';
+  weight: number;
+  startDate?: string;
+  endDate?: string;
+  status: 'Pending' | 'In Progress' | 'Completed';
+  tarUsed: number;
+  remarks?: string;
+}
 
 export const LabourDashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -28,7 +43,11 @@ export const LabourDashboardPage: React.FC = () => {
     startLabourOpenTask,
     completeLabourOpenTask,
     currentUser,
+    navigateToJob,
   } = useERP();
+
+  const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'in_progress' | 'completed'>('all');
+  const [completeModalTask, setCompleteModalTask] = useState<UnifiedTask | null>(null);
 
   // Filter tasks assigned to current user (Suresh Parmar or matching name)
   const isMyTask = (labourName: string) => {
@@ -39,21 +58,7 @@ export const LabourDashboardPage: React.FC = () => {
   const myBindingTasks = labourBindingTasks.filter((t) => isMyTask(t.labourName));
   const myOpenTasks = labourOpenTasks.filter((t) => isMyTask(t.labourName));
 
-  // Combine tasks into unified labour assignments
-  interface UnifiedTask {
-    id: string;
-    jobId: string;
-    customerName: string;
-    workType: 'Binding' | 'Open';
-    weight: number;
-    startDate?: string;
-    endDate?: string;
-    status: 'Pending' | 'In Progress' | 'Completed';
-    tarUsed: number;
-    remarks?: string;
-  }
-
-  const allTasks: UnifiedTask[] = [
+  const allTasks: UnifiedTask[] = useMemo(() => [
     ...myBindingTasks.map((t) => ({
       id: t.id,
       jobId: t.jobId,
@@ -78,7 +83,7 @@ export const LabourDashboardPage: React.FC = () => {
       tarUsed: t.tarUsed,
       remarks: t.remarks,
     })),
-  ];
+  ], [myBindingTasks, myOpenTasks]);
 
   // KPIs
   const assignedWorkCount = allTasks.filter((t) => t.status !== 'Completed').length;
@@ -87,17 +92,20 @@ export const LabourDashboardPage: React.FC = () => {
   const inProgressCount = allTasks.filter((t) => t.status === 'In Progress').length;
   const completedTodayCount = allTasks.filter((t) => t.status === 'Completed').length;
 
-  // Active / In Progress Work
-  const inProgressTasks = allTasks.filter((t) => t.status === 'In Progress');
-
-  // Next Pending Work
-  const pendingTasks = allTasks.filter((t) => t.status === 'Pending');
-
-  // Recent Completed
-  const completedTasks = allTasks.filter((t) => t.status === 'Completed').slice(0, 5);
-
-  // Modal State for Completing Work
-  const [completeModalTask, setCompleteModalTask] = useState<UnifiedTask | null>(null);
+  // Filtered tasks for table
+  const filteredTasks = useMemo(() => {
+    switch (activeTab) {
+      case 'pending':
+        return allTasks.filter((t) => t.status === 'Pending');
+      case 'in_progress':
+        return allTasks.filter((t) => t.status === 'In Progress');
+      case 'completed':
+        return allTasks.filter((t) => t.status === 'Completed');
+      case 'all':
+      default:
+        return allTasks;
+    }
+  }, [allTasks, activeTab]);
 
   const handleStartWork = (task: UnifiedTask) => {
     if (task.workType === 'Binding') {
@@ -117,396 +125,391 @@ export const LabourDashboardPage: React.FC = () => {
     setCompleteModalTask(null);
   };
 
+  const columns: ColumnDef<UnifiedTask>[] = [
+    {
+      header: 'Task ID',
+      accessorKey: 'id',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-mono font-bold text-xs bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded">
+          {row.id}
+        </span>
+      ),
+    },
+    {
+      header: 'Job ID',
+      accessorKey: 'jobId',
+      sortable: true,
+      cell: (row) => (
+        <span
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateToJob(row.jobId);
+          }}
+          className="font-mono font-bold text-xs bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded hover:text-emerald-700 cursor-pointer"
+        >
+          {row.jobId}
+        </span>
+      ),
+    },
+    {
+      header: 'Customer',
+      accessorKey: 'customerName',
+      sortable: true,
+      cell: (row) => <span className="font-semibold text-xs text-slate-800">{row.customerName}</span>,
+    },
+    {
+      header: 'Work Type',
+      accessorKey: 'workType',
+      sortable: true,
+      cell: (row) => (
+        <span
+          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-2xs font-bold ${
+            row.workType === 'Binding'
+              ? 'bg-amber-50 text-amber-800 border border-amber-200'
+              : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+          }`}
+        >
+          {row.workType === 'Binding' ? <Layers className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
+          {row.workType} Work
+        </span>
+      ),
+    },
+    {
+      header: 'Weight',
+      accessorKey: 'weight',
+      sortable: true,
+      align: 'right',
+      cell: (row) => (
+        <span className="font-mono text-xs font-bold text-slate-900">
+          {formatWeight(row.weight)}
+        </span>
+      ),
+    },
+    {
+      header: 'Tar Used',
+      accessorKey: 'tarUsed',
+      sortable: true,
+      align: 'right',
+      cell: (row) => (
+        <span className="font-mono text-xs text-slate-700">
+          {row.tarUsed > 0 ? `${row.tarUsed} g` : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+      sortable: true,
+      cell: (row) => <StatusBadge type="labour" value={row.status} size="sm" />,
+    },
+    {
+      header: 'Start Date & Time',
+      accessorKey: 'startDate',
+      sortable: true,
+      cell: (row) => (
+        <span className="text-2xs text-slate-600">
+          {row.startDate ? formatDateTime(row.startDate) : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Action',
+      sortable: false,
+      align: 'right',
+      cell: (row) => (
+        <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+          {row.status === 'Pending' && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => handleStartWork(row)}
+              className="text-xs inline-flex items-center gap-1"
+            >
+              <Play className="w-3.5 h-3.5 fill-current" /> Start
+            </Button>
+          )}
+
+          {row.status === 'In Progress' && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setCompleteModalTask(row)}
+              className="text-xs inline-flex items-center gap-1"
+            >
+              <CheckCircle className="w-3.5 h-3.5" /> Complete
+            </Button>
+          )}
+
+          {row.status === 'Completed' && (
+            <span className="text-2xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+              Completed
+            </span>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <div className="space-y-6 font-sans">
-      {/* 1. Header Greeting & Station Status */}
-      <Card padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 border border-amber-500/20 flex items-center justify-center shrink-0">
-            <Hammer className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold text-slate-900">
-                Work Dashboard
-              </h1>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-200">
-                Artisan Bench #4
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Welcome back, <strong className="text-slate-800">{currentUser?.name || 'Suresh Parmar'}</strong>. Manage your assigned jewellery labour tasks.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs">
-          <span className="px-3 py-1.5 rounded-xl bg-slate-50 text-slate-700 font-semibold border border-slate-200 flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-slate-500" />
-            Active Tasks: <span className="text-amber-600 font-bold">{inProgressCount} In Progress</span>
-          </span>
-        </div>
-      </Card>
-
-      {/* 2. 5 KPI CARDS */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
-        {/* Assigned Work */}
-        <Card padding="sm"
-          onClick={() => navigate('/my-work')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-400 transition-colors cursor-pointer group"
-        >
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold">
-            <span>Assigned Work</span>
-            <Briefcase className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-slate-900">
-            {assignedWorkCount}
-          </div>
-          <p className="text-[11px] text-slate-400 mt-0.5">Active queued jobs</p>
-        </Card>
-
-        {/* Pending Binding */}
-        <Card padding="sm"
-          onClick={() => navigate('/labour/binding')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-amber-400 transition-colors cursor-pointer group"
-        >
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold">
-            <span>Pending Binding</span>
-            <Layers className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-amber-600">
-            {pendingBindingCount}
-          </div>
-          <p className="text-[11px] text-amber-700/80 mt-0.5">Awaiting start</p>
-        </Card>
-
-        {/* Pending Open */}
-        <Card padding="sm"
-          onClick={() => navigate('/labour/open')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-emerald-400 transition-colors cursor-pointer group"
-        >
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold">
-            <span>Pending Open</span>
-            <Sparkles className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-emerald-600">
-            {pendingOpenCount}
-          </div>
-          <p className="text-[11px] text-emerald-700/80 mt-0.5">Untying queue</p>
-        </Card>
-
-        {/* In Progress */}
-        <Card padding="sm"
-          onClick={() => navigate('/my-work')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-indigo-400 transition-colors cursor-pointer group"
-        >
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold">
-            <span>In Progress</span>
-            <Clock className="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-indigo-600">
-            {inProgressCount}
-          </div>
-          <p className="text-[11px] text-indigo-700/80 mt-0.5">On current bench</p>
-        </Card>
-
-        {/* Completed Today */}
-        <Card padding="sm"
-          onClick={() => navigate('/labour/reports')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-emerald-400 transition-colors cursor-pointer group col-span-2 sm:col-span-1"
-        >
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold">
-            <span>Completed Today</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-slate-900">
-            {completedTodayCount}
-          </div>
-          <p className="text-[11px] text-slate-400 mt-0.5">Done & verified</p>
-        </Card>
-      </div>
-
-      {/* 3. QUICK ACTIONS (Large touch buttons) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Button variant="surface"
-          onClick={() => navigate('/my-work')}
-          className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-xs hover:border-blue-400 hover:bg-blue-50/30 transition-all text-left group"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-              <Briefcase className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-slate-900 group-hover:text-blue-700">
-                View My Work
-              </div>
-              <div className="text-[11px] text-slate-500">All assigned jobs list</div>
-            </div>
-          </div>
-          <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
-        </Button>
-
-        <Button variant="surface"
-          onClick={() => navigate('/labour/binding')}
-          className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-xs hover:border-amber-400 hover:bg-amber-50/30 transition-all text-left group"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
-              <Layers className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-slate-900 group-hover:text-amber-800">
-                Binding Work
-              </div>
-              <div className="text-[11px] text-slate-500">Wiring & tar fixture jobs</div>
-            </div>
-          </div>
-          <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-700 group-hover:translate-x-0.5 transition-all" />
-        </Button>
-
-        <Button variant="surface"
-          onClick={() => navigate('/labour/open')}
-          className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-xs hover:border-emerald-400 hover:bg-emerald-50/30 transition-all text-left group"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-slate-900 group-hover:text-emerald-800">
-                Open Work
-              </div>
-              <div className="text-[11px] text-slate-500">Unbinding & cleaning queue</div>
-            </div>
-          </div>
-          <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 transition-all" />
-        </Button>
-      </div>
-
-      {/* 4. CURRENT WORK (In Progress Bench) */}
-      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
-            <h2 className="text-sm font-bold text-slate-900">
-              Current Work (In Progress)
-            </h2>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">
-              {inProgressTasks.length} active
+    <div className="space-y-5">
+      {/* 1. Header Banner - Unified Application Standard */}
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-[11px] font-bold text-slate-500 font-mono uppercase tracking-wider">
+              Artisan Bench #04 • Labour Specialist
+            </span>
+            <span className="text-slate-300">•</span>
+            <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              Shift Active
             </span>
           </div>
-          <Button variant="ghost"
-            onClick={() => navigate('/my-work')}
-            className="flex items-center gap-1"
-          >
-            View All Work <ArrowRight className="w-3.5 h-3.5" />
-          </Button>
+          <h2 className="text-sm font-bold text-slate-900">Artisan Work Processing Console</h2>
+          <p className="text-xs text-slate-500">
+            Welcome back, <strong className="text-slate-800">{currentUser?.name || 'Suresh Parmar'}</strong>. Silver chain binding, tar sealing, and post-plating unbinding operations.
+          </p>
         </div>
 
-        {inProgressTasks.length === 0 ? (
-          <div className="p-8 text-center text-slate-400 text-xs">
-            <Briefcase className="w-8 h-8 mx-auto text-slate-300 mb-2" />
-            No tasks are currently in progress. Start one from the pending queue below.
-          </div>
-        ) : (
-          <div className="divide-y divide-slate-100">
-            {inProgressTasks.map((task) => (
-              <div
-                key={task.id}
-                className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-slate-50/60 transition-colors"
-              >
-                <div className="flex items-start gap-3.5">
-                  <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                      task.workType === 'Binding'
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-emerald-100 text-emerald-800'
-                    }`}
-                  >
-                    {task.workType === 'Binding' ? <Layers className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60">
-                        {task.jobId}
-                      </span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          task.workType === 'Binding'
-                            ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                            : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                        }`}
-                      >
-                        {task.workType} Work
-                      </span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200">
-                        IN PROGRESS
-                      </span>
-                    </div>
-
-                    <div className="mt-1 flex items-center gap-3 text-xs">
-                      <span className="font-bold text-slate-900">{task.customerName}</span>
-                      <span className="text-slate-300">•</span>
-                      <span className="font-mono text-slate-700 font-bold flex items-center gap-1">
-                        <Scale className="w-3.5 h-3.5 text-slate-400" />
-                        {Number(task.weight).toFixed(3)} kg
-                      </span>
-                    </div>
-
-                    {task.remarks && (
-                      <p className="text-[11px] text-slate-500 mt-1 italic">
-                        "{task.remarks}"
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Complete Action Button */}
-                <div className="flex items-center gap-2 sm:self-center">
-                  <Button variant="primary"
-                    onClick={() => setCompleteModalTask(task)}
-                    className="w-full sm:w-auto transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <CheckCircle className="w-4 h-4" />
-                    Complete Work
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
-
-      {/* 5. PENDING WORK QUEUE */}
-      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-bold text-slate-900">
-              Pending Queue (Ready to Start)
-            </h2>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
-              {pendingTasks.length} pending
-            </span>
-          </div>
-        </div>
-
-        {pendingTasks.length === 0 ? (
-          <div className="p-8 text-center text-slate-400 text-xs">
-            No pending tasks waiting. Great job!
-          </div>
-        ) : (
-          <div className="divide-y divide-slate-100">
-            {pendingTasks.map((task) => (
-              <div
-                key={task.id}
-                className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-slate-50/60 transition-colors"
-              >
-                <div className="flex items-start gap-3.5">
-                  <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                      task.workType === 'Binding'
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-emerald-100 text-emerald-800'
-                    }`}
-                  >
-                    {task.workType === 'Binding' ? <Layers className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60">
-                        {task.jobId}
-                      </span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          task.workType === 'Binding'
-                            ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                            : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                        }`}
-                      >
-                        {task.workType} Work
-                      </span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                        PENDING
-                      </span>
-                    </div>
-
-                    <div className="mt-1 flex items-center gap-3 text-xs">
-                      <span className="font-bold text-slate-900">{task.customerName}</span>
-                      <span className="text-slate-300">•</span>
-                      <span className="font-mono text-slate-700 font-bold flex items-center gap-1">
-                        <Scale className="w-3.5 h-3.5 text-slate-400" />
-                        {Number(task.weight).toFixed(3)} kg
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Start Work Action Button */}
-                <div className="flex items-center gap-2 sm:self-center">
-                  <Button variant="primary"
-                    onClick={() => handleStartWork(task)}
-                    className="w-full sm:w-auto transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <Play className="w-4 h-4 fill-current" />
-                    Start Work
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
-
-      {/* 6. RECENT COMPLETED WORK */}
-      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-          <h2 className="text-sm font-bold text-slate-900">
-            Recently Completed Work
-          </h2>
-          <Button variant="ghost"
+        <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+          <Button
+            variant="secondary"
             onClick={() => navigate('/labour/reports')}
-            className=""
+            className="inline-flex items-center gap-1.5"
           >
-            Work History →
+            <FileText className="w-3.5 h-3.5" /> Shift Reports
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => navigate('/my-work')}
+            className="inline-flex items-center gap-1.5"
+          >
+            <Briefcase className="w-3.5 h-3.5" /> My Assigned Queue
           </Button>
         </div>
+      </div>
 
-        {completedTasks.length === 0 ? (
-          <div className="p-6 text-center text-slate-400 text-xs">
-            No completed records yet for today.
-          </div>
-        ) : (
-          <div className="divide-y divide-slate-100">
-            {completedTasks.map((task) => (
-              <div key={task.id} className="p-3.5 px-5 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <div>
-                    <span className="font-mono font-bold text-slate-900 mr-2">{task.jobId}</span>
-                    <span className="text-slate-600 font-medium mr-2">{task.customerName}</span>
-                    <span className="font-mono font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">
-                      {Number(task.weight).toFixed(3)} kg
-                    </span>
-                  </div>
-                </div>
+      {/* 2. Primary KPI Row (5 Core Operational KPIs) */}
+      <div>
+        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">
+          Bench Operational Metrics
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
+          <StatCard
+            title="Assigned Work"
+            value={`${assignedWorkCount} tasks`}
+            subtitle="Active queued jobs"
+            icon={Briefcase}
+            badgeText="Assigned"
+            badgeVariant="info"
+            onClick={() => navigate('/my-work')}
+          />
+          <StatCard
+            title="Pending Binding"
+            value={`${pendingBindingCount} tasks`}
+            subtitle="Pre-plating fixture"
+            icon={Layers}
+            badgeText="Wire Queue"
+            badgeVariant="warning"
+            onClick={() => navigate('/labour/binding')}
+          />
+          <StatCard
+            title="Pending Open"
+            value={`${pendingOpenCount} tasks`}
+            subtitle="Untying & cleaning"
+            icon={Sparkles}
+            badgeText="Post-Plating"
+            badgeVariant="success"
+            onClick={() => navigate('/labour/open')}
+          />
+          <StatCard
+            title="In Progress Work"
+            value={`${inProgressCount} tasks`}
+            subtitle="On current bench"
+            icon={Clock}
+            badgeText="In Cycle"
+            badgeVariant="warning"
+            urgent={inProgressCount > 0}
+            onClick={() => navigate('/my-work')}
+          />
+          <StatCard
+            title="Completed Today"
+            value={`${completedTodayCount} tasks`}
+            subtitle="Done & verified"
+            icon={CheckCircle2}
+            badgeText="Verified"
+            badgeVariant="success"
+            onClick={() => navigate('/labour/reports')}
+          />
+        </div>
+      </div>
 
-                <div className="flex items-center gap-3 text-slate-500 text-[11px]">
-                  {task.tarUsed > 0 && (
-                    <span className="bg-amber-50 text-amber-800 font-medium px-2 py-0.5 rounded border border-amber-200/60">
-                      Tar: {task.tarUsed}g
-                    </span>
-                  )}
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
-                    Completed
-                  </span>
+      {/* 3. Floor Workflows & Operations */}
+      <div>
+        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">
+          Artisan Workflows & Bench Operations
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Action 1 */}
+          <Card
+            padding="md"
+            className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:border-slate-300 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center font-bold border border-blue-100">
+                  <Briefcase className="w-5 h-5" />
                 </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                  {assignedWorkCount} Assigned
+                </span>
               </div>
-            ))}
-          </div>
-        )}
-      </Card>
+              <h4 className="text-xs font-bold text-slate-900">Assigned Work Queue</h4>
+              <p className="text-2xs text-slate-500 mt-1 leading-relaxed">
+                Unified work list containing all assigned binding and opening tasks for your bench.
+              </p>
+            </div>
+            <div className="pt-3 border-t border-slate-100 mt-3">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => navigate('/my-work')}
+                className="w-full justify-center text-xs"
+              >
+                <Briefcase className="w-3.5 h-3.5" /> View Assigned Work
+              </Button>
+            </div>
+          </Card>
 
-      {/* Complete Modal */}
+          {/* Action 2 */}
+          <Card
+            padding="md"
+            className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:border-slate-300 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold border border-amber-100">
+                  <Layers className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                  {pendingBindingCount} Pending
+                </span>
+              </div>
+              <h4 className="text-xs font-bold text-slate-900">Wire & Tar Binding</h4>
+              <p className="text-2xs text-slate-500 mt-1 leading-relaxed">
+                Pre-electroplating copper wire stringing, fixture assembly, and sealing tar application.
+              </p>
+            </div>
+            <div className="pt-3 border-t border-slate-100 mt-3">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => navigate('/labour/binding')}
+                className="w-full justify-center text-xs"
+              >
+                <Layers className="w-3.5 h-3.5" /> Binding Queue
+              </Button>
+            </div>
+          </Card>
+
+          {/* Action 3 */}
+          <Card
+            padding="md"
+            className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:border-slate-300 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold border border-emerald-100">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  {pendingOpenCount} Pending
+                </span>
+              </div>
+              <h4 className="text-xs font-bold text-slate-900">Post-Plating Open & Clean</h4>
+              <p className="text-2xs text-slate-500 mt-1 leading-relaxed">
+                Post-plating wire removal, tar unbinding, ultrasonic cleaning, and batch completion.
+              </p>
+            </div>
+            <div className="pt-3 border-t border-slate-100 mt-3">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => navigate('/labour/open')}
+                className="w-full justify-center text-xs"
+              >
+                <Sparkles className="w-3.5 h-3.5" /> Open & Clean Queue
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      {/* 4. Live Work Queue Table */}
+      <div className="space-y-2">
+        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+          Live Artisan Work Queue
+        </h3>
+
+        {/* Unified DataTable */}
+        <DataTable
+          data={filteredTasks}
+          columns={columns}
+          searchPlaceholder="Search tasks by Job ID, Customer, or Task ID..."
+          exportFilename="artisan_work_queue"
+          actions={
+            <div className="erp-toolbar-control inline-flex items-center p-1 bg-slate-100 border border-slate-200 shrink-0 gap-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab('all')}
+                className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                  activeTab === 'all'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                All Tasks ({allTasks.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('pending')}
+                className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  activeTab === 'pending'
+                    ? 'bg-white text-amber-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Pending ({allTasks.filter((t) => t.status === 'Pending').length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('in_progress')}
+                className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                  activeTab === 'in_progress'
+                    ? 'bg-white text-indigo-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                In Progress ({inProgressCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('completed')}
+                className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                  activeTab === 'completed'
+                    ? 'bg-white text-emerald-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Completed ({completedTodayCount})
+              </button>
+            </div>
+          }
+        />
+      </div>
+
+      {/* Complete Work Modal */}
       {completeModalTask && (
         <CompleteWorkModal
           isOpen={!!completeModalTask}

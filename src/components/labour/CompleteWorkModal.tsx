@@ -1,7 +1,7 @@
-import { DialogSurface } from '../ui/DialogSurface';
-import { Button, Card, Input, Textarea } from '../ui/Primitives';
 import React, { useState } from 'react';
-import { X, CheckCircle, Scale, Clock, Layers, Sparkles, AlertCircle } from 'lucide-react';
+import { Button, Input, Textarea } from '../ui/Primitives';
+import { Modal } from '../common/Modal';
+import { Scale, Clock, AlertCircle } from 'lucide-react';
 
 interface CompleteWorkModalProps {
   isOpen: boolean;
@@ -30,8 +30,6 @@ export const CompleteWorkModal: React.FC<CompleteWorkModalProps> = ({
   const [remarks, setRemarks] = useState<string>(initialRemarks);
   const [error, setError] = useState<string>('');
 
-  if (!isOpen) return null;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const tarValue = tarUsed.trim() === '' ? 0 : Number(tarUsed);
@@ -44,134 +42,104 @@ export const CompleteWorkModal: React.FC<CompleteWorkModalProps> = ({
   };
 
   return (
-    <div className="ds-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs font-sans animate-in fade-in duration-150">
-      <DialogSurface onClose={onClose} aria-label="Complete work"  className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-          <div className="flex items-center gap-2.5">
-            <div
-              className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                workType === 'Binding' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
-              }`}
-            >
-              {workType === 'Binding' ? <Layers className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">
-                Complete {workType} Work
-              </h3>
-              <p className="text-[11px] text-slate-500">Record completion and tar usage</p>
-            </div>
-          </div>
-          <Button variant="ghost" size="icon"
-            onClick={onClose}
-            className="transition-colors" aria-label="Close dialog"
-          >
-            <X className="w-5 h-5" />
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`Complete ${workType} Work`}
+      subtitle={`Record completion and tar consumption for Job ID: ${jobId}`}
+      maxWidth="md"
+      footer={
+        <>
+          <Button variant="secondary" type="button" onClick={onClose}>
+            Cancel
           </Button>
+          <Button variant="primary" type="button" onClick={handleSubmit}>
+            Confirm & Complete Work
+          </Button>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Job Overview Summary */}
+        <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-500 font-medium">Customer</span>
+            <span className="font-bold text-slate-900">{customerName}</span>
+          </div>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-500 font-medium">Job ID</span>
+            <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+              {jobId}
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-500 font-medium">Batch Weight</span>
+            <span className="font-mono font-bold text-slate-900 flex items-center gap-1">
+              <Scale className="w-3.5 h-3.5 text-slate-400" />
+              {Number(weight).toFixed(3)} kg
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-xs pt-1.5 border-t border-slate-200">
+            <span className="text-slate-500 font-medium">Recorded At</span>
+            <span className="text-slate-700 font-medium flex items-center gap-1 text-2xs">
+              <Clock className="w-3 h-3 text-emerald-600" /> Auto-recorded timestamp
+            </span>
+          </div>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          {/* Job Overview Card */}
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500 font-medium">Customer</span>
-              <span className="font-bold text-slate-900">{customerName}</span>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500 font-medium">Customer ID</span>
-              <span className="font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60">
-                {jobId}
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500 font-medium">Weight</span>
-              <span className="font-mono font-bold text-slate-900 flex items-center gap-1">
-                <Scale className="w-3.5 h-3.5 text-slate-400" />
-                {Number(weight).toFixed(3)} kg
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200/60">
-              <span className="text-slate-500 font-medium">Completion Time</span>
-              <span className="text-slate-700 font-medium flex items-center gap-1 text-[11px]">
-                <Clock className="w-3 h-3 text-emerald-600" /> Auto-recorded now
-              </span>
-            </div>
-          </div>
-
-          {/* Tar Used Input */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <label htmlFor="tarUsedInput" className="text-xs font-bold text-slate-800">
-                Tar Used (where applicable)
-              </label>
-              <span className="text-[11px] text-slate-500 font-medium">Unit: grams</span>
-            </div>
-            <div className="relative">
-              <Input
-                id="tarUsedInput"
-                type="number"
-                step="1"
-                min="0"
-                placeholder="e.g. 120"
-                value={tarUsed}
-                onChange={(e) => {
-                  setTarUsed(e.target.value);
-                  setError('');
-                }}
-                className="w-full pr-16"
-              />
-              <span className="absolute right-3.5 top-3 text-xs font-bold text-slate-400 select-none">
-                grams
-              </span>
-            </div>
-            <p className="text-[10px] text-slate-500">
-              Enter quantity of sealing tar consumed during this {workType.toLowerCase()} batch.
-            </p>
-          </div>
-
-          {/* Remarks */}
-          <div className="space-y-1.5">
-            <label htmlFor="remarksInput" className="text-xs font-bold text-slate-800">
-              Work Remarks / Notes (Optional)
+        {/* Tar Used Input */}
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label htmlFor="tarUsedInput" className="block text-xs font-semibold text-slate-700">
+              Tar Used (grams)
             </label>
-            <Textarea
-              id="remarksInput"
-              rows={2}
-              placeholder={`Notes on ${workType.toLowerCase()} quality, wire count, or untying batch...`}
-              value={remarks}
-              onChange={(e) => setRemarks(e.target.value)}
-              className="w-full resize-none"
+            <span className="text-2xs text-slate-500">Unit: grams</span>
+          </div>
+          <div className="relative">
+            <Input
+              id="tarUsedInput"
+              type="number"
+              step="1"
+              min="0"
+              placeholder="e.g. 50"
+              value={tarUsed}
+              onChange={(e) => {
+                setTarUsed(e.target.value);
+                setError('');
+              }}
+              className="w-full pr-14 text-xs"
             />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 select-none">
+              grams
+            </span>
           </div>
+          <p className="text-2xs text-slate-500 mt-1">
+            Quantity of sealing tar consumed or cleaned during this {workType.toLowerCase()} batch.
+          </p>
+        </div>
 
-          {error && (
-            <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
+        {/* Remarks */}
+        <div>
+          <label htmlFor="remarksInput" className="block text-xs font-semibold text-slate-700 mb-1">
+            Work Remarks / Notes (Optional)
+          </label>
+          <Textarea
+            id="remarksInput"
+            rows={2}
+            placeholder={`Notes on ${workType.toLowerCase()} quality or binding details...`}
+            value={remarks}
+            onChange={(e) => setRemarks(e.target.value)}
+            className="w-full text-xs"
+          />
+        </div>
 
-          {/* Action Buttons */}
-          <div className="pt-2 flex items-center gap-2.5">
-            <Button variant="secondary"
-              type="button"
-              onClick={onClose}
-              className="flex-1 transition-colors"
-            >
-              Cancel
-            </Button>
-            <Button variant="primary"
-              type="submit"
-              className="flex-1 transition-all flex items-center justify-center gap-2"
-            >
-              <CheckCircle className="w-4 h-4" />
-              Complete Work
-            </Button>
+        {error && (
+          <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
           </div>
-        </form>
-      </DialogSurface>
-    </div>
+        )}
+      </form>
+    </Modal>
   );
 };

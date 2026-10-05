@@ -1,21 +1,16 @@
-import { DialogSurface } from '../../components/ui/DialogSurface';
-import { Button, Card, Input, TabButton } from '../../components/ui/Primitives';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useERP } from '../../context/ERPContext';
+import { Button } from '../../components/ui/Primitives';
+import { DataTable, ColumnDef } from '../../components/common/DataTable';
+import { StatusBadge } from '../../components/common/StatusBadge';
+import { LabourBindingTask } from '../../types/erp';
+import { CompleteWorkModal } from '../../components/labour/CompleteWorkModal';
+import { formatWeight, formatDateTime } from '../../utils/formatters';
 import {
   Layers,
-  Search,
-  Filter,
   Play,
   CheckCircle,
-  Clock,
-  CheckCircle2,
-  Scale,
-  Calendar,
-  X,
-  Info,
 } from 'lucide-react';
-import { CompleteWorkModal } from '../../components/labour/CompleteWorkModal';
 
 export const LabourBindingWorkPage: React.FC = () => {
   const {
@@ -23,12 +18,11 @@ export const LabourBindingWorkPage: React.FC = () => {
     startLabourBindingTask,
     completeLabourBindingTask,
     currentUser,
+    navigateToJob,
   } = useERP();
 
   const [statusFilter, setStatusFilter] = useState<'All' | 'Pending' | 'In Progress' | 'Completed'>('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTask, setSelectedTask] = useState<any | null>(null);
-  const [completeModalTask, setCompleteModalTask] = useState<any | null>(null);
+  const [completeModalTask, setCompleteModalTask] = useState<LabourBindingTask | null>(null);
 
   const isMyTask = (labourName: string) => {
     if (!currentUser?.name) return true;
@@ -37,403 +31,215 @@ export const LabourBindingWorkPage: React.FC = () => {
 
   const myBindingTasks = labourBindingTasks.filter((t) => isMyTask(t.labourName));
 
-  const filteredTasks = myBindingTasks.filter((task) => {
-    if (statusFilter !== 'All' && task.status !== statusFilter) return false;
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      const matchId = task.jobId.toLowerCase().includes(q);
-      const matchCust = task.customerName.toLowerCase().includes(q);
-      if (!matchId && !matchCust) return false;
-    }
-    return true;
-  });
+  const filteredTasks = useMemo(() => {
+    if (statusFilter === 'All') return myBindingTasks;
+    return myBindingTasks.filter((task) => task.status === statusFilter);
+  }, [myBindingTasks, statusFilter]);
 
   const handleStartWork = (taskId: string) => {
     startLabourBindingTask(taskId);
-    if (selectedTask?.id === taskId) {
-      setSelectedTask({ ...selectedTask, status: 'In Progress', startDate: new Date().toISOString() });
-    }
   };
 
   const handleConfirmComplete = (tarUsed: number, remarks: string) => {
     if (!completeModalTask) return;
     completeLabourBindingTask(completeModalTask.id, tarUsed, remarks);
-    if (selectedTask?.id === completeModalTask.id) {
-      setSelectedTask({
-        ...selectedTask,
-        status: 'Completed',
-        endDate: new Date().toISOString(),
-        tarUsed,
-        remarks,
-      });
-    }
     setCompleteModalTask(null);
   };
 
-  return (
-    <div className="space-y-5 font-sans">
-      {/* Header */}
-      <Card padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <div>
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
-              <Layers className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-base font-bold text-slate-900">
-                Labour Binding Operations
-              </h1>
-              <p className="text-xs text-slate-500">
-                Wire fixture and sealing tar binding work queue for artisan bench.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-900 border border-amber-200 text-xs font-bold">
-            Total Binding: {myBindingTasks.length} jobs
-          </span>
-        </div>
-      </Card>
-
-      {/* Search & Status Filters */}
-      <Card padding="sm" className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 text-xs">
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
-          <Input
-            type="text"
-            placeholder="Search by Customer ID (DARSHAN1...) or Customer Name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 ds-control-leading"
-          />
-          {searchQuery && (
-            <Button variant="ghost" size="icon"
-              onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-2" aria-label="Close dialog"
+  const columns: ColumnDef<LabourBindingTask>[] = [
+    {
+      header: 'Task ID',
+      accessorKey: 'id',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-mono font-bold text-xs bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded">
+          {row.id}
+        </span>
+      ),
+    },
+    {
+      header: 'Job ID',
+      accessorKey: 'jobId',
+      sortable: true,
+      cell: (row) => (
+        <span
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateToJob(row.jobId);
+          }}
+          className="font-mono font-bold text-xs bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded hover:text-emerald-700 cursor-pointer"
+        >
+          {row.jobId}
+        </span>
+      ),
+    },
+    {
+      header: 'Customer',
+      accessorKey: 'customerName',
+      sortable: true,
+      cell: (row) => <span className="font-semibold text-xs text-slate-800">{row.customerName}</span>,
+    },
+    {
+      header: 'Weight',
+      accessorKey: 'inwardWeight',
+      sortable: true,
+      align: 'right',
+      cell: (row) => (
+        <span className="font-mono text-xs font-bold text-slate-900">
+          {formatWeight(row.inwardWeight)}
+        </span>
+      ),
+    },
+    {
+      header: 'Tar Used',
+      accessorKey: 'tarUsed',
+      sortable: true,
+      align: 'right',
+      cell: (row) => (
+        <span className="font-mono text-xs text-slate-700">
+          {row.tarUsed > 0 ? `${row.tarUsed} ${row.tarUnit || 'g'}` : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Rate (₹/kg)',
+      accessorKey: 'chargeRate',
+      align: 'right',
+      cell: (row) => (
+        <span className="font-mono text-xs text-slate-700">
+          ₹{row.chargeRate ? row.chargeRate.toFixed(2) : '12.50'}
+        </span>
+      ),
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+      sortable: true,
+      cell: (row) => <StatusBadge type="labour" value={row.status} size="sm" />,
+    },
+    {
+      header: 'Start Date & Time',
+      accessorKey: 'startDate',
+      sortable: true,
+      cell: (row) => (
+        <span className="text-2xs text-slate-600">
+          {row.startDate ? formatDateTime(row.startDate) : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Action',
+      sortable: false,
+      align: 'right',
+      cell: (row) => (
+        <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+          {row.status === 'Pending' && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => handleStartWork(row.id)}
+              className="text-xs inline-flex items-center gap-1"
             >
-              <X className="w-4 h-4" />
+              <Play className="w-3.5 h-3.5 fill-current" /> Start Work
             </Button>
           )}
-        </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto">
-          <span className="text-slate-400 font-semibold mr-1 flex items-center gap-1">
-            <Filter className="w-3 h-3" /> Status:
-          </span>
-          {(['All', 'Pending', 'In Progress', 'Completed'] as const).map((status) => (
-            <TabButton active={statusFilter === status}
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className=""
+          {row.status === 'In Progress' && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setCompleteModalTask(row)}
+              className="text-xs inline-flex items-center gap-1"
             >
-              {status}
-            </TabButton>
-          ))}
+              <CheckCircle className="w-3.5 h-3.5" /> Complete Work
+            </Button>
+          )}
+
+          {row.status === 'Completed' && (
+            <span className="text-2xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+              Completed
+            </span>
+          )}
         </div>
-      </Card>
+      ),
+    },
+  ];
 
-      {/* Binding Work Table */}
-      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        {filteredTasks.length === 0 ? (
-          <div className="p-12 text-center text-slate-400 text-xs space-y-2">
-            <Layers className="w-10 h-10 mx-auto text-slate-300" />
-            <p className="font-semibold text-slate-600">No Binding tasks found</p>
-            <p className="text-slate-400">All binding assignments have been completed or filtered.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th className="py-3 px-4">Date</th>
-                  <th className="py-3 px-4">Customer</th>
-                  <th className="py-3 px-4">Customer ID</th>
-                  <th className="py-3 px-4 text-right">Inward Weight (kg)</th>
-                  <th className="py-3 px-4">Binding Start</th>
-                  <th className="py-3 px-4">Binding End</th>
-                  <th className="py-3 px-4">Tar Used</th>
-                  <th className="py-3 px-4">Binding Status</th>
-                  <th className="py-3 px-4 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
-                {filteredTasks.map((task) => (
-                  <tr
-                    key={task.id}
-                    onClick={() => setSelectedTask(task)}
-                    className="hover:bg-slate-50/70 transition-colors cursor-pointer group"
-                  >
-                    {/* Date */}
-                    <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
-                      {new Date(task.createdAt || task.startDate).toLocaleDateString([], {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </td>
-
-                    {/* Customer */}
-                    <td className="py-3 px-4 font-bold text-slate-900">
-                      {task.customerName}
-                    </td>
-
-                    {/* Customer ID (Read-only) */}
-                    <td className="py-3 px-4 font-mono font-bold text-blue-700">
-                      <span className="bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60">
-                        {task.jobId}
-                      </span>
-                    </td>
-
-                    {/* Inward Weight (strictly 3 decimals, kg unit) */}
-                    <td className="py-3 px-4 font-mono font-bold text-slate-900 text-right whitespace-nowrap">
-                      {Number(task.inwardWeight).toFixed(3)} kg
-                    </td>
-
-                    {/* Start Time */}
-                    <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
-                      {task.startDate ? (
-                        <span className="text-[11px] font-medium">
-                          {new Date(task.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400">—</span>
-                      )}
-                    </td>
-
-                    {/* End Time */}
-                    <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
-                      {task.endDate ? (
-                        <span className="text-[11px] font-medium">
-                          {new Date(task.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400">—</span>
-                      )}
-                    </td>
-
-                    {/* Tar Used */}
-                    <td className="py-3 px-4 whitespace-nowrap">
-                      {task.tarUsed > 0 ? (
-                        <span className="font-mono font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/60 text-[11px]">
-                          {task.tarUsed} {task.tarUnit || 'grams'}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400">0 grams</span>
-                      )}
-                    </td>
-
-                    {/* Binding Status */}
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          task.status === 'Completed'
-                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                            : task.status === 'In Progress'
-                            ? 'bg-amber-100 text-amber-900 border border-amber-300 animate-pulse'
-                            : 'bg-slate-100 text-slate-700 border border-slate-200'
-                        }`}
-                      >
-                        {task.status}
-                      </span>
-                    </td>
-
-                    {/* Action */}
-                    <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
-                      {task.status === 'Pending' && (
-                        <Button variant="primary"
-                          onClick={() => handleStartWork(task.id)}
-                          className="transition-all inline-flex items-center gap-1"
-                        >
-                          <Play className="w-3.5 h-3.5 fill-current" />
-                          Start Work
-                        </Button>
-                      )}
-
-                      {task.status === 'In Progress' && (
-                        <Button variant="primary"
-                          onClick={() => setCompleteModalTask(task)}
-                          className="transition-all inline-flex items-center gap-1"
-                        >
-                          <CheckCircle className="w-3.5 h-3.5" />
-                          Complete Work
-                        </Button>
-                      )}
-
-                      {task.status === 'Completed' && (
-                        <Button variant="secondary"
-                          onClick={() => setSelectedTask(task)}
-                          className="inline-flex items-center gap-1"
-                        >
-                          <Info className="w-3.5 h-3.5 text-slate-500" />
-                          Details
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
-
-      {/* Slide-over Detail Drawer */}
-      {selectedTask && (
-        <div className="ds-overlay fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <DialogSurface onClose={() => setSelectedTask(null)} presentation="drawer" aria-label="Binding work details" className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col justify-between overflow-y-auto">
-            <div>
-              <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-amber-50/50">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
-                    <Layers className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900">
-                      Binding Work Details
-                    </h3>
-                    <p className="text-[11px] text-slate-500">{selectedTask.customerName} • {selectedTask.jobId}</p>
-                  </div>
-                </div>
-                <Button variant="ghost" size="icon"
-                  onClick={() => setSelectedTask(null)}
-                  className="" aria-label="Close dialog"
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-
-              <div className="p-5 space-y-4">
-                {/* Status Indicator */}
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-600">Binding Status</span>
-                  <span
-                    className={`px-2.5 py-0.5 rounded-full text-xs font-black tracking-wide ${
-                      selectedTask.status === 'Completed'
-                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                        : selectedTask.status === 'In Progress'
-                        ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                        : 'bg-slate-100 text-slate-700 border border-slate-300'
-                    }`}
-                  >
-                    {selectedTask.status.toUpperCase()}
-                  </span>
-                </div>
-
-                {/* Job Information */}
-                <Card padding="sm" className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-2.5 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-medium">Customer</span>
-                    <span className="font-bold text-slate-900">{selectedTask.customerName}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-medium">Customer ID</span>
-                    <span className="font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                      {selectedTask.jobId}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-medium">Inward Weight</span>
-                    <span className="font-mono font-bold text-slate-900 flex items-center gap-1">
-                      <Scale className="w-3.5 h-3.5 text-slate-400" />
-                      {Number(selectedTask.inwardWeight).toFixed(3)} kg
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-medium">Assigned Labour</span>
-                    <span className="font-semibold text-slate-800">{selectedTask.labourName}</span>
-                  </div>
-                </Card>
-
-                {/* Timestamps */}
-                <Card padding="sm" className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-medium">Binding Start Date/Time</span>
-                    <span className="font-medium text-slate-800">
-                      {selectedTask.startDate
-                        ? new Date(selectedTask.startDate).toLocaleString([], {
-                            dateStyle: 'medium',
-                            timeStyle: 'short',
-                          })
-                        : 'Awaiting start'}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-medium">Binding End Date/Time</span>
-                    <span className="font-medium text-slate-800">
-                      {selectedTask.endDate
-                        ? new Date(selectedTask.endDate).toLocaleString([], {
-                            dateStyle: 'medium',
-                            timeStyle: 'short',
-                          })
-                        : 'Not completed yet'}
-                    </span>
-                  </div>
-                </Card>
-
-                {/* Tar Usage */}
-                <Card padding="sm" className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1.5 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-medium">Tar Used</span>
-                    <span className="font-bold text-amber-900 font-mono">
-                      {selectedTask.tarUsed > 0 ? `${selectedTask.tarUsed} grams` : '0 grams'}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-slate-400">Tar Unit</span>
-                    <span className="text-slate-600 font-medium">{selectedTask.tarUnit || 'grams'}</span>
-                  </div>
-                </Card>
-
-                {/* Remarks */}
-                {selectedTask.remarks && (
-                  <Card padding="sm" className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1 text-xs">
-                    <span className="text-slate-500 font-medium">Remarks</span>
-                    <p className="text-slate-700 italic">"{selectedTask.remarks}"</p>
-                  </Card>
-                )}
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="p-5 border-t border-slate-200 bg-slate-50">
-              {selectedTask.status === 'Pending' && (
-                <Button variant="primary"
-                  onClick={() => handleStartWork(selectedTask.id)}
-                  className="w-full flex items-center justify-center gap-2"
-                >
-                  <Play className="w-4 h-4 fill-current" />
-                  Start Work
-                </Button>
-              )}
-
-              {selectedTask.status === 'In Progress' && (
-                <Button variant="primary"
-                  onClick={() => setCompleteModalTask(selectedTask)}
-                  className="w-full flex items-center justify-center gap-2"
-                >
-                  <CheckCircle className="w-4 h-4" />
-                  Complete Work
-                </Button>
-              )}
-
-              {selectedTask.status === 'Completed' && (
-                <div className="w-full py-2 text-center text-xs font-bold text-emerald-700 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  Binding Completed & Recorded
-                </div>
-              )}
-            </div>
-          </DialogSurface>
+  return (
+    <div className="space-y-4 font-sans">
+      {/* 1. Header Banner */}
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+        <div>
+          <h2 className="text-sm font-bold text-slate-900">
+            Labour Binding Operations
+          </h2>
+          <p className="text-xs text-slate-500">
+            Pre-electroplating copper wire stringing, fixture assembly, and sealing tar application queue.
+          </p>
         </div>
-      )}
 
-      {/* Complete Modal */}
+        <div className="text-xs text-slate-500 font-semibold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 self-start sm:self-auto">
+          {myBindingTasks.length} Total Binding Tasks
+        </div>
+      </div>
+
+      {/* 2. Unified DataTable */}
+      <DataTable
+        data={filteredTasks}
+        columns={columns}
+        searchPlaceholder="Search binding tasks by Job ID, Customer, or Task ID..."
+        exportFilename="labour_binding_queue"
+        actions={
+          <div className="erp-toolbar-control inline-flex items-center p-1 bg-slate-100 border border-slate-200 shrink-0 gap-1">
+            <button
+              type="button"
+              onClick={() => setStatusFilter('All')}
+              className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                statusFilter === 'All'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              All ({myBindingTasks.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('Pending')}
+              className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                statusFilter === 'Pending'
+                  ? 'bg-white text-amber-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Pending ({myBindingTasks.filter((t) => t.status === 'Pending').length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('In Progress')}
+              className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                statusFilter === 'In Progress'
+                  ? 'bg-white text-indigo-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              In Progress ({myBindingTasks.filter((t) => t.status === 'In Progress').length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('Completed')}
+              className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                statusFilter === 'Completed'
+                  ? 'bg-white text-emerald-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Completed ({myBindingTasks.filter((t) => t.status === 'Completed').length})
+            </button>
+          </div>
+        }
+      />
+
+      {/* Complete Work Modal */}
       {completeModalTask && (
         <CompleteWorkModal
           isOpen={!!completeModalTask}

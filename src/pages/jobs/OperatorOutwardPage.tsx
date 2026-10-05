@@ -188,58 +188,62 @@ export const OperatorOutwardPage: React.FC = () => {
         </Button>
       </div>
 
-      {/* Segmented Queue Filter Tabs */}
-      <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200 self-start w-fit">
-        <button
-          onClick={() => setActiveFilterTab('READY')}
-          className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-            activeFilterTab === 'READY'
-              ? 'bg-white text-slate-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-        >
-          Ready for Outward ({readyJobs.length})
-        </button>
-        <button
-          onClick={() => setActiveFilterTab('FAST_FORWARD')}
-          className={`px-3 py-1 text-xs font-semibold rounded-md transition-all flex items-center gap-1.5 ${
-            activeFilterTab === 'FAST_FORWARD'
-              ? 'bg-white text-amber-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-        >
-          <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
-          Fast Forward ({fastForwardJobs.length})
-        </button>
-        <button
-          onClick={() => setActiveFilterTab('COMPLETED')}
-          className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-            activeFilterTab === 'COMPLETED'
-              ? 'bg-white text-emerald-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-        >
-          Completed Outward ({completedJobs.length})
-        </button>
-        <button
-          onClick={() => setActiveFilterTab('ALL')}
-          className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-            activeFilterTab === 'ALL'
-              ? 'bg-white text-slate-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-        >
-          All Jobs ({jobs.length})
-        </button>
-      </div>
-
-      {/* Unified DataTable */}
+      {/* Unified DataTable with Filter Tabs next to Export */}
       <DataTable
         data={filteredJobs}
         columns={columns}
         onRowClick={(row) => navigate(`/jobs/${row.id}`)}
         searchPlaceholder="Search Outward by Job ID, Customer, Plating..."
         exportFilename="customer_outward_queue"
+        actions={
+          <div className="erp-toolbar-control inline-flex items-center p-1 bg-slate-100 border border-slate-200 shrink-0 gap-1">
+            <button
+              type="button"
+              onClick={() => setActiveFilterTab('READY')}
+              className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                activeFilterTab === 'READY'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Ready for Outward ({readyJobs.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveFilterTab('FAST_FORWARD')}
+              className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                activeFilterTab === 'FAST_FORWARD'
+                  ? 'bg-white text-amber-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
+              Fast Forward ({fastForwardJobs.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveFilterTab('COMPLETED')}
+              className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                activeFilterTab === 'COMPLETED'
+                  ? 'bg-white text-emerald-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Completed Outward ({completedJobs.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveFilterTab('ALL')}
+              className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                activeFilterTab === 'ALL'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              All Jobs ({jobs.length})
+            </button>
+          </div>
+        }
       />
     </div>
   );

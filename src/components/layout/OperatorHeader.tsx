@@ -172,7 +172,7 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
   const pageInfo = getPageInfo();
 
   return (
-    <header className="erp-header h-15 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 flex items-center justify-between z-20 shrink-0 font-sans sticky top-0">
+    <header className="erp-header h-15 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 flex items-center justify-between z-20 shrink-0 sticky top-0">
       {/* Left: Sidebar Toggle + Title & Breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0 mr-2">
         <Button variant="secondary" size="icon"
@@ -236,23 +236,13 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
           onClick={() => setIsSearchModalOpen(true)}
           aria-label="Search records"
           className="erp-header-search flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap"
-          title="Search Job IDs (Cmd+K)"
+          title="Search jobs, bills (Cmd+K)"
         >
           <Search className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-slate-500">Search Job ID / Cust...</span>
+          <span className="text-slate-500">Search jobs, bills...</span>
           <kbd className="font-mono text-[10px] bg-slate-200/80 text-slate-700 px-1.5 py-0.5 rounded font-semibold border border-slate-300/60">
             ⌘K
           </kbd>
-        </Button>
-
-        {/* Direct Inward Quick Action Button */}
-        <Button variant="primary"
-          type="button"
-          onClick={() => navigate('/inward/new')}
-          className="inline-flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap active:scale-[0.98]"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>New Inward</span>
         </Button>
 
         {/* Operational Notifications */}
@@ -261,11 +251,11 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
             type="button"
             onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
             className="relative transition-colors cursor-pointer"
-            title="Operational Alerts"
+            title="Alerts & Notifications"
           >
             <Bell className="w-4 h-4" />
             {unreadAlertsCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-600 ring-2 ring-white"></span>
             )}
           </Button>
           <NotificationsPopover
@@ -285,15 +275,15 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
             className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors text-left cursor-pointer"
             aria-label="Operator Profile Menu"
           >
-            <div className="w-8 h-8 rounded-full bg-sky-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+            <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
               RP
             </div>
             <div className="hidden md:flex flex-col min-w-0 pr-0.5">
               <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">
                 {currentUser?.name || 'Ramesh Patel'}
               </span>
-              <span className="text-[11px] text-sky-700 font-semibold leading-tight flex items-center gap-1 mt-0.5">
-                <HardHat className="w-3 h-3 text-sky-600" /> Operator
+              <span className="text-[11px] text-emerald-700 font-semibold leading-tight flex items-center gap-1 mt-0.5">
+                <HardHat className="w-3 h-3 text-emerald-600" /> Operator
               </span>
             </div>
             <ChevronDown className="w-4 h-4 text-slate-500 hidden sm:block" />
@@ -305,8 +295,8 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
               <div className="px-4 py-3 border-b border-slate-100">
                 <p className="text-sm font-bold text-slate-900 leading-snug">{currentUser?.name || 'Ramesh Patel'}</p>
                 <p className="text-xs text-slate-600 font-medium mt-0.5 break-all">{currentUser?.email || 'ramesh.operator@platingerp.in'}</p>
-                <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-sky-50 text-sky-800 text-xs font-semibold border border-sky-200">
-                  <HardHat className="w-3.5 h-3.5 text-sky-600 shrink-0" /> Factory Floor Operator
+                <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+                  <HardHat className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Factory Floor Operator
                 </div>
               </div>
 

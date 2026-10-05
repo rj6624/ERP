@@ -117,7 +117,7 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ collapsed, setCollap
   const { title, subtitle, crumbs } = getPageInfo();
 
   return (
-    <header className="erp-header h-15 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 flex items-center justify-between z-20 shrink-0 sticky top-0 font-sans">
+    <header className="erp-header h-15 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 flex items-center justify-between z-20 shrink-0 sticky top-0">
       {/* Left: Sidebar Toggle + Title & Breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0 mr-2">
         <Button variant="secondary" size="icon"
@@ -172,35 +172,35 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ collapsed, setCollap
         </div>
       </div>
 
-      {/* Right Actions: Shift Indicator, Search, Notifications, Role Switcher, Profile */}
+      {/* Right Actions */}
       <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
 
-        {/* Search Job ID */}
+        {/* Global Search Button */}
         <Button variant="secondary"
           type="button"
           onClick={() => setIsSearchModalOpen(true)}
           aria-label="Search records"
           className="erp-header-search flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap"
-          title="Search Assigned Job ID or Customer"
+          title="Search jobs, bills (Cmd+K)"
         >
           <Search className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-slate-500">Search work...</span>
+          <span className="text-slate-500">Search jobs, bills...</span>
           <kbd className="font-mono text-[10px] bg-slate-200/80 text-slate-700 px-1.5 py-0.5 rounded font-semibold border border-slate-300/60">
             ⌘K
           </kbd>
         </Button>
 
-        {/* Notifications */}
+        {/* Operational Notifications */}
         <div className="relative">
           <Button variant="secondary" size="icon"
             type="button"
             onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
             className="relative transition-colors cursor-pointer"
-            title="Operational Alerts"
+            title="Alerts & Notifications"
           >
             <Bell className="w-4 h-4" />
             {unreadAlertsCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-600 ring-2 ring-white"></span>
             )}
           </Button>
           <NotificationsPopover
@@ -220,15 +220,15 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ collapsed, setCollap
             className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors text-left cursor-pointer"
             aria-label="Labour Profile Menu"
           >
-            <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+            <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
               SP
             </div>
             <div className="hidden md:flex flex-col min-w-0 pr-0.5">
               <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">
                 {currentUser?.name || 'Suresh Parmar'}
               </span>
-              <span className="text-[11px] text-amber-700 font-semibold leading-tight flex items-center gap-1 mt-0.5">
-                <Hammer className="w-3 h-3 text-amber-600" /> Artisan
+              <span className="text-[11px] text-emerald-700 font-semibold leading-tight flex items-center gap-1 mt-0.5">
+                <Hammer className="w-3 h-3 text-emerald-600" /> Artisan
               </span>
             </div>
             <ChevronDown className="w-4 h-4 text-slate-500 hidden sm:block" />
@@ -240,8 +240,8 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ collapsed, setCollap
               <div className="px-4 py-3 border-b border-slate-100">
                 <p className="text-sm font-bold text-slate-900 leading-snug">{currentUser?.name || 'Suresh Parmar'}</p>
                 <p className="text-xs text-slate-600 font-medium mt-0.5 break-all">{currentUser?.email || 'suresh.labour@platingerp.in'}</p>
-                <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 text-xs font-semibold border border-amber-200">
-                  <Hammer className="w-3.5 h-3.5 text-amber-600 shrink-0" /> Artisan Bench #4 • Station 03
+                <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+                  <Hammer className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Artisan Bench #4 • Station 03
                 </div>
               </div>
 

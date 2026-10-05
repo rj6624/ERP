@@ -66,12 +66,99 @@ body { background: var(--erp-canvas); color: var(--erp-ink); letter-spacing: 0; 
 .erp-sidebar span.text-emerald-300 { color: #081c05; background: #edf5ec; }
 .erp-sidebar > :last-child .bg-slate-900 { background: white; border-color: var(--erp-border); }
 .erp-sidebar > :last-child [class*="bg-emerald-950"] { background: #edf5ec; border-color: #c4dac0; }
-.erp-sidebar .animate-pulse { animation: none; }
-.erp-sidebar ::-webkit-scrollbar-track { background: transparent; }
-.erp-sidebar ::-webkit-scrollbar-thumb { background: #dde5e7; }
-.erp-sidebar.w-16 > :first-child { padding-inline: 15px; }
-.erp-sidebar.w-16 > .overflow-y-auto { padding-inline: 7px; }
-.erp-sidebar.w-16 > :last-child { padding-inline: 17px; }
+/* Sidebar scrollbar: hidden by default, visible only on hover */
+.erp-sidebar > .overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+.erp-sidebar:hover > .overflow-y-auto {
+  scrollbar-color: #cbd5e1 transparent;
+}
+.erp-sidebar ::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.erp-sidebar ::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+.erp-sidebar ::-webkit-scrollbar-thumb {
+  background: transparent !important;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+.erp-sidebar:hover ::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+}
+.erp-sidebar:hover ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8 !important;
+}
+
+.erp-sidebar.w-16 {
+  width: 64px !important;
+}
+.erp-sidebar.w-16 > :first-child {
+  padding-inline: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+.erp-sidebar.w-16 > :first-child > div {
+  margin-inline: auto !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+.erp-sidebar.w-16 > .overflow-y-auto {
+  padding-inline: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+.erp-sidebar.w-16 > .overflow-y-auto > div,
+.erp-sidebar.w-16 > .overflow-y-auto .space-y-0\.5,
+.erp-sidebar.w-16 > .overflow-y-auto .space-y-1 {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+.erp-sidebar.w-16 button[title] {
+  width: 44px !important;
+  min-width: 44px !important;
+  max-width: 44px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding: 0 !important;
+  margin-inline: auto !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+.erp-sidebar.w-16 button[title] > div {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  gap: 0 !important;
+}
+.erp-sidebar.w-16 button[title] svg {
+  margin: auto !important;
+  display: block !important;
+}
+.erp-sidebar.w-16 > :last-child {
+  padding-inline: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+.erp-sidebar.w-16 > :last-child > div {
+  margin-inline: auto !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
 
 /* Header keeps the existing search, actions, roles and account controls. */
 .erp-header { min-height: 82px; height: 82px; background: #fff; border-color: var(--erp-border); gap: 16px; padding-inline: 24px; }

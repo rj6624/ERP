@@ -222,8 +222,10 @@ export function DataTable<T extends { id?: string | number }>({
           )}
         </div>
 
-        {/* Right End: Export, Actions, and View Switcher */}
-        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+        {/* Right End: Actions, Export, and View Switcher */}
+        <div className="flex flex-wrap items-center gap-2 self-end sm:self-auto shrink-0">
+          {actions}
+
           {/* CSV Export */}
           <Button
             variant="secondary"
@@ -235,8 +237,6 @@ export function DataTable<T extends { id?: string | number }>({
             <Download className="w-3.5 h-3.5 text-slate-500" />
             <span>Export</span>
           </Button>
-
-          {actions}
 
           {/* Reference-Styled Icon Segmented View Switcher Pill */}
           {showViewToggle && (

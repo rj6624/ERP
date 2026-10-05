@@ -437,58 +437,11 @@ export const OperatorDashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. Live Work Queue Table with Clean Filter Tabs */}
-      <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-            Live Station Work Queue
-          </h3>
-
-          {/* Segmented Tab Filter */}
-          <div className="erp-nav-tabs flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                activeTab === 'all'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              All Jobs ({jobs.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('ff')}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all flex items-center gap-1.5 ${
-                activeTab === 'ff'
-                  ? 'bg-white text-amber-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
-              Fast Forward ({fastForwardJobs.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('ready')}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                activeTab === 'ready'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Active Intake ({readyForOutwardJobs.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('completed')}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                activeTab === 'completed'
-                  ? 'bg-white text-emerald-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Completed ({jobs.filter((j) => j.status === 'Outward Completed').length})
-            </button>
-          </div>
-        </div>
+      {/* 4. Live Work Queue Table with Filter Tabs next to Export */}
+      <div className="space-y-2">
+        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+          Live Station Work Queue
+        </h3>
 
         {/* Unified DataTable */}
         <DataTable
@@ -497,6 +450,55 @@ export const OperatorDashboardPage: React.FC = () => {
           onRowClick={(row) => navigate(`/jobs/${row.id}`)}
           searchPlaceholder="Search jobs by Job ID, Customer, Plating type..."
           exportFilename="operator_work_queue"
+          actions={
+            <div className="erp-toolbar-control inline-flex items-center p-1 bg-slate-100 border border-slate-200 shrink-0 gap-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab('all')}
+                className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                  activeTab === 'all'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                All Jobs ({jobs.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('ff')}
+                className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  activeTab === 'ff'
+                    ? 'bg-white text-amber-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
+                Fast Forward ({fastForwardJobs.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('ready')}
+                className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                  activeTab === 'ready'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Active Intake ({readyForOutwardJobs.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('completed')}
+                className={`h-7 px-2.5 text-xs font-semibold rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer flex items-center justify-center ${
+                  activeTab === 'completed'
+                    ? 'bg-white text-emerald-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Completed ({jobs.filter((j) => j.status === 'Outward Completed').length})
+              </button>
+            </div>
+          }
         />
       </div>
 

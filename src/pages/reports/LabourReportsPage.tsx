@@ -1,30 +1,53 @@
-import { Button, Card, Input, TabButton } from '../../components/ui/Primitives';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useERP } from '../../context/ERPContext';
+import { Button, TabButton } from '../../components/ui/Primitives';
+import { DataTable, ColumnDef } from '../../components/common/DataTable';
+import { StatusBadge } from '../../components/common/StatusBadge';
+import { formatWeight, formatDateTime } from '../../utils/formatters';
+import { exportToCSV, triggerPrint } from '../../utils/exportUtils';
 import {
   FileText,
   Clock,
   CheckCircle2,
-  Calendar,
   Layers,
   Sparkles,
-  Search,
-  Filter,
-  X,
-  Scale,
+  Download,
+  Printer,
+  Hammer,
 } from 'lucide-react';
+
+type LabourReportType = 'HISTORY' | 'PENDING' | 'COMPLETED' | 'TAR_USAGE';
+
+interface UnifiedTask {
+  id: string;
+  jobId: string;
+  customerName: string;
+  workType: 'Binding' | 'Open';
+  weight: number;
+  startDate?: string;
+  endDate?: string;
+  status: 'Pending' | 'In Progress' | 'Completed';
+  tarUsed: number;
+  remarks?: string;
+  createdAt?: string;
+}
 
 export const LabourReportsPage: React.FC = () => {
   const {
     labourBindingTasks,
     labourOpenTasks,
     currentUser,
+    navigateToJob,
   } = useERP();
 
-  // Tab: 'Pending' | 'Completed' | 'History'
-  const [activeReportTab, setActiveReportTab] = useState<'Pending' | 'Completed' | 'History'>('History');
-  const [workTypeFilter, setWorkTypeFilter] = useState<'All' | 'Binding' | 'Open'>('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeReportTab, setActiveReportTab] = useState<LabourReportType>('HISTORY');
+
+  const reportTabs = [
+    { key: 'HISTORY' as const, label: 'All Work History', icon: FileText },
+    { key: 'PENDING' as const, label: 'Pending Operations', icon: Clock },
+    { key: 'COMPLETED' as const, label: 'Completed Batches', icon: CheckCircle2 },
+    { key: 'TAR_USAGE' as const, label: 'Tar & Clean Ledger', icon: Hammer },
+  ];
 
   const isMyTask = (labourName: string) => {
     if (!currentUser?.name) return true;
@@ -34,7 +57,7 @@ export const LabourReportsPage: React.FC = () => {
   const myBindingTasks = labourBindingTasks.filter((t) => isMyTask(t.labourName));
   const myOpenTasks = labourOpenTasks.filter((t) => isMyTask(t.labourName));
 
-  const allTasks = [
+  const allTasks: UnifiedTask[] = useMemo(() => [
     ...myBindingTasks.map((t) => ({
       id: t.id,
       jobId: t.jobId,
@@ -46,7 +69,7 @@ export const LabourReportsPage: React.FC = () => {
       status: t.status,
       tarUsed: t.tarUsed,
       remarks: t.remarks,
-      createdAt: t.createdAt,
+      createdAt: t.startDate,
     })),
     ...myOpenTasks.map((t) => ({
       id: t.id,
@@ -59,212 +82,267 @@ export const LabourReportsPage: React.FC = () => {
       status: t.status,
       tarUsed: t.tarUsed,
       remarks: t.remarks,
-      createdAt: t.createdAt,
+      createdAt: t.startDate,
     })),
+  ], [myBindingTasks, myOpenTasks]);
+
+  const reportRows = useMemo(() => {
+    if (activeReportTab === 'PENDING') {
+      return allTasks.filter((t) => t.status === 'Pending' || t.status === 'In Progress');
+    }
+    if (activeReportTab === 'COMPLETED') {
+      return allTasks.filter((t) => t.status === 'Completed');
+    }
+    if (activeReportTab === 'TAR_USAGE') {
+      return allTasks.filter((t) => t.tarUsed > 0);
+    }
+    return allTasks;
+  }, [allTasks, activeReportTab]);
+
+  const totalGrossWeight = useMemo(
+    () => reportRows.reduce((acc, r) => acc + (r.weight || 0), 0),
+    [reportRows]
+  );
+  const totalTarConsumed = useMemo(
+    () => reportRows.reduce((acc, r) => acc + (r.tarUsed || 0), 0),
+    [reportRows]
+  );
+  const totalCompletedCount = useMemo(
+    () => allTasks.filter((t) => t.status === 'Completed').length,
+    [allTasks]
+  );
+
+  const reportMetadata = useMemo(() => {
+    switch (activeReportTab) {
+      case 'PENDING':
+        return {
+          title: 'PENDING ARTISAN OPERATIONS QUEUE AUDIT',
+          subtitle: 'Active silver jewellery batches awaiting wire binding or post-plating unbinding',
+        };
+      case 'COMPLETED':
+        return {
+          title: 'COMPLETED LABOUR BATCHES REPORT',
+          subtitle: 'Historical verified labour work completed on artisan bench',
+        };
+      case 'TAR_USAGE':
+        return {
+          title: 'SEALING TAR & CLEANING CONSUMPTION LEDGER',
+          subtitle: 'Material tracking for sealing tar application and untying residue cleaning',
+        };
+      case 'HISTORY':
+      default:
+        return {
+          title: 'COMPLETE ARTISAN WORK HISTORY REPORT',
+          subtitle: 'Full operational ledger of all silver jewellery tasks assigned to your bench',
+        };
+    }
+  }, [activeReportTab]);
+
+  const handleExportCSV = () => {
+    const headers = [
+      'Task ID',
+      'Job ID',
+      'Customer',
+      'Work Type',
+      'Weight (kg)',
+      'Tar Used (g)',
+      'Status',
+      'Start Time',
+      'End Time',
+    ];
+    const rows = reportRows.map((t) => [
+      t.id,
+      t.jobId,
+      t.customerName,
+      t.workType,
+      t.weight.toFixed(3),
+      t.tarUsed ? `${t.tarUsed} g` : '-',
+      t.status,
+      t.startDate ? formatDateTime(t.startDate) : '-',
+      t.endDate ? formatDateTime(t.endDate) : '-',
+    ]);
+    exportToCSV(`labour_report_${activeReportTab.toLowerCase()}`, headers, rows);
+  };
+
+  const columns: ColumnDef<UnifiedTask>[] = [
+    {
+      header: 'Task ID',
+      accessorKey: 'id',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-mono font-bold text-xs bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded">
+          {row.id}
+        </span>
+      ),
+    },
+    {
+      header: 'Job ID',
+      accessorKey: 'jobId',
+      sortable: true,
+      cell: (row) => (
+        <span
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateToJob(row.jobId);
+          }}
+          className="font-mono font-bold text-xs bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded hover:text-emerald-700 cursor-pointer"
+        >
+          {row.jobId}
+        </span>
+      ),
+    },
+    {
+      header: 'Customer',
+      accessorKey: 'customerName',
+      sortable: true,
+      cell: (row) => <span className="font-semibold text-xs text-slate-800">{row.customerName}</span>,
+    },
+    {
+      header: 'Work Type',
+      accessorKey: 'workType',
+      sortable: true,
+      cell: (row) => (
+        <span
+          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-2xs font-bold ${
+            row.workType === 'Binding'
+              ? 'bg-amber-50 text-amber-800 border border-amber-200'
+              : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+          }`}
+        >
+          {row.workType === 'Binding' ? <Layers className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
+          {row.workType}
+        </span>
+      ),
+    },
+    {
+      header: 'Weight',
+      accessorKey: 'weight',
+      sortable: true,
+      align: 'right',
+      cell: (row) => (
+        <span className="font-mono text-xs font-bold text-slate-900">
+          {formatWeight(row.weight)}
+        </span>
+      ),
+    },
+    {
+      header: 'Tar Used',
+      accessorKey: 'tarUsed',
+      sortable: true,
+      align: 'right',
+      cell: (row) => (
+        <span className="font-mono text-xs font-bold text-amber-900">
+          {row.tarUsed > 0 ? `${row.tarUsed} g` : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+      sortable: true,
+      cell: (row) => <StatusBadge type="labour" value={row.status} size="sm" />,
+    },
+    {
+      header: 'Start Date & Time',
+      accessorKey: 'startDate',
+      sortable: true,
+      cell: (row) => (
+        <span className="text-2xs text-slate-600">
+          {row.startDate ? formatDateTime(row.startDate) : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'End Date & Time',
+      accessorKey: 'endDate',
+      sortable: true,
+      cell: (row) => (
+        <span className="text-2xs text-slate-600">
+          {row.endDate ? formatDateTime(row.endDate) : '—'}
+        </span>
+      ),
+    },
   ];
 
-  const filteredTasks = allTasks.filter((task) => {
-    // Tab Filter
-    if (activeReportTab === 'Pending' && task.status !== 'Pending') return false;
-    if (activeReportTab === 'Completed' && task.status !== 'Completed') return false;
-
-    // Work Type Filter
-    if (workTypeFilter !== 'All' && task.workType !== workTypeFilter) return false;
-
-    // Search Query
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      const matchId = task.jobId.toLowerCase().includes(q);
-      const matchCust = task.customerName.toLowerCase().includes(q);
-      if (!matchId && !matchCust) return false;
-    }
-    return true;
-  });
-
-  const pendingCount = allTasks.filter((t) => t.status === 'Pending').length;
-  const completedCount = allTasks.filter((t) => t.status === 'Completed').length;
-
   return (
-    <div className="space-y-5 font-sans">
-      {/* Header */}
-      <Card padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+    <div className="space-y-4 font-sans">
+      {/* 1. Header Banner */}
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <h1 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-amber-600" />
-            Labour Work Reports
-          </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Operational summaries of your pending jobs, completed batches, and full work history.
+          <h2 className="text-sm font-bold text-slate-900">
+            Artisan Work Reports Center
+          </h2>
+          <p className="text-xs text-slate-500">
+            Operational summaries of your pending tasks, completed batches, and tar material consumption.
           </p>
         </div>
 
-        {/* Report Sub-Tabs */}
-        <div className="ds-tabs min-w-0" role="group" aria-label="Work report views">
-          <TabButton active={activeReportTab === 'History'}
-            onClick={() => setActiveReportTab('History')}
-            className=""
-          >
-            My Work History ({allTasks.length})
-          </TabButton>
-          <TabButton active={activeReportTab === 'Pending'}
-            onClick={() => setActiveReportTab('Pending')}
-            className=""
-          >
-            <Clock className="w-3.5 h-3.5" />
-            My Pending Work ({pendingCount})
-          </TabButton>
-          <TabButton active={activeReportTab === 'Completed'}
-            onClick={() => setActiveReportTab('Completed')}
-            className=""
-          >
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            My Completed Work ({completedCount})
-          </TabButton>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button variant="secondary" onClick={handleExportCSV} className="inline-flex items-center gap-1.5">
+            <Download className="w-3.5 h-3.5 text-slate-500" /> Export CSV
+          </Button>
+          <Button variant="secondary" onClick={triggerPrint} className="inline-flex items-center gap-1.5">
+            <Printer className="w-3.5 h-3.5 text-slate-500" /> Print
+          </Button>
         </div>
-      </Card>
+      </div>
 
-      {/* Filter and Search Bar */}
-      <Card padding="sm" className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
-          <Input
-            type="text"
-            placeholder="Search report by Customer ID or Customer Name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 ds-control-leading"
-          />
-          {searchQuery && (
-            <Button variant="ghost" size="icon"
-              onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-2" aria-label="Clear search"
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          )}
-        </div>
+      {/* 2. Operational Categories Selector */}
+      <div className="ds-tabs" role="group" aria-label="Labour report categories">
+        {reportTabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeReportTab === tab.key;
 
-        <div className="flex items-center gap-2">
-          <span className="text-slate-400 font-semibold mr-1 flex items-center gap-1">
-            <Filter className="w-3 h-3" /> Operation:
-          </span>
-          {(['All', 'Binding', 'Open'] as const).map((type) => (
-            <TabButton active={workTypeFilter === type}
-              key={type}
-              onClick={() => setWorkTypeFilter(type)}
-              className=""
+          return (
+            <TabButton
+              active={isActive}
+              key={tab.key}
+              onClick={() => setActiveReportTab(tab.key)}
             >
-              {type}
+              <Icon className="w-4 h-4 shrink-0" />
+              <span>{tab.label}</span>
             </TabButton>
-          ))}
+          );
+        })}
+      </div>
+
+      {/* 3. Operational KPI Rollup Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+        <div className="erp-light-panel erp-card bg-slate-900 text-white p-3.5">
+          <span className="text-[11px] text-slate-400 font-medium">Total Processed Gross Weight</span>
+          <p className="font-mono text-xl font-bold text-white mt-0.5">{formatWeight(totalGrossWeight)}</p>
+          <span className="text-2xs text-slate-400">Filtered batch records</span>
         </div>
-      </Card>
 
-      {/* Report Table */}
-      <Card padding="none" className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        {filteredTasks.length === 0 ? (
-          <div className="p-12 text-center text-slate-400 text-xs space-y-2">
-            <FileText className="w-10 h-10 mx-auto text-slate-300" />
-            <p className="font-semibold text-slate-600">No report records found</p>
-            <p className="text-slate-400">There are no jobs matching the selected report filters.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th className="py-3 px-4">Customer</th>
-                  <th className="py-3 px-4">Customer ID</th>
-                  <th className="py-3 px-4">Work Type</th>
-                  <th className="py-3 px-4 text-right">Weight</th>
-                  <th className="py-3 px-4">Start Time</th>
-                  <th className="py-3 px-4">End Time</th>
-                  <th className="py-3 px-4">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
-                {filteredTasks.map((task) => (
-                  <tr key={task.id} className="hover:bg-slate-50/70 transition-colors">
-                    {/* Customer */}
-                    <td className="py-3 px-4 font-bold text-slate-900">
-                      {task.customerName}
-                    </td>
+        <div className="erp-light-panel erp-card bg-slate-900 text-white p-3.5">
+          <span className="text-[11px] text-slate-400 font-medium">Total Sealing Tar Used</span>
+          <p className="font-mono text-xl font-bold text-amber-400 mt-0.5">{totalTarConsumed} g</p>
+          <span className="text-2xs text-amber-400/80">Consumed or cleaned</span>
+        </div>
 
-                    {/* Customer ID */}
-                    <td className="py-3 px-4 font-mono font-bold text-blue-700">
-                      <span className="bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60">
-                        {task.jobId}
-                      </span>
-                    </td>
+        <div className="erp-light-panel erp-card bg-slate-900 text-white p-3.5">
+          <span className="text-[11px] text-slate-400 font-medium">Completed Batches</span>
+          <p className="font-mono text-xl font-bold text-emerald-400 mt-0.5">{totalCompletedCount} Tasks</p>
+          <span className="text-2xs text-emerald-400/80">Done & verified</span>
+        </div>
 
-                    {/* Work Type */}
-                    <td className="py-3 px-4">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          task.workType === 'Binding'
-                            ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                            : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                        }`}
-                      >
-                        {task.workType === 'Binding' ? <Layers className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
-                        {task.workType} Work
-                      </span>
-                    </td>
+        <div className="erp-light-panel erp-card bg-slate-900 text-white p-3.5">
+          <span className="text-[11px] text-slate-400 font-medium">Tasks in Current View</span>
+          <p className="font-mono text-xl font-bold text-blue-400 mt-0.5">{reportRows.length} Tasks</p>
+          <span className="text-2xs text-blue-400/80">In selected filter tab</span>
+        </div>
+      </div>
 
-                    {/* Weight (strictly 3 decimals, kg unit) */}
-                    <td className="py-3 px-4 font-mono font-bold text-slate-900 text-right whitespace-nowrap">
-                      {Number(task.weight).toFixed(3)} kg
-                    </td>
-
-                    {/* Start Time */}
-                    <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
-                      {task.startDate ? (
-                        <span>
-                          {new Date(task.startDate).toLocaleDateString([], { day: '2-digit', month: 'short' })}{' '}
-                          <span className="text-slate-400 font-mono">
-                            {new Date(task.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </span>
-                      ) : (
-                        <span className="text-slate-400">—</span>
-                      )}
-                    </td>
-
-                    {/* End Time */}
-                    <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
-                      {task.endDate ? (
-                        <span>
-                          {new Date(task.endDate).toLocaleDateString([], { day: '2-digit', month: 'short' })}{' '}
-                          <span className="text-slate-400 font-mono">
-                            {new Date(task.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </span>
-                      ) : (
-                        <span className="text-slate-400">—</span>
-                      )}
-                    </td>
-
-                    {/* Status */}
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          task.status === 'Completed'
-                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                            : task.status === 'In Progress'
-                            ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
-                            : 'bg-slate-100 text-slate-700 border border-slate-200'
-                        }`}
-                      >
-                        {task.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      {/* 4. Unified DataTable */}
+      <DataTable
+        data={reportRows}
+        columns={columns}
+        onRowClick={(row) => navigateToJob(row.jobId)}
+        title={reportMetadata.title}
+        subtitle={reportMetadata.subtitle}
+        searchPlaceholder="Search report tasks by Job ID, Customer, or Task ID..."
+        exportFilename={`labour_report_${activeReportTab.toLowerCase()}`}
+      />
     </div>
   );
 };

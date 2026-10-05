@@ -1,15 +1,19 @@
 import React, { useState, useMemo } from 'react';
 import { useERP } from '../../context/ERPContext';
+import { Button, TabButton } from '../../components/ui/Primitives';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { JewelleryJob } from '../../types/erp';
 import { formatWeight, formatPlating, formatDate } from '../../utils/formatters';
+import { exportToCSV, triggerPrint } from '../../utils/exportUtils';
 import {
   Clock,
   ArrowDownLeft,
   ArrowUpRight,
   Zap,
   Scale,
+  Download,
+  Printer,
 } from 'lucide-react';
 
 type OperatorReportType =
@@ -67,6 +71,65 @@ export const OperatorReportsPage: React.FC = () => {
     const sum = withPlating.reduce((acc, r) => acc + (r.platingPerKg || 0), 0);
     return sum / withPlating.length;
   }, [reportRows]);
+
+  const reportMetadata = useMemo(() => {
+    switch (activeReport) {
+      case 'TODAY_INWARD':
+        return {
+          title: "TODAY'S INWARD JEWELLERY INTAKE REPORT",
+          subtitle: 'All intake batches verified on digital scale console with customer records',
+        };
+      case 'TODAY_OUTWARD':
+        return {
+          title: "TODAY'S OUTWARD DISPATCH AUDIT REPORT",
+          subtitle: 'Completed finished jewellery dispatches with final verified outward weights',
+        };
+      case 'PENDING_JOBS':
+        return {
+          title: 'PENDING PLANT MANUFACTURING JOBS AUDIT',
+          subtitle: 'Active floor jobs currently undergoing electroplating or labour unbinding',
+        };
+      case 'FAST_FORWARD':
+        return {
+          title: 'FAST FORWARD PRIORITY ORDER QUEUE',
+          subtitle: 'Urgent turnaround jewellery orders expedited for same-day delivery',
+        };
+      case 'WEIGHT_REPORT':
+      default:
+        return {
+          title: 'JEWELLERY WEIGHT PRECISION & PLATING PER KG AUDIT',
+          subtitle: 'Strict 3-decimal precision weight tracking and calculated plating concentrations',
+        };
+    }
+  }, [activeReport]);
+
+  const handleExportCSV = () => {
+    const headers = [
+      'Job ID',
+      'Customer',
+      'Plating Type',
+      'Inward Weight (kg)',
+      'Outward Weight (kg)',
+      'Difference (kg)',
+      'Plating per KG (g/kg)',
+      'Inward Date',
+      'Priority',
+      'Status',
+    ];
+    const rows = reportRows.map((j) => [
+      j.id,
+      j.customerName,
+      j.platingType,
+      j.inwardWeight.toFixed(3),
+      j.outwardWeight ? j.outwardWeight.toFixed(3) : '-',
+      j.outwardWeight ? (j.outwardWeight - j.inwardWeight).toFixed(3) : '-',
+      j.platingPerKg ? j.platingPerKg.toFixed(3) : '-',
+      j.inwardDate,
+      j.priority,
+      j.status,
+    ]);
+    exportToCSV(`operator_report_${activeReport.toLowerCase()}`, headers, rows);
+  };
 
   const columns: ColumnDef<JewelleryJob>[] = [
     {
@@ -166,71 +229,81 @@ export const OperatorReportsPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-4">
-      {/* Header Banner */}
+    <div className="space-y-4 font-sans">
+      {/* 1. Header Banner */}
       <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-sm font-bold text-slate-900">
-            Operational Daily Reports
+            Operational Reports Center
           </h2>
           <p className="text-xs text-slate-500">
-            Operational verification ledgers: jewellery intake, dispatches, scale weights & plating rates.
+            Real-time operational manufacturing data: jewellery intake, dispatches, scale weights & plating rates.
           </p>
         </div>
 
-        <div className="text-xs text-slate-500 font-semibold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 self-start sm:self-auto">
-          Showing {reportRows.length} Operational Records
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button variant="secondary" onClick={handleExportCSV} className="inline-flex items-center gap-1.5">
+            <Download className="w-3.5 h-3.5 text-slate-500" /> Export CSV
+          </Button>
+          <Button variant="secondary" onClick={triggerPrint} className="inline-flex items-center gap-1.5">
+            <Printer className="w-3.5 h-3.5 text-slate-500" /> Print
+          </Button>
         </div>
       </div>
 
-      {/* Report Segmented Filter Tabs */}
-      <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200 self-start flex-wrap">
+      {/* 2. Operational Categories Selector */}
+      <div className="ds-tabs" role="group" aria-label="Operational report categories">
         {reportTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeReport === tab.key;
 
           return (
-            <button
+            <TabButton
+              active={isActive}
               key={tab.key}
               onClick={() => setActiveReport(tab.key)}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all flex items-center gap-1.5 ${
-                isActive
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
             >
-              <Icon className="w-3.5 h-3.5 text-slate-500" />
+              <Icon className="w-4 h-4 shrink-0" />
               <span>{tab.label}</span>
-            </button>
+            </TabButton>
           );
         })}
       </div>
 
-      {/* Clean Summary KPI Bar */}
-      <div className="bg-white rounded-lg p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 border border-slate-200 shadow-sm">
-        <div className="p-2.5 rounded bg-slate-50 border border-slate-100">
-          <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Total Inward Weight</span>
-          <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">{formatWeight(totalInwardKg)}</span>
+      {/* 3. Operational KPI Rollup Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+        <div className="erp-light-panel erp-card bg-slate-900 text-white p-3.5">
+          <span className="text-[11px] text-slate-400 font-medium">Total Inward Jewellery Intake</span>
+          <p className="font-mono text-xl font-bold text-white mt-0.5">{formatWeight(totalInwardKg)}</p>
+          <span className="text-2xs text-slate-400">All registered intake batches</span>
         </div>
-        <div className="p-2.5 rounded bg-slate-50 border border-slate-100">
-          <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Total Outward Weight</span>
-          <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">{formatWeight(totalOutwardKg)}</span>
+
+        <div className="erp-light-panel erp-card bg-slate-900 text-white p-3.5">
+          <span className="text-[11px] text-slate-400 font-medium">Total Outward Jewellery Dispatched</span>
+          <p className="font-mono text-xl font-bold text-emerald-400 mt-0.5">{formatWeight(totalOutwardKg)}</p>
+          <span className="text-2xs text-emerald-400/80">Completed verified dispatches</span>
         </div>
-        <div className="p-2.5 rounded bg-slate-50 border border-slate-100">
-          <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Average Plating</span>
-          <span className="text-base font-bold font-mono text-purple-700 mt-0.5 block">{formatPlating(avgPlating)}</span>
+
+        <div className="erp-light-panel erp-card bg-slate-900 text-white p-3.5">
+          <span className="text-[11px] text-slate-400 font-medium">Average Plating Concentration</span>
+          <p className="font-mono text-xl font-bold text-purple-400 mt-0.5">{formatPlating(avgPlating)}</p>
+          <span className="text-2xs text-purple-400/80">Across recorded jobs</span>
         </div>
-        <div className="p-2.5 rounded bg-slate-50 border border-slate-100">
-          <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Record Count</span>
-          <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">{reportRows.length} Jobs</span>
+
+        <div className="erp-light-panel erp-card bg-slate-900 text-white p-3.5">
+          <span className="text-[11px] text-slate-400 font-medium">Total Record Count</span>
+          <p className="font-mono text-xl font-bold text-blue-400 mt-0.5">{reportRows.length} Jobs</p>
+          <span className="text-2xs text-blue-400/80">In current report filter</span>
         </div>
       </div>
 
-      {/* Unified DataTable */}
+      {/* 4. Unified DataTable */}
       <DataTable
         data={reportRows}
         columns={columns}
         onRowClick={(row) => navigateToJob(row.id)}
+        title={reportMetadata.title}
+        subtitle={reportMetadata.subtitle}
         searchPlaceholder="Search operational report records..."
         exportFilename={`operator_report_${activeReport.toLowerCase()}`}
       />

@@ -1,6 +1,6 @@
 import { Button } from '../ui/Primitives';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
 import { NavigationPage } from '../../types/navigation';
 import {
@@ -15,15 +15,15 @@ import {
   Box,
   FlaskConical,
   Flame,
-  Shield,
+  ShieldCheck,
+  FileText,
   BarChart3,
   Bell,
   ChevronDown,
   ChevronRight,
   Sparkles,
   Scale,
-  Briefcase,
-  FileSpreadsheet,
+  CreditCard,
 } from 'lucide-react';
 
 interface ManagerSidebarProps {
@@ -32,6 +32,8 @@ interface ManagerSidebarProps {
 }
 
 export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({ collapsed }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const {
     currentPage,
     setCurrentPage,
@@ -42,35 +44,43 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({ collapsed }) => 
     acids,
     metals,
     currentTarStock,
+    customers,
+    currentUser,
   } = useERP();
 
   // Accordion state for nested groups
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     customer: true,
     labour: true,
-    stock: true,
+    stock: false,
     reports: true,
+    admin: true,
   });
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const navigate = useNavigate();
+  const isNavActive = (path: string, pageKey?: NavigationPage) => {
+    if (pageKey && currentPage === pageKey) return true;
+    if (path === '/dashboard') {
+      return location.pathname === '/' || location.pathname === '/dashboard';
+    }
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
 
-  const isNavActive = (page: NavigationPage) => currentPage === page;
-
-  const handleNav = (page: NavigationPage) => {
-    setCurrentPage(page);
+  const handleNav = (path: string, pageKey?: NavigationPage) => {
+    if (pageKey) setCurrentPage(pageKey);
+    navigate(path);
   };
 
   const handleReportNav = (category: string) => {
     setSelectedReportCategory(category);
+    setCurrentPage('reports_center');
     navigate(`/reports/${category.toLowerCase()}`);
   };
 
-  // Operational metrics for sidebar badges
-  const fastForwardPendingCount = jobs.filter(
+  const fastForwardCount = jobs.filter(
     (j) => j.priority === 'Fast Forward' && j.status !== 'Outward Completed'
   ).length;
 
@@ -92,12 +102,12 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({ collapsed }) => 
       }`}
     >
       {/* Brand Header */}
-      <div className="h-14 px-4 flex items-center justify-between border-b border-slate-800 bg-slate-950/70">
+      <div className={`h-14 flex items-center border-b border-slate-800 bg-slate-950/60 shrink-0 ${collapsed ? 'justify-center px-0' : 'justify-between px-4'}`}>
         <div
-          onClick={() => handleNav('dashboard')}
-          className="flex items-center gap-2.5 cursor-pointer overflow-hidden"
+          onClick={() => handleNav('/dashboard', 'dashboard')}
+          className={`flex items-center cursor-pointer overflow-hidden ${collapsed ? 'justify-center' : 'gap-2.5'}`}
         >
-          <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold shrink-0 shadow-sm shadow-emerald-500/20">
+          <div className="w-8 h-8 rounded bg-emerald-600 flex items-center justify-center text-white font-bold shrink-0 shadow-sm shadow-emerald-500/20">
             <Sparkles className="w-4 h-4" />
           </div>
           {!collapsed && (
@@ -105,8 +115,8 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({ collapsed }) => 
               <span className="font-extrabold tracking-wider text-xs text-white">
                 PLATING MGMT
               </span>
-              <span className="text-[10px] text-slate-400 tracking-tight flex items-center gap-1">
-                JEWELLERY ERP <span className="text-emerald-400 font-bold text-[9px] bg-emerald-950/90 px-1 py-0.2 rounded border border-emerald-800/40">MANAGER</span>
+              <span className="text-[10px] text-slate-400 font-mono tracking-tight flex items-center gap-1">
+                JEWELLERY ERP <span className="text-emerald-400 font-bold text-[9px] bg-emerald-950/80 px-1 py-0.2 rounded border border-emerald-800/40">MANAGER</span>
               </span>
             </div>
           )}
@@ -116,363 +126,324 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({ collapsed }) => 
       {/* Navigation Links Scrollable Area */}
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1 text-xs custom-scrollbar">
         {/* DASHBOARD */}
-        <Button variant="surface"
-          onClick={() => handleNav('dashboard')}
+        <Button
+          variant="surface"
+          onClick={() => handleNav('/dashboard', 'dashboard')}
           className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors ${
-            isNavActive('dashboard')
+            isNavActive('/dashboard', 'dashboard')
               ? 'erp-nav-active bg-emerald-600 text-white font-semibold shadow-sm'
               : 'text-slate-300 hover:bg-slate-800 hover:text-white'
           }`}
-          title="Operational Dashboard"
+          title="Dashboard"
         >
-          <LayoutDashboard className="w-4 h-4 shrink-0 text-emerald-400" />
+          <LayoutDashboard className="w-4 h-4 shrink-0" />
           {!collapsed && <span>Dashboard</span>}
         </Button>
 
-        {/* 1. CUSTOMER SECTION */}
+        {/* CUSTOMER SECTION */}
         <div className="pt-2">
           {!collapsed && (
-            <Button variant="surface"
+            <Button
+              variant="surface"
               onClick={() => toggleSection('customer')}
               className="w-full flex items-center justify-between px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
             >
-              <span>Customer</span>
+              <span>Customer Operations</span>
               {openSections.customer ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
             </Button>
           )}
           {(!collapsed ? openSections.customer : true) && (
             <div className="space-y-0.5 mt-0.5">
-              <Button variant="surface"
-                onClick={() => handleNav('customers')}
-                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('customers') || isNavActive('customer_detail')
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/customers', 'customers')}
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
+                  isNavActive('/customers', 'customers')
                     ? 'erp-nav-active bg-slate-800 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
                 title="Customers"
               >
-                <Users className="w-4 h-4 shrink-0 text-slate-400" />
-                {!collapsed && <span>Customers</span>}
+                <div className="flex items-center gap-2.5">
+                  <Users className="w-4 h-4 shrink-0" />
+                  {!collapsed && <span>Customers</span>}
+                </div>
+                {!collapsed && (
+                  <span className="text-[10px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded-[4px] font-mono min-w-[18px] h-[18px] inline-flex items-center justify-center">
+                    {customers.length}
+                  </span>
+                )}
               </Button>
 
-              <Button variant="surface"
-                onClick={() => handleNav('inward_list')}
-                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('inward_list') || isNavActive('create_inward')
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/inward', 'inward_list')}
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
+                  isNavActive('/inward', 'inward_list')
                     ? 'erp-nav-active bg-slate-800 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
-                title="Inward"
+                title="Inward Intake"
               >
-                <ArrowDownLeft className="w-4 h-4 shrink-0 text-blue-400" />
-                {!collapsed && <span>Inward</span>}
+                <div className="flex items-center gap-2.5">
+                  <ArrowDownLeft className="w-4 h-4 shrink-0 text-blue-400" />
+                  {!collapsed && <span>Inward</span>}
+                </div>
               </Button>
 
-              <Button variant="surface"
-                onClick={() => handleNav('outward_list')}
-                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('outward_list') || isNavActive('create_outward')
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/outward', 'outward_list')}
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
+                  isNavActive('/outward', 'outward_list')
                     ? 'erp-nav-active bg-slate-800 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
                 title="Customer Outward"
               >
-                <ArrowUpRight className="w-4 h-4 shrink-0 text-emerald-400" />
-                {!collapsed && <span>Customer Outward</span>}
+                <div className="flex items-center gap-2.5">
+                  <ArrowUpRight className="w-4 h-4 shrink-0 text-emerald-400" />
+                  {!collapsed && <span>Customer Outward</span>}
+                </div>
               </Button>
 
-              <Button variant="surface"
-                onClick={() => handleNav('fast_forward')}
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/fast-forward', 'fast_forward')}
                 className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('fast_forward')
-                    ? 'erp-nav-active bg-amber-950/80 text-amber-300 font-semibold border border-amber-800/50'
-                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                  isNavActive('/fast-forward', 'fast_forward')
+                    ? 'erp-nav-active bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/40'
+                    : 'text-amber-400/80 hover:bg-slate-800/60 hover:text-amber-300'
                 }`}
-                title="Fast Forward Priority Queue"
+                title="Fast Forward Queue"
               >
                 <div className="flex items-center gap-2.5">
                   <Zap className="w-4 h-4 shrink-0 text-amber-400 fill-amber-400" />
                   {!collapsed && <span>Fast Forward</span>}
                 </div>
-                {!collapsed && fastForwardPendingCount > 0 && (
-                  <span className="text-[10px] bg-amber-500 text-slate-950 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-bold min-w-[18px] h-[18px] inline-flex items-center justify-center">
-                    {fastForwardPendingCount}
+                {!collapsed && fastForwardCount > 0 && (
+                  <span className="bg-amber-500 text-slate-950 font-extrabold text-[10px] px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center">
+                    {fastForwardCount}
                   </span>
                 )}
-              </Button>
-
-              <Button variant="surface"
-                onClick={() => handleReportNav('CUSTOMER')}
-                className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors"
-                title="Customer Reports"
-              >
-                <FileSpreadsheet className="w-4 h-4 shrink-0 text-slate-500" />
-                {!collapsed && <span>Customer Reports</span>}
               </Button>
             </div>
           )}
         </div>
 
-        {/* 2. LABOUR SECTION */}
+        {/* LABOUR SECTION */}
         <div className="pt-2">
           {!collapsed && (
-            <Button variant="surface"
+            <Button
+              variant="surface"
               onClick={() => toggleSection('labour')}
               className="w-full flex items-center justify-between px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
             >
-              <span>Labour</span>
+              <span>Labour Management</span>
               {openSections.labour ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
             </Button>
           )}
           {(!collapsed ? openSections.labour : true) && (
             <div className="space-y-0.5 mt-0.5">
-              <Button variant="surface"
-                onClick={() => handleNav('labour_list')}
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/labour', 'labour_list')}
                 className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('labour_list')
+                  isNavActive('/labour', 'labour_list')
                     ? 'erp-nav-active bg-slate-800 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
-                title="Labour Master"
+                title="Labour List"
               >
-                <Hammer className="w-4 h-4 shrink-0 text-slate-400" />
-                {!collapsed && <span>Labour</span>}
+                <Hammer className="w-4 h-4 shrink-0" />
+                {!collapsed && <span>Labour List</span>}
               </Button>
 
-              <Button variant="surface"
-                onClick={() => handleNav('labour_binding')}
-                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('labour_binding')
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/labour/binding', 'labour_binding')}
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
+                  isNavActive('/labour/binding', 'labour_binding')
                     ? 'erp-nav-active bg-slate-800 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
                 title="Labour Binding"
               >
-                <Layers className="w-4 h-4 shrink-0 text-indigo-400" />
-                {!collapsed && <span>Labour Binding</span>}
+                <div className="flex items-center gap-2.5">
+                  <Layers className="w-4 h-4 shrink-0" />
+                  {!collapsed && <span>Labour Binding</span>}
+                </div>
               </Button>
 
-              <Button variant="surface"
-                onClick={() => handleNav('labour_open')}
-                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('labour_open')
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/labour/open', 'labour_open')}
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
+                  isNavActive('/labour/open', 'labour_open')
                     ? 'erp-nav-active bg-slate-800 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
                 title="Labour Open"
               >
-                <Unlock className="w-4 h-4 shrink-0 text-orange-400" />
-                {!collapsed && <span>Labour Open</span>}
-              </Button>
-
-              <Button variant="surface"
-                onClick={() => handleReportNav('LABOUR')}
-                className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors"
-                title="Labour Reports"
-              >
-                <FileSpreadsheet className="w-4 h-4 shrink-0 text-slate-500" />
-                {!collapsed && <span>Labour Reports</span>}
+                <div className="flex items-center gap-2.5">
+                  <Unlock className="w-4 h-4 shrink-0" />
+                  {!collapsed && <span>Labour Open</span>}
+                </div>
               </Button>
             </div>
           )}
         </div>
 
-        {/* 3. STOCK SECTION */}
+        {/* STOCK SECTION */}
         <div className="pt-2">
           {!collapsed && (
-            <Button variant="surface"
+            <Button
+              variant="surface"
               onClick={() => toggleSection('stock')}
               className="w-full flex items-center justify-between px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
             >
-              <span>Stock</span>
+              <span>Stock & Chemicals</span>
               {openSections.stock ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
             </Button>
           )}
           {(!collapsed ? openSections.stock : true) && (
             <div className="space-y-0.5 mt-0.5">
-              <Button variant="surface"
-                onClick={() => handleNav('stock_chemical')}
-                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('stock_chemical')
-                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
-                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
-                }`}
-                title="Chemical"
-              >
-                <div className="flex items-center gap-2.5">
-                  <FlaskConical className="w-4 h-4 shrink-0 text-cyan-400" />
-                  {!collapsed && <span>Chemical</span>}
-                </div>
-                {!collapsed && chemicals.some((c) => c.status === 'Low Stock') && (
-                  <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                )}
-              </Button>
-
-              <Button variant="surface"
-                onClick={() => handleNav('stock_acid')}
-                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('stock_acid')
-                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
-                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
-                }`}
-                title="Acid"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Flame className="w-4 h-4 shrink-0 text-red-400" />
-                  {!collapsed && <span>Acid</span>}
-                </div>
-                {!collapsed && acids.some((a) => a.status === 'Low Stock') && (
-                  <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                )}
-              </Button>
-
-              <Button variant="surface"
-                onClick={() => handleNav('stock_metal')}
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/stock/chemicals', 'stock_chemical')}
                 className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('stock_metal')
+                  isNavActive('/stock/chemicals', 'stock_chemical')
                     ? 'erp-nav-active bg-slate-800 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
-                title="Metal"
+                title="Chemical Baths"
               >
-                <Shield className="w-4 h-4 shrink-0 text-emerald-400" />
-                {!collapsed && <span>Metal</span>}
+                <FlaskConical className="w-4 h-4 shrink-0 text-cyan-400" />
+                {!collapsed && <span>Chemical Baths</span>}
               </Button>
 
-              <Button variant="surface"
-                onClick={() => handleNav('stock_tar')}
-                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('stock_tar')
-                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
-                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
-                }`}
-                title="Tar Stock"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Box className="w-4 h-4 shrink-0 text-amber-500" />
-                  {!collapsed && <span>Tar Stock</span>}
-                </div>
-                {!collapsed && currentTarStock < 10 && (
-                  <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                )}
-              </Button>
-
-              <Button variant="surface"
-                onClick={() => handleNav('stock_scrap')}
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/stock/acids', 'stock_acid')}
                 className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('stock_scrap')
+                  isNavActive('/stock/acids', 'stock_acid')
                     ? 'erp-nav-active bg-slate-800 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
-                title="Scrap"
+                title="Acid Stock"
               >
-                <Box className="w-4 h-4 shrink-0 text-slate-500" />
-                {!collapsed && <span>Scrap</span>}
+                <Flame className="w-4 h-4 shrink-0 text-orange-400" />
+                {!collapsed && <span>Acid Stock</span>}
               </Button>
 
-              <Button variant="surface"
-                onClick={() => handleReportNav('STOCK')}
-                className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors"
-                title="Stock Reports"
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/stock/metals', 'stock_metal')}
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
+                  isNavActive('/stock/metals', 'stock_metal')
+                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                }`}
+                title="Precious Metals"
               >
-                <FileSpreadsheet className="w-4 h-4 shrink-0 text-slate-500" />
-                {!collapsed && <span>Stock Reports</span>}
+                <Sparkles className="w-4 h-4 shrink-0 text-amber-400" />
+                {!collapsed && <span>Precious Metals</span>}
+              </Button>
+
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/stock/tar', 'stock_tar')}
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
+                  isNavActive('/stock/tar', 'stock_tar')
+                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                }`}
+                title="Sealing Tar Stock"
+              >
+                <Box className="w-4 h-4 shrink-0 text-slate-400" />
+                {!collapsed && <span>Sealing Tar</span>}
+              </Button>
+
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/stock/scrap', 'stock_scrap')}
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
+                  isNavActive('/stock/scrap', 'stock_scrap')
+                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                }`}
+                title="Scrap Refining"
+              >
+                <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-400" />
+                {!collapsed && <span>Scrap Refining</span>}
               </Button>
             </div>
           )}
         </div>
 
-        {/* 4. REPORTS SECTION */}
+        {/* REPORTS SECTION */}
         <div className="pt-2">
           {!collapsed && (
-            <Button variant="surface"
+            <Button
+              variant="surface"
               onClick={() => toggleSection('reports')}
               className="w-full flex items-center justify-between px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
             >
-              <span>Reports</span>
+              <span>Reports & Analytics</span>
               {openSections.reports ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
             </Button>
           )}
           {(!collapsed ? openSections.reports : true) && (
             <div className="space-y-0.5 mt-0.5">
-              <Button variant="surface"
-                onClick={() => handleReportNav('CUSTOMER')}
-                className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors"
-                title="Customer Reports"
-              >
-                <Users className="w-4 h-4 shrink-0 text-slate-500" />
-                {!collapsed && <span>Customer Reports</span>}
-              </Button>
-
-              <Button variant="surface"
-                onClick={() => handleReportNav('JOB')}
-                className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors"
-                title="Job Reports"
-              >
-                <Briefcase className="w-4 h-4 shrink-0 text-slate-500" />
-                {!collapsed && <span>Job Reports</span>}
-              </Button>
-
-              <Button variant="surface"
-                onClick={() => handleReportNav('WEIGHT')}
-                className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors"
-                title="Weight Reports"
-              >
-                <Scale className="w-4 h-4 shrink-0 text-emerald-400" />
-                {!collapsed && <span>Weight Reports</span>}
-              </Button>
-
-              <Button variant="surface"
-                onClick={() => handleReportNav('LABOUR')}
-                className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors"
-                title="Labour Reports"
-              >
-                <Hammer className="w-4 h-4 shrink-0 text-slate-500" />
-                {!collapsed && <span>Labour Reports</span>}
-              </Button>
-
-              <Button variant="surface"
-                onClick={() => handleReportNav('STOCK')}
-                className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors"
-                title="Stock Reports"
-              >
-                <Box className="w-4 h-4 shrink-0 text-slate-500" />
-                {!collapsed && <span>Stock Reports</span>}
-              </Button>
-
-              <Button variant="surface"
-                onClick={() => handleNav('reports_center')}
+              <Button
+                variant="surface"
+                onClick={() => handleNav('/reports', 'reports_center')}
                 className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
-                  isNavActive('reports_center')
+                  isNavActive('/reports', 'reports_center')
                     ? 'erp-nav-active bg-slate-800 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
-                title="All Reports"
+                title="Reports Center"
               >
                 <BarChart3 className="w-4 h-4 shrink-0 text-cyan-400" />
-                {!collapsed && <span>All Reports</span>}
+                {!collapsed && <span>Reports Center</span>}
+              </Button>
+
+              <Button
+                variant="surface"
+                onClick={() => handleReportNav('WEIGHT')}
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
+                  location.pathname === '/reports/weight'
+                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                }`}
+                title="Weight & Plating Report"
+              >
+                <Scale className="w-4 h-4 shrink-0 text-emerald-400" />
+                {!collapsed && <span>Weight & Plating</span>}
               </Button>
             </div>
           )}
         </div>
 
-        {/* 5. ALERTS SECTION */}
+        {/* ALERTS SECTION */}
         <div className="pt-2">
-          <Button variant="surface"
-            onClick={() => handleNav('alerts')}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-md transition-colors ${
-              isNavActive('alerts') || isNavActive('admin_alerts')
+          <Button
+            variant="surface"
+            onClick={() => handleNav('/alerts', 'admin_alerts')}
+            className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
+              isNavActive('/alerts', 'admin_alerts')
                 ? 'erp-nav-active bg-slate-800 text-white font-semibold'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
             }`}
-            title="Operational Alerts"
+            title="Alerts Center"
           >
             <div className="flex items-center gap-2.5">
-              <Bell className="w-4 h-4 shrink-0 text-amber-400" />
-              {!collapsed && <span>Alerts</span>}
+              <Bell className="w-4 h-4 shrink-0" />
+              {!collapsed && <span>Alerts Center</span>}
             </div>
             {!collapsed && unreadAlertsCount > 0 && (
-              <span className="text-[10px] bg-red-500 text-white px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-bold min-w-[18px] h-[18px] inline-flex items-center justify-center">
+              <span className="text-[10px] bg-red-500 text-white px-1 py-0.5 rounded-[4px] font-bold min-w-[18px] h-[18px] inline-flex items-center justify-center">
                 {unreadAlertsCount}
               </span>
             )}
@@ -481,15 +452,15 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({ collapsed }) => 
       </div>
 
       {/* Manager User Footer Widget */}
-      <div className="p-3 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shrink-0 border border-emerald-600/50">
-            VJ
+      <div className={`p-3 border-t border-slate-800 bg-slate-950/80 flex items-center shrink-0 ${collapsed ? 'justify-center px-0' : 'justify-between'}`}>
+        <div className={`flex items-center min-w-0 ${collapsed ? 'justify-center' : 'gap-2.5'}`}>
+          <div className="w-7 h-7 rounded-full bg-slate-700 text-white flex items-center justify-center font-bold text-xs shrink-0 border border-slate-600">
+            {currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : 'PS'}
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-semibold text-slate-200 truncate">Vikram Joshi</span>
-              <span className="text-[10px] text-emerald-400">Manager • Operations</span>
+              <span className="text-xs font-semibold text-slate-200 truncate">{currentUser?.name || 'Pravin Soni'}</span>
+              <span className="text-[10px] text-emerald-400 font-mono">Plant Manager</span>
             </div>
           )}
         </div>

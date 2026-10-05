@@ -4,17 +4,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
 import {
   LayoutDashboard,
+  Users,
   ArrowDownLeft,
   ArrowUpRight,
   Zap,
-  Users,
   Briefcase,
   FileSpreadsheet,
   ChevronDown,
   ChevronRight,
-  Shield,
-  Layers,
   Sparkles,
+  Scale,
 } from 'lucide-react';
 
 interface OperatorSidebarProps {
@@ -25,11 +24,11 @@ interface OperatorSidebarProps {
 export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { jobs } = useERP();
+  const { jobs, customers, currentUser } = useERP();
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     work: true,
-    customers: true,
+    customer: true,
     reports: true,
   });
 
@@ -41,136 +40,120 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
     if (path === '/dashboard') {
       return location.pathname === '/' || location.pathname === '/dashboard';
     }
-    return location.pathname.startsWith(path);
+    return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
   const fastForwardPendingCount = jobs.filter(
     (j) => j.priority === 'Fast Forward' && j.status !== 'Outward Completed'
   ).length;
 
-  const outwardPendingCount = jobs.filter(
-    (j) => j.status === 'Ready for Outward' || j.status === 'In Process'
-  ).length;
-
   return (
     <aside
-      className={`erp-sidebar bg-slate-950 text-slate-300 flex flex-col border-r border-slate-800 transition-all duration-200 z-30 select-none ${
+      className={`erp-sidebar bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 transition-all duration-200 z-30 select-none font-sans shrink-0 ${
         collapsed ? 'w-16' : 'w-64'
       }`}
     >
       {/* Brand Header */}
-      <div className="h-14 px-4 flex items-center justify-between border-b border-slate-800 bg-black/40">
-        {!collapsed && (
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-black text-white text-sm shadow-md shrink-0">
-              PM
-            </div>
-            <div className="truncate">
-              <span className="font-bold text-xs text-white tracking-wide block leading-tight">
-                PLATING FACTORY
-              </span>
-              <span className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider block">
-                Operator Station
-              </span>
-            </div>
+      <div className={`h-14 flex items-center border-b border-slate-800 bg-slate-950/60 shrink-0 ${collapsed ? 'justify-center px-0' : 'justify-between px-4'}`}>
+        <div
+          onClick={() => navigate('/dashboard')}
+          className={`flex items-center cursor-pointer overflow-hidden ${collapsed ? 'justify-center' : 'gap-2.5'}`}
+        >
+          <div className="w-8 h-8 rounded bg-emerald-600 flex items-center justify-center text-white font-bold shrink-0 shadow-sm shadow-emerald-500/20">
+            <Sparkles className="w-4 h-4" />
           </div>
-        )}
-        {collapsed && (
-          <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-black text-white text-sm mx-auto shadow-md">
-            PM
-          </div>
-        )}
+          {!collapsed && (
+            <div className="flex flex-col">
+              <span className="font-extrabold tracking-wider text-xs text-white">
+                PLATING MGMT
+              </span>
+              <span className="text-[10px] text-slate-400 font-mono tracking-tight flex items-center gap-1">
+                JEWELLERY ERP <span className="text-emerald-400 font-bold text-[9px] bg-emerald-950/80 px-1 py-0.2 rounded border border-emerald-800/40">OPERATOR</span>
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Navigation Links */}
-      <div className="flex-1 overflow-y-auto p-2.5 space-y-4 custom-scrollbar">
-        {/* 1. DASHBOARD */}
-        <div>
-          <Button variant="surface"
-            onClick={() => navigate('/dashboard')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold transition-colors ${
-              isNavActive('/dashboard')
-                ? 'erp-nav-active bg-emerald-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900'
-            }`}
-            title="Operator Dashboard"
-          >
-            <LayoutDashboard className="w-4 h-4 shrink-0" />
-            {!collapsed && <span>Dashboard</span>}
-          </Button>
-        </div>
+      {/* Navigation Links Scrollable Area */}
+      <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1 text-xs custom-scrollbar">
+        {/* DASHBOARD */}
+        <Button
+          variant="surface"
+          onClick={() => navigate('/dashboard')}
+          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors ${
+            isNavActive('/dashboard')
+              ? 'erp-nav-active bg-emerald-600 text-white font-semibold shadow-sm'
+              : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+          }`}
+          title="Dashboard"
+        >
+          <LayoutDashboard className="w-4 h-4 shrink-0" />
+          {!collapsed && <span>Dashboard</span>}
+        </Button>
 
-        {/* 2. WORK SECTION */}
-        <div>
+        {/* INTAKE & DISPATCH (WORK SECTION) */}
+        <div className="pt-2">
           {!collapsed && (
-            <Button variant="surface"
+            <Button
+              variant="surface"
               onClick={() => toggleSection('work')}
-              className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
+              className="w-full flex items-center justify-between px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
             >
-              <span>Factory Work</span>
-              {openSections.work ? (
-                <ChevronDown className="w-3.5 h-3.5" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5" />
-              )}
+              <span>Intake & Dispatch</span>
+              {openSections.work ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
             </Button>
           )}
-
-          {(openSections.work || collapsed) && (
-            <div className="mt-1 space-y-1">
-              {/* Inward */}
-              <Button variant="surface"
+          {(!collapsed ? openSections.work : true) && (
+            <div className="space-y-0.5 mt-0.5">
+              <Button
+                variant="surface"
                 onClick={() => navigate('/inward')}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
                   isNavActive('/inward')
-                    ? 'erp-nav-active bg-slate-800 text-white border-l-3 border-emerald-500'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/80'
+                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
-                title="Customer Inward Intake"
+                title="Inward Intake"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <ArrowDownLeft className="w-4 h-4 text-emerald-400 shrink-0" />
-                  {!collapsed && <span className="truncate">Inward Intake</span>}
+                <div className="flex items-center gap-2.5">
+                  <ArrowDownLeft className="w-4 h-4 shrink-0 text-blue-400" />
+                  {!collapsed && <span>Inward Intake</span>}
                 </div>
               </Button>
 
-              {/* Outward */}
-              <Button variant="surface"
+              <Button
+                variant="surface"
                 onClick={() => navigate('/outward')}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
                   isNavActive('/outward')
-                    ? 'erp-nav-active bg-slate-800 text-white border-l-3 border-emerald-500'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/80'
+                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
-                title="Customer Outward Dispatch"
+                title="Outward Dispatch"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <ArrowUpRight className="w-4 h-4 text-blue-400 shrink-0" />
-                  {!collapsed && <span className="truncate">Outward Dispatch</span>}
+                <div className="flex items-center gap-2.5">
+                  <ArrowUpRight className="w-4 h-4 shrink-0 text-emerald-400" />
+                  {!collapsed && <span>Outward Dispatch</span>}
                 </div>
-                {!collapsed && outwardPendingCount > 0 && (
-                  <span className="text-[10px] bg-blue-950/80 text-blue-300 border border-blue-800/60 px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-[4px] font-bold min-w-[18px] h-[18px] inline-flex items-center justify-center">
-                    {outwardPendingCount}
-                  </span>
-                )}
               </Button>
 
-              {/* Fast Forward Queue */}
-              <Button variant="surface"
+              <Button
+                variant="surface"
                 onClick={() => navigate('/fast-forward')}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
                   isNavActive('/fast-forward')
-                    ? 'erp-nav-active bg-amber-950/60 text-amber-200 border-l-3 border-amber-500'
-                    : 'text-amber-400/90 hover:text-amber-200 hover:bg-amber-950/30'
+                    ? 'erp-nav-active bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/40'
+                    : 'text-amber-400/80 hover:bg-slate-800/60 hover:text-amber-300'
                 }`}
-                title="Fast Forward Priority Queue"
+                title="Fast Forward Queue"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <Zap className="w-4 h-4 text-amber-400 fill-amber-400/20 shrink-0" />
-                  {!collapsed && <span className="truncate font-bold">Fast Forward</span>}
+                <div className="flex items-center gap-2.5">
+                  <Zap className="w-4 h-4 shrink-0 text-amber-400 fill-amber-400" />
+                  {!collapsed && <span>Fast Forward</span>}
                 </div>
                 {!collapsed && fastForwardPendingCount > 0 && (
-                  <span className="text-[10px] bg-amber-500 text-slate-950 font-black px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center-full shadow-xs">
+                  <span className="bg-amber-500 text-slate-950 font-extrabold text-[10px] px-1 py-0.5 rounded-[4px] min-w-[18px] h-[18px] inline-flex items-center justify-center">
                     {fastForwardPendingCount}
                   </span>
                 )}
@@ -179,100 +162,104 @@ export const OperatorSidebar: React.FC<OperatorSidebarProps> = ({ collapsed }) =
           )}
         </div>
 
-        {/* 3. CUSTOMERS SECTION */}
-        <div>
+        {/* CUSTOMER SECTION */}
+        <div className="pt-2">
           {!collapsed && (
-            <Button variant="surface"
-              onClick={() => toggleSection('customers')}
-              className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
+            <Button
+              variant="surface"
+              onClick={() => toggleSection('customer')}
+              className="w-full flex items-center justify-between px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
             >
-              <span>Customers</span>
-              {openSections.customers ? (
-                <ChevronDown className="w-3.5 h-3.5" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5" />
-              )}
+              <span>Customer Operations</span>
+              {openSections.customer ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
             </Button>
           )}
-
-          {(openSections.customers || collapsed) && (
-            <div className="mt-1 space-y-1">
-              <Button variant="surface"
+          {(!collapsed ? openSections.customer : true) && (
+            <div className="space-y-0.5 mt-0.5">
+              <Button
+                variant="surface"
                 onClick={() => navigate('/customers')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md transition-colors ${
                   isNavActive('/customers')
-                    ? 'erp-nav-active bg-slate-800 text-white border-l-3 border-emerald-500'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/80'
+                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
-                title="Customer Directory"
+                title="Customers"
               >
-                <Users className="w-4 h-4 text-slate-400 shrink-0" />
-                {!collapsed && <span className="truncate">Customers</span>}
+                <div className="flex items-center gap-2.5">
+                  <Users className="w-4 h-4 shrink-0" />
+                  {!collapsed && <span>Customers</span>}
+                </div>
+                {!collapsed && (
+                  <span className="text-[10px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded-[4px] font-mono min-w-[18px] h-[18px] inline-flex items-center justify-center">
+                    {customers.length}
+                  </span>
+                )}
               </Button>
 
-              <Button variant="surface"
+              <Button
+                variant="surface"
                 onClick={() => navigate('/customer-jobs')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
                   isNavActive('/customer-jobs')
-                    ? 'erp-nav-active bg-slate-800 text-white border-l-3 border-emerald-500'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/80'
+                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
-                title="Customer Jobs History"
+                title="Customer Job Ledgers"
               >
-                <Briefcase className="w-4 h-4 text-slate-400 shrink-0" />
-                {!collapsed && <span className="truncate">Customer Jobs</span>}
+                <Briefcase className="w-4 h-4 shrink-0 text-cyan-400" />
+                {!collapsed && <span>Customer Ledgers</span>}
               </Button>
             </div>
           )}
         </div>
 
-        {/* 4. OPERATIONAL REPORTS */}
-        <div>
+        {/* REPORTS SECTION */}
+        <div className="pt-2">
           {!collapsed && (
-            <Button variant="surface"
+            <Button
+              variant="surface"
               onClick={() => toggleSection('reports')}
-              className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
+              className="w-full flex items-center justify-between px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200"
             >
-              <span>Daily Reports</span>
-              {openSections.reports ? (
-                <ChevronDown className="w-3.5 h-3.5" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5" />
-              )}
+              <span>Operator Reports</span>
+              {openSections.reports ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
             </Button>
           )}
-
-          {(openSections.reports || collapsed) && (
-            <div className="mt-1 space-y-1">
-              <Button variant="surface"
+          {(!collapsed ? openSections.reports : true) && (
+            <div className="space-y-0.5 mt-0.5">
+              <Button
+                variant="surface"
                 onClick={() => navigate('/reports')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors ${
                   isNavActive('/reports')
-                    ? 'erp-nav-active bg-slate-800 text-white border-l-3 border-emerald-500'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/80'
+                    ? 'erp-nav-active bg-slate-800 text-white font-semibold'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
-                title="Operational Daily Reports"
+                title="Daily Reports"
               >
-                <FileSpreadsheet className="w-4 h-4 text-slate-400 shrink-0" />
-                {!collapsed && <span className="truncate">Operational Reports</span>}
+                <FileSpreadsheet className="w-4 h-4 shrink-0 text-cyan-400" />
+                {!collapsed && <span>Daily Shift Reports</span>}
               </Button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Operator Station Badge Footer */}
-      {!collapsed && (
-        <div className="p-3 border-t border-slate-800 bg-slate-950/80 text-xs">
-          <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-950/40 border border-emerald-800/40">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <div>
-              <p className="text-[11px] font-bold text-emerald-200 leading-tight">Scale Calibration: Active</p>
-              <p className="text-[10px] text-slate-400 font-mono">Precision ±0.001 kg</p>
-            </div>
+      {/* Operator User Footer Widget */}
+      <div className={`p-3 border-t border-slate-800 bg-slate-950/80 flex items-center shrink-0 ${collapsed ? 'justify-center px-0' : 'justify-between'}`}>
+        <div className={`flex items-center min-w-0 ${collapsed ? 'justify-center' : 'gap-2.5'}`}>
+          <div className="w-7 h-7 rounded-full bg-slate-700 text-white flex items-center justify-center font-bold text-xs shrink-0 border border-slate-600">
+            {currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : 'RP'}
           </div>
+          {!collapsed && (
+            <div className="flex flex-col min-w-0">
+              <span className="text-xs font-semibold text-slate-200 truncate">{currentUser?.name || 'Ramesh Patel'}</span>
+              <span className="text-[10px] text-emerald-400 font-mono">Factory Operator</span>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </aside>
   );
 };

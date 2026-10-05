@@ -68,10 +68,10 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
       }`}
     >
       {/* Brand Header */}
-      <div className="h-14 px-4 flex items-center justify-between border-b border-slate-800 bg-slate-950/60">
+      <div className={`h-14 flex items-center border-b border-slate-800 bg-slate-950/60 shrink-0 ${collapsed ? 'justify-center px-0' : 'justify-between px-4'}`}>
         <div
           onClick={() => handleNav('dashboard')}
-          className="flex items-center gap-2.5 cursor-pointer overflow-hidden"
+          className={`flex items-center cursor-pointer overflow-hidden ${collapsed ? 'justify-center' : 'gap-2.5'}`}
         >
           <div className="w-8 h-8 rounded bg-emerald-600 flex items-center justify-center text-white font-bold shrink-0 shadow-sm shadow-emerald-500/20">
             <Sparkles className="w-4 h-4" />
@@ -532,8 +532,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ collapsed }) => {
       </div>
 
       {/* Admin User Footer Widget */}
-      <div className="p-3 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
-        <div className="flex items-center gap-2.5 min-w-0">
+      <div className={`p-3 border-t border-slate-800 bg-slate-950/80 flex items-center shrink-0 ${collapsed ? 'justify-center px-0' : 'justify-between'}`}>
+        <div className={`flex items-center min-w-0 ${collapsed ? 'justify-center' : 'gap-2.5'}`}>
           <div className="w-7 h-7 rounded-full bg-slate-700 text-white flex items-center justify-center font-bold text-xs shrink-0 border border-slate-600">
             RS
           </div>
