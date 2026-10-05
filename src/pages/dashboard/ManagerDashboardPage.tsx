@@ -91,7 +91,7 @@ export const ManagerDashboardPage: React.FC = () => {
             onClick={() => setCurrentPage('create_inward')}
             className="inline-flex items-center gap-1.5 transition-colors"
           >
-            <ArrowDownLeft className="w-3.5 h-3.5" /> + New Inward
+            <ArrowDownLeft className="w-3.5 h-3.5" /> New Inward
           </Button>
           <Button variant="secondary"
             onClick={() => setCurrentPage('create_outward')}

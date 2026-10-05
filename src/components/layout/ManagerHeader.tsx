@@ -18,6 +18,12 @@ import {
 import { NotificationsPopover } from '../common/NotificationsPopover';
 import { RoleSwitcherDropdown } from './RoleSwitcherDropdown';
 
+interface BreadcrumbItem {
+  label: string;
+  page?: any;
+  onClick?: () => void;
+}
+
 interface ManagerHeaderProps {
   collapsed: boolean;
   setCollapsed: (v: boolean | ((prev: boolean) => boolean)) => void;
@@ -31,6 +37,8 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({ collapsed, setColl
     setIsQuickActionOpen,
     selectedCustomerId,
     selectedJobId,
+    navigateToCustomer,
+    navigateToJob,
     customers,
     alerts,
     currentUser,
@@ -61,68 +69,220 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({ collapsed, setColl
   }, [isProfileMenuOpen]);
 
   // Breadcrumbs title helper
-  const getPageInfo = () => {
+  const getPageInfo = (): { title: string; subtitle: string; crumbs: BreadcrumbItem[] } => {
     switch (currentPage) {
       case 'dashboard':
-        return { title: 'Operational Command Center', subtitle: 'Factory floor oversight & queues', crumbs: ['Dashboard'] };
+        return {
+          title: 'Operational Command Center',
+          subtitle: 'Factory floor oversight & queues',
+          crumbs: [{ label: 'Dashboard', page: 'dashboard' }],
+        };
       case 'customers':
-        return { title: 'Customer Operations & Master', subtitle: 'Client accounts & job intake', crumbs: ['Customer', 'Customers'] };
+        return {
+          title: 'Customer Operations & Master',
+          subtitle: 'Client accounts & job intake',
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Customers', page: 'customers' },
+          ],
+        };
       case 'customer_detail': {
         const cust = customers.find((c) => c.id === selectedCustomerId);
         return {
           title: cust ? cust.name : 'Customer Profile',
           subtitle: 'Production & job lifecycle tracking',
-          crumbs: ['Customer', 'Customers', cust ? cust.name : 'Detail'],
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Customers', page: 'customers' },
+            {
+              label: cust ? cust.name : (selectedCustomerId || 'Detail'),
+              page: 'customer_detail',
+              onClick: () => selectedCustomerId && navigateToCustomer(selectedCustomerId),
+            },
+          ],
         };
       }
       case 'inward_list':
-        return { title: 'Customer Inward Intake Logs', subtitle: 'Raw jewellery intake records', crumbs: ['Customer', 'Inward'] };
+        return {
+          title: 'Customer Inward Intake Logs',
+          subtitle: 'Raw jewellery intake records',
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Inward', page: 'inward_list' },
+          ],
+        };
       case 'create_inward':
-        return { title: 'Create Customer Inward', subtitle: 'Auto job ID generator', crumbs: ['Customer', 'Inward', 'New Intake'] };
+        return {
+          title: 'Create Customer Inward',
+          subtitle: 'Auto job ID generator',
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Inward', page: 'inward_list' },
+            { label: 'New Intake', page: 'create_inward' },
+          ],
+        };
       case 'outward_list':
-        return { title: 'Customer Outward Dispatches', subtitle: 'Finished plating dispatches', crumbs: ['Customer', 'Outward'] };
+        return {
+          title: 'Customer Outward Dispatches',
+          subtitle: 'Finished plating dispatches',
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Outward', page: 'outward_list' },
+          ],
+        };
       case 'create_outward':
-        return { title: 'Process Customer Outward', subtitle: 'Plating verification & dispatch', crumbs: ['Customer', 'Outward', 'Process'] };
+        return {
+          title: 'Process Customer Outward',
+          subtitle: 'Plating verification & dispatch',
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Outward', page: 'outward_list' },
+            { label: 'Process', page: 'create_outward' },
+          ],
+        };
       case 'job_detail':
         return {
-          title: `Job Production Traceability`,
+          title: 'Job Production Traceability',
           subtitle: `Job ID: ${selectedJobId || 'JOB-1025'}`,
-          crumbs: ['Operations', 'Jobs', selectedJobId || 'Detail'],
+          crumbs: [
+            { label: 'Operations', page: 'dashboard' },
+            { label: 'Jobs', page: 'inward_list' },
+            {
+              label: selectedJobId || 'Detail',
+              page: 'job_detail',
+              onClick: () => selectedJobId && navigateToJob(selectedJobId),
+            },
+          ],
         };
       case 'fast_forward':
-        return { title: 'Fast Forward Priority Queue', subtitle: 'High urgency rush orders', crumbs: ['Operations', 'Fast Forward Queue'] };
+        return {
+          title: 'Fast Forward Priority Queue',
+          subtitle: 'High urgency rush orders',
+          crumbs: [
+            { label: 'Operations', page: 'dashboard' },
+            { label: 'Fast Forward Queue', page: 'fast_forward' },
+          ],
+        };
       case 'labour_list':
-        return { title: 'Labour Force & Directory', subtitle: 'Artisan directory & active benches', crumbs: ['Labour', 'Labour Master'] };
+        return {
+          title: 'Labour Force & Directory',
+          subtitle: 'Artisan directory & active benches',
+          crumbs: [
+            { label: 'Labour', page: 'labour_list' },
+            { label: 'Labour Master', page: 'labour_list' },
+          ],
+        };
       case 'labour_binding':
-        return { title: 'Labour Binding & Tar Consumption', subtitle: 'Wire binding task allocation', crumbs: ['Labour', 'Binding Work'] };
+        return {
+          title: 'Labour Binding & Tar Consumption',
+          subtitle: 'Wire binding task allocation',
+          crumbs: [
+            { label: 'Labour', page: 'labour_list' },
+            { label: 'Binding Work', page: 'labour_binding' },
+          ],
+        };
       case 'labour_open':
-        return { title: 'Labour Untying Operations', subtitle: 'Open piecework tracking', crumbs: ['Labour', 'Open Tasks'] };
+        return {
+          title: 'Labour Untying Operations',
+          subtitle: 'Open piecework tracking',
+          crumbs: [
+            { label: 'Labour', page: 'labour_list' },
+            { label: 'Open Tasks', page: 'labour_open' },
+          ],
+        };
       case 'labour_reports':
-        return { title: 'Labour Workload & Tar Reports', subtitle: 'Bench productivity analytics', crumbs: ['Labour', 'Reports'] };
+        return {
+          title: 'Labour Workload & Tar Reports',
+          subtitle: 'Bench productivity analytics',
+          crumbs: [
+            { label: 'Labour', page: 'labour_list' },
+            { label: 'Reports', page: 'labour_reports' },
+          ],
+        };
       case 'stock_chemical':
-        return { title: 'Chemical Baths & Solutions', subtitle: 'Electroplating tank inventory', crumbs: ['Stock', 'Chemicals'] };
+        return {
+          title: 'Chemical Baths & Solutions',
+          subtitle: 'Electroplating tank inventory',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Chemicals', page: 'stock_chemical' },
+          ],
+        };
       case 'stock_acid':
-        return { title: 'Acid Stock & Consumption Logs', subtitle: 'Pickling & cleaning acids', crumbs: ['Stock', 'Acids'] };
+        return {
+          title: 'Acid Stock & Consumption Logs',
+          subtitle: 'Pickling & cleaning acids',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Acids', page: 'stock_acid' },
+          ],
+        };
       case 'stock_metal':
-        return { title: 'Precious Metals & Anodes', subtitle: 'Gold, Silver & Rhodium inventory', crumbs: ['Stock', 'Metals'] };
+        return {
+          title: 'Precious Metals & Anodes',
+          subtitle: 'Gold, Silver & Rhodium inventory',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Metals', page: 'stock_metal' },
+          ],
+        };
       case 'stock_tar':
-        return { title: 'Tar Stock & Melting Ledger', subtitle: 'Sealing tar weight register', crumbs: ['Stock', 'Tar Stock'] };
+        return {
+          title: 'Tar Stock & Melting Ledger',
+          subtitle: 'Sealing tar weight register',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Tar Stock', page: 'stock_tar' },
+          ],
+        };
       case 'stock_scrap':
-        return { title: 'Scrap Recovery & Refining Ledger', subtitle: 'Plating sweep & scrap recovery', crumbs: ['Stock', 'Scrap Management'] };
+        return {
+          title: 'Scrap Recovery & Refining Ledger',
+          subtitle: 'Plating sweep & scrap recovery',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Scrap Management', page: 'stock_scrap' },
+          ],
+        };
       case 'stock_reports':
-        return { title: 'Inventory & Material Ledger', subtitle: 'Chemical & metal balance logs', crumbs: ['Stock', 'Reports'] };
+        return {
+          title: 'Inventory & Material Ledger',
+          subtitle: 'Chemical & metal balance logs',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Reports', page: 'stock_reports' },
+          ],
+        };
       case 'reports_center':
       case 'report_customer':
       case 'report_jobs':
       case 'report_weight':
       case 'report_labour':
       case 'report_stock':
-        return { title: 'Operational Reports Center', subtitle: 'Performance & yield reports', crumbs: ['Reports', 'Operational Intelligence'] };
+        return {
+          title: 'Operational Reports Center',
+          subtitle: 'Performance & yield reports',
+          crumbs: [
+            { label: 'Reports', page: 'reports_center' },
+            { label: 'Operational Intelligence', page: 'reports_center' },
+          ],
+        };
       case 'alerts':
       case 'admin_alerts':
-        return { title: 'Operational Alerts & Thresholds', subtitle: 'Real-time floor triggers', crumbs: ['Alerts', 'Threshold Monitoring'] };
+        return {
+          title: 'Operational Alerts & Thresholds',
+          subtitle: 'Real-time floor triggers',
+          crumbs: [
+            { label: 'Alerts', page: 'alerts' },
+            { label: 'Threshold Monitoring', page: 'alerts' },
+          ],
+        };
       default:
-        return { title: 'Operational Command Center', subtitle: 'Factory floor operations', crumbs: ['Operations'] };
+        return {
+          title: 'Operational Command Center',
+          subtitle: 'Factory floor operations',
+          crumbs: [{ label: 'Dashboard', page: 'dashboard' }],
+        };
     }
   };
 
@@ -143,27 +303,33 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({ collapsed, setColl
         </Button>
 
         <div className="flex flex-col min-w-0">
-          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
-            {crumbs.map((crumb, idx) => (
-              <React.Fragment key={idx}>
-                {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />}
-                <span
-                  onClick={() => {
-                    if (idx === 0 && crumb === 'Customer') setCurrentPage('customers');
-                    if (idx === 0 && crumb === 'Labour') setCurrentPage('labour_list');
-                    if (idx === 0 && crumb === 'Stock') setCurrentPage('stock_chemical');
-                    if (idx === 0 && crumb === 'Reports') setCurrentPage('reports_center');
-                  }}
-                  className={`truncate ${
-                    idx === crumbs.length - 1
-                      ? 'text-slate-700 font-semibold'
-                      : 'hover:text-slate-900 cursor-pointer transition-colors'
-                  }`}
-                >
-                  {crumb}
-                </span>
-              </React.Fragment>
-            ))}
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-medium">
+            {crumbs.map((crumb, idx) => {
+              const isLast = idx === crumbs.length - 1;
+              return (
+                <React.Fragment key={idx}>
+                  {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (crumb.onClick) {
+                        crumb.onClick();
+                      } else if (crumb.page) {
+                        setCurrentPage(crumb.page);
+                      }
+                    }}
+                    className={`truncate transition-colors cursor-pointer text-left ${
+                      isLast
+                        ? 'text-slate-800 font-semibold hover:text-emerald-700 hover:underline'
+                        : 'text-slate-500 hover:text-slate-900 hover:underline'
+                    }`}
+                    title={`Navigate to ${crumb.label}`}
+                  >
+                    {crumb.label}
+                  </button>
+                </React.Fragment>
+              );
+            })}
           </div>
           <div className="flex items-center gap-2">
             <h1 className="text-xs sm:text-sm font-bold text-slate-900 truncate leading-snug">

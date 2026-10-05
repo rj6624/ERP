@@ -1,11 +1,10 @@
-import { Button, Card, TabButton } from '../../components/ui/Primitives';
+import { Button, TabButton } from '../../components/ui/Primitives';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { exportToCSV, triggerPrint } from '../../utils/exportUtils';
 import {
-  BarChart3,
   Calendar,
   Download,
   Printer,
@@ -213,18 +212,16 @@ export const ReportsCenterPage: React.FC = () => {
 
   return (
     <div className="space-y-4 font-sans">
-      {/* 1. Header Banner */}
-      <Card padding="sm" className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* List Header */}
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-emerald-600" /> Operational Reports Center
-          </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h2 className="text-sm font-bold text-slate-900">Operational Reports Center</h2>
+          <p className="text-xs text-slate-500">
             Real-time operational manufacturing data, weights, plating concentrations, labour, and inventory
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-end sm:self-auto">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
           <Button variant="secondary" onClick={handleExport} className="">
             <Download className="w-3.5 h-3.5" /> Export CSV
           </Button>
@@ -232,7 +229,7 @@ export const ReportsCenterPage: React.FC = () => {
             <Printer className="w-3.5 h-3.5" /> Print
           </Button>
         </div>
-      </Card>
+      </div>
 
       {/* 2. Operational Categories Selector */}
       <div className="ds-tabs" role="group" aria-label="Report categories">
@@ -248,7 +245,7 @@ export const ReportsCenterPage: React.FC = () => {
               }}
               className=""
             >
-              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
+              <Icon className="w-4 h-4 shrink-0" />
               <span>{c.label}</span>
             </TabButton>
           );

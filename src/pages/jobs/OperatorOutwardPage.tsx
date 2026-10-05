@@ -1,242 +1,246 @@
-import { Button, Card, Input, Select } from '../../components/ui/Primitives';
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
-import { formatWeight, formatPlating } from '../../utils/formatters';
+import { Button } from '../../components/ui/Primitives';
+import { DataTable, ColumnDef } from '../../components/common/DataTable';
+import { StatusBadge } from '../../components/common/StatusBadge';
+import { JewelleryJob } from '../../types/erp';
+import { formatWeight, formatPlating, formatDateTime } from '../../utils/formatters';
 import {
   ArrowUpRight,
-  Search,
   Zap,
-  Filter,
-  Clock,
-  CheckCircle2,
+  Eye,
   Plus,
-  Scale,
-  Sparkles,
-  ArrowRight,
 } from 'lucide-react';
 
 export const OperatorOutwardPage: React.FC = () => {
   const navigate = useNavigate();
-  const { jobs } = useERP();
+  const { jobs, navigateToCustomer } = useERP();
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterPriority, setFilterPriority] = useState<'ALL' | 'FAST_FORWARD' | 'REGULAR'>('ALL');
-  const [filterStatus, setFilterStatus] = useState<'ALL' | 'READY' | 'COMPLETED'>('READY');
+  const [activeFilterTab, setActiveFilterTab] = useState<'READY' | 'FAST_FORWARD' | 'COMPLETED' | 'ALL'>('READY');
+
+  const readyJobs = useMemo(() => jobs.filter((j) => j.status !== 'Outward Completed'), [jobs]);
+  const fastForwardJobs = useMemo(
+    () => jobs.filter((j) => j.priority === 'Fast Forward' && j.status !== 'Outward Completed'),
+    [jobs]
+  );
+  const completedJobs = useMemo(() => jobs.filter((j) => j.status === 'Outward Completed'), [jobs]);
 
   const filteredJobs = useMemo(() => {
-    return jobs.filter((job) => {
-      // Search by ID, Customer, Plating
-      const q = searchQuery.toLowerCase();
-      const matchesSearch =
-        !searchQuery ||
-        job.id.toLowerCase().includes(q) ||
-        job.customerName.toLowerCase().includes(q) ||
-        job.platingType.toLowerCase().includes(q);
+    switch (activeFilterTab) {
+      case 'READY':
+        return readyJobs;
+      case 'FAST_FORWARD':
+        return fastForwardJobs;
+      case 'COMPLETED':
+        return completedJobs;
+      case 'ALL':
+      default:
+        return jobs;
+    }
+  }, [activeFilterTab, readyJobs, fastForwardJobs, completedJobs, jobs]);
 
-      if (!matchesSearch) return false;
-
-      // Filter Priority
-      if (filterPriority === 'FAST_FORWARD' && job.priority !== 'Fast Forward') return false;
-      if (filterPriority === 'REGULAR' && job.priority !== 'Regular') return false;
-
-      // Filter Status
-      if (filterStatus === 'READY' && job.status === 'Outward Completed') return false;
-      if (filterStatus === 'COMPLETED' && job.status !== 'Outward Completed') return false;
-
-      return true;
-    });
-  }, [jobs, searchQuery, filterPriority, filterStatus]);
-
-  const readyCount = jobs.filter((j) => j.status !== 'Outward Completed').length;
-  const ffCount = jobs.filter(
-    (j) => j.priority === 'Fast Forward' && j.status !== 'Outward Completed'
-  ).length;
+  const columns: ColumnDef<JewelleryJob>[] = [
+    {
+      header: 'Job ID',
+      accessorKey: 'id',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-mono font-bold text-xs bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded">
+          {row.id}
+        </span>
+      ),
+    },
+    {
+      header: 'Customer',
+      accessorKey: 'customerName',
+      sortable: true,
+      cell: (row) => (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateToCustomer(row.customerId);
+          }}
+          className="text-left font-bold text-xs text-slate-800 hover:text-blue-600 hover:underline"
+        >
+          {row.customerName}
+        </button>
+      ),
+    },
+    {
+      header: 'Plating Type',
+      accessorKey: 'platingType',
+      sortable: true,
+      cell: (row) => (
+        <span className="text-xs font-semibold text-slate-700">
+          {row.platingType}
+        </span>
+      ),
+    },
+    {
+      header: 'Inward Weight',
+      accessorKey: 'inwardWeight',
+      sortable: true,
+      align: 'right',
+      cell: (row) => (
+        <span className="font-mono text-xs font-bold text-slate-900">
+          {formatWeight(row.inwardWeight)}
+        </span>
+      ),
+    },
+    {
+      header: 'Outward Weight',
+      accessorKey: 'outwardWeight',
+      sortable: true,
+      align: 'right',
+      cell: (row) => (
+        <span className="font-mono text-xs font-semibold text-slate-700">
+          {row.outwardWeight ? formatWeight(row.outwardWeight) : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Plating / KG',
+      accessorKey: 'platingPerKg',
+      sortable: true,
+      align: 'right',
+      cell: (row) => (
+        <span className="font-mono text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+          {row.platingPerKg ? formatPlating(row.platingPerKg) : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Priority',
+      accessorKey: 'priority',
+      sortable: true,
+      cell: (row) => (
+        <span
+          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-2xs font-bold ${
+            row.priority === 'Fast Forward'
+              ? 'bg-amber-50 text-amber-800 border border-amber-200'
+              : 'bg-slate-100 text-slate-700'
+          }`}
+        >
+          {row.priority === 'Fast Forward' && <Zap className="w-3 h-3 text-amber-600 fill-amber-600" />}
+          {row.priority}
+        </span>
+      ),
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+      sortable: true,
+      cell: (row) => <StatusBadge type="job" value={row.status} size="sm" />,
+    },
+    {
+      header: 'Action',
+      sortable: false,
+      align: 'right',
+      cell: (row) => (
+        <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/jobs/${row.id}`)}
+            className="text-xs"
+          >
+            <Eye className="w-3.5 h-3.5" /> View
+          </Button>
+          {row.status !== 'Outward Completed' ? (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => navigate(`/outward/new?jobId=${row.id}`)}
+              className="text-xs"
+            >
+              <ArrowUpRight className="w-3.5 h-3.5" /> Process Outward
+            </Button>
+          ) : (
+            <span className="text-2xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+              Dispatched
+            </span>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="space-y-5 max-w-7xl mx-auto font-sans">
-      {/* Header Banner */}
-      <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-4">
+      {/* Header Banner - Standard Application Theme */}
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-black text-slate-900 tracking-tight">
-              Customer Outward Queue
-            </h1>
-            <span className="text-xs bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full">
-              {readyCount} Pending Outward
-            </span>
-            {ffCount > 0 && (
-              <span className="text-xs bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded-full flex items-center gap-1">
-                <Zap className="w-3 h-3 fill-slate-950" /> {ffCount} Urgent
-              </span>
-            )}
-          </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Verify finished jewellery, capture outward weight, calculate plating concentration, and complete dispatch.
+          <h2 className="text-sm font-bold text-slate-900">
+            Customer Outward Queue
+          </h2>
+          <p className="text-xs text-slate-500">
+            Verify finished jewellery, capture verified outward weight, calculate Plating per KG automatically, and record dispatches.
           </p>
         </div>
 
-        <Button variant="primary"
+        <Button
+          variant="primary"
           onClick={() => navigate('/outward/new')}
-          className="flex items-center gap-2 transition-all cursor-pointer shrink-0"
+          className="self-start sm:self-auto"
         >
-          <ArrowUpRight className="w-4 h-4" />
-          <span>Process Outward Directly</span>
+          <Plus className="w-3.5 h-3.5" /> Process Outward Directly
         </Button>
-      </Card>
-
-      {/* Search & Filter Controls */}
-      <Card padding="sm" className="bg-white rounded-xl p-4 border border-slate-200 shadow-xs grid grid-cols-1 sm:grid-cols-12 gap-3">
-        {/* Search */}
-        <div className="sm:col-span-6 relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-          <Input
-            type="text"
-            placeholder="Search by Job ID (e.g. DARSHAN1), Customer, Plating..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 ds-control-leading"
-          />
-        </div>
-
-        {/* Priority Filter */}
-        <div className="sm:col-span-3">
-          <Select
-            value={filterPriority}
-            onChange={(e) => setFilterPriority(e.target.value as any)}
-            className="w-full"
-          >
-            <option value="ALL">All Priorities</option>
-            <option value="FAST_FORWARD">⚡ Fast Forward Only</option>
-            <option value="REGULAR">Regular Priority</option>
-          </Select>
-        </div>
-
-        {/* Status Filter */}
-        <div className="sm:col-span-3">
-          <Select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as any)}
-            className="w-full"
-          >
-            <option value="READY">Ready for Outward</option>
-            <option value="COMPLETED">Outward Completed</option>
-            <option value="ALL">All Statuses</option>
-          </Select>
-        </div>
-      </Card>
-
-      {/* Outward Cards Grid (Touch-Friendly) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredJobs.length > 0 ? (
-          filteredJobs.map((job) => {
-            const isCompleted = job.status === 'Outward Completed';
-            const isFastForward = job.priority === 'Fast Forward';
-
-            return (
-              <div
-                key={job.id}
-                className={`bg-white rounded-2xl border-2 transition-all p-5 flex flex-col justify-between shadow-xs ${
-                  isFastForward && !isCompleted
-                    ? 'border-amber-400 bg-amber-50/20 shadow-md ring-1 ring-amber-300'
-                    : isCompleted
-                    ? 'border-slate-200 opacity-90'
-                    : 'border-slate-200 hover:border-blue-400'
-                }`}
-              >
-                <div>
-                  {/* Top Badges */}
-                  <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100">
-                    <span className="font-mono font-black text-base text-slate-900">
-                      {job.id}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      {isFastForward && (
-                        <span className="text-[10px] bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
-                          <Zap className="w-3 h-3 fill-slate-950" /> FAST FORWARD
-                        </span>
-                      )}
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          isCompleted
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : 'bg-blue-100 text-blue-800'
-                        }`}
-                      >
-                        {job.status}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Customer & Plating */}
-                  <div className="py-3 space-y-1.5 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">Customer:</span>
-                      <span className="font-bold text-slate-900">{job.customerName}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">Plating Type:</span>
-                      <span className="font-bold text-slate-800">{job.platingType}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">Inward Weight:</span>
-                      <span className="font-black text-slate-900 font-mono text-sm">
-                        {formatWeight(job.inwardWeight)}
-                      </span>
-                    </div>
-
-                    {isCompleted && (
-                      <>
-                        <div className="flex justify-between pt-1 border-t border-slate-100">
-                          <span className="text-slate-500 font-medium">Outward Weight:</span>
-                          <span className="font-black text-emerald-800 font-mono text-sm">
-                            {formatWeight(job.outwardWeight || 0)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-500 font-medium">Plating per KG:</span>
-                          <span className="font-black text-emerald-700 font-mono">
-                            {formatPlating(job.platingPerKg || 0)}
-                          </span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Bottom Action */}
-                <div className="pt-3 border-t border-slate-100">
-                  {isCompleted ? (
-                    <Button variant="secondary"
-                      onClick={() => navigate(`/jobs/${job.id}`)}
-                      className="w-full flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                    >
-                      <span>View Outward Details</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Button>
-                  ) : (
-                    <Button variant="surface"
-                      onClick={() => navigate(`/outward/new?jobId=${job.id}`)}
-                      className={`w-full h-11 rounded-xl font-extrabold text-xs shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                        isFastForward
-                          ? 'bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950'
-                          : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white'
-                      }`}
-                    >
-                      <ArrowUpRight className="w-4 h-4" />
-                      <span>Process Outward</span>
-                    </Button>
-                  )}
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <Card padding="md" className="col-span-full py-12 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200">
-            No jobs are currently ready for Outward.
-          </Card>
-        )}
       </div>
+
+      {/* Segmented Queue Filter Tabs */}
+      <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200 self-start w-fit">
+        <button
+          onClick={() => setActiveFilterTab('READY')}
+          className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+            activeFilterTab === 'READY'
+              ? 'bg-white text-slate-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          Ready for Outward ({readyJobs.length})
+        </button>
+        <button
+          onClick={() => setActiveFilterTab('FAST_FORWARD')}
+          className={`px-3 py-1 text-xs font-semibold rounded-md transition-all flex items-center gap-1.5 ${
+            activeFilterTab === 'FAST_FORWARD'
+              ? 'bg-white text-amber-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
+          Fast Forward ({fastForwardJobs.length})
+        </button>
+        <button
+          onClick={() => setActiveFilterTab('COMPLETED')}
+          className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+            activeFilterTab === 'COMPLETED'
+              ? 'bg-white text-emerald-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          Completed Outward ({completedJobs.length})
+        </button>
+        <button
+          onClick={() => setActiveFilterTab('ALL')}
+          className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+            activeFilterTab === 'ALL'
+              ? 'bg-white text-slate-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          All Jobs ({jobs.length})
+        </button>
+      </div>
+
+      {/* Unified DataTable */}
+      <DataTable
+        data={filteredJobs}
+        columns={columns}
+        onRowClick={(row) => navigate(`/jobs/${row.id}`)}
+        searchPlaceholder="Search Outward by Job ID, Customer, Plating..."
+        exportFilename="customer_outward_queue"
+      />
     </div>
   );
 };

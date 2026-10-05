@@ -119,9 +119,7 @@ export const LabourListPage: React.FC = () => {
       {/* Header Banner */}
       <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Hammer className="w-4 h-4 text-slate-700" /> Labour Master & Staff Directory
-          </h2>
+          <h2 className="text-sm font-bold text-slate-900">Labour Master & Staff Directory</h2>
           <p className="text-xs text-slate-500">
             Contract workers, binding specialists, and untying operators with default charge rates.
           </p>

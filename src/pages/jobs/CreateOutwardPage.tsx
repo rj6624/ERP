@@ -96,9 +96,7 @@ export const CreateOutwardPage: React.FC = () => {
         {/* Header Banner */}
         <div className="erp-light-panel p-4 bg-slate-900 text-white flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-bold flex items-center gap-2">
-              <ArrowUpRight className="w-4 h-4 text-emerald-400" /> Process Customer Outward
-            </h2>
+            <h2 className="text-sm font-bold text-white">Process Customer Outward</h2>
             <p className="text-xs text-slate-300 mt-0.5">
               Select Job ID to fetch Inward Weight; enter verified Outward Weight to calculate Plating per KG
             </p>

@@ -10,12 +10,14 @@ import {
   Bell,
   
   ChevronDown,
+  ChevronRight,
   HardHat,
   LogOut,
   Sparkles,
 } from 'lucide-react';
 import { NotificationsPopover } from '../common/NotificationsPopover';
 import { RoleSwitcherDropdown } from './RoleSwitcherDropdown';
+import { BreadcrumbItem } from '../../types/navigation';
 
 interface OperatorHeaderProps {
   collapsed: boolean;
@@ -57,46 +59,121 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
   }, [isProfileMenuOpen]);
 
   // Breadcrumbs title helper
-  const getPageInfo = () => {
+  const getPageInfo = (): { title: string; subtitle: string; crumbs: BreadcrumbItem[] } => {
     const path = location.pathname;
     if (path === '/' || path === '/dashboard') {
-      return { title: 'Factory Floor Operations', subtitle: 'Station 01 • Intake & Dispatch Console' };
+      return {
+        title: 'Factory Floor Operations',
+        subtitle: 'Station 01 • Intake & Dispatch Console',
+        crumbs: [{ label: 'Dashboard', path: '/dashboard' }],
+      };
     }
     if (path === '/inward') {
-      return { title: 'Customer Inward Receipts', subtitle: 'Jewellery Intake Log' };
+      return {
+        title: 'Customer Inward Receipts',
+        subtitle: 'Jewellery Intake Log',
+        crumbs: [
+          { label: 'Customer', path: '/customers' },
+          { label: 'Inward Receipts', path: '/inward' },
+        ],
+      };
     }
     if (path === '/inward/new') {
-      return { title: 'New Customer Inward', subtitle: 'Weight & Dual Photo Intake' };
+      return {
+        title: 'New Customer Inward',
+        subtitle: 'Weight & Dual Photo Intake',
+        crumbs: [
+          { label: 'Customer', path: '/customers' },
+          { label: 'Inward', path: '/inward' },
+          { label: 'New Inward', path: '/inward/new' },
+        ],
+      };
     }
     if (path === '/outward') {
-      return { title: 'Customer Outward Dispatches', subtitle: 'Ready for Plating Dispatch' };
+      return {
+        title: 'Customer Outward Dispatches',
+        subtitle: 'Ready for Plating Dispatch',
+        crumbs: [
+          { label: 'Customer', path: '/customers' },
+          { label: 'Outward Dispatches', path: '/outward' },
+        ],
+      };
     }
     if (path === '/outward/new') {
-      return { title: 'Process Customer Outward', subtitle: 'Weight Verification & Plating Calculation' };
+      return {
+        title: 'Process Customer Outward',
+        subtitle: 'Weight Verification & Plating Calculation',
+        crumbs: [
+          { label: 'Customer', path: '/customers' },
+          { label: 'Outward', path: '/outward' },
+          { label: 'Process', path: '/outward/new' },
+        ],
+      };
     }
     if (path.startsWith('/jobs/')) {
-      return { title: 'Job Traceability Details', subtitle: 'Inward, Photos & Dispatch' };
+      const jobId = path.split('/')[2] || 'Detail';
+      return {
+        title: 'Job Traceability Details',
+        subtitle: 'Inward, Photos & Dispatch',
+        crumbs: [
+          { label: 'Operations', path: '/dashboard' },
+          { label: 'Jobs', path: '/inward' },
+          { label: jobId, path },
+        ],
+      };
     }
     if (path === '/fast-forward') {
-      return { title: 'Fast Forward Priority Queue', subtitle: 'Urgent Processing Required' };
+      return {
+        title: 'Fast Forward Priority Queue',
+        subtitle: 'Urgent Processing Required',
+        crumbs: [
+          { label: 'Operations', path: '/dashboard' },
+          { label: 'Fast Forward Queue', path: '/fast-forward' },
+        ],
+      };
     }
     if (path === '/customers') {
-      return { title: 'Customer Directory', subtitle: 'Contact & Account Lookup' };
+      return {
+        title: 'Customer Directory',
+        subtitle: 'Contact & Account Lookup',
+        crumbs: [
+          { label: 'Customer', path: '/customers' },
+          { label: 'Directory', path: '/customers' },
+        ],
+      };
     }
     if (path === '/customer-jobs') {
-      return { title: 'Customer Jobs History', subtitle: 'Past Inward & Outward Records' };
+      return {
+        title: 'Customer Jobs History',
+        subtitle: 'Past Inward & Outward Records',
+        crumbs: [
+          { label: 'Customer', path: '/customers' },
+          { label: 'Customer Jobs', path: '/customer-jobs' },
+        ],
+      };
     }
     if (path.startsWith('/reports')) {
-      return { title: 'Operational Daily Reports', subtitle: 'Inward, Outward & Plating' };
+      return {
+        title: 'Operational Daily Reports',
+        subtitle: 'Inward, Outward & Plating',
+        crumbs: [
+          { label: 'Reports', path: '/reports' },
+          { label: 'Daily Reports', path: '/reports' },
+        ],
+      };
     }
-    return { title: 'Factory Operator Portal', subtitle: 'Jewellery Plating Operations' };
+    return {
+      title: 'Factory Operator Portal',
+      subtitle: 'Jewellery Plating Operations',
+      crumbs: [{ label: 'Dashboard', path: '/dashboard' }],
+    };
   };
 
   const pageInfo = getPageInfo();
 
   return (
     <header className="erp-header h-15 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 flex items-center justify-between z-20 shrink-0 font-sans sticky top-0">
-      {/* Left: Sidebar Toggle + Title */}
+      {/* Left: Sidebar Toggle + Title & Breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0 mr-2">
         <Button variant="secondary" size="icon"
           type="button"
@@ -108,7 +185,35 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
           {collapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
         </Button>
 
-        <div className="min-w-0">
+        <div className="flex flex-col min-w-0">
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-medium">
+            {pageInfo.crumbs.map((crumb, idx) => {
+              const isLast = idx === pageInfo.crumbs.length - 1;
+              return (
+                <React.Fragment key={idx}>
+                  {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (crumb.onClick) {
+                        crumb.onClick();
+                      } else if (crumb.path) {
+                        navigate(crumb.path);
+                      }
+                    }}
+                    className={`truncate transition-colors cursor-pointer text-left ${
+                      isLast
+                        ? 'text-slate-800 font-semibold hover:text-emerald-700 hover:underline'
+                        : 'text-slate-500 hover:text-slate-900 hover:underline'
+                    }`}
+                    title={`Navigate to ${crumb.label}`}
+                  >
+                    {crumb.label}
+                  </button>
+                </React.Fragment>
+              );
+            })}
+          </div>
           <div className="flex items-center gap-2">
             <h1 className="text-xs sm:text-sm font-bold text-slate-900 tracking-tight leading-snug truncate">
               {pageInfo.title}
@@ -119,9 +224,6 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
               </span>
             )}
           </div>
-          <p className="text-[11px] text-slate-500 hidden sm:block truncate leading-tight mt-0.5">
-            {pageInfo.subtitle}
-          </p>
         </div>
       </div>
 

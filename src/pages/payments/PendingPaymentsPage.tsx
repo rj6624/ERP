@@ -96,18 +96,22 @@ export const PendingPaymentsPage: React.FC = () => {
       align: 'right',
       cell: (row) => (
         <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
-          <Button variant="secondary" size="icon"
+          <Button
+            variant="secondary"
+            size="icon"
             onClick={() => navigateToBill(row.id)}
-            className=""
+            className="!min-h-[28px] !h-7 !w-7 p-0 shrink-0 cursor-pointer"
             title="View Bill"
           >
-            <Eye className="w-3.5 h-3.5" />
+            <Eye className="w-3.5 h-3.5 text-slate-600" />
           </Button>
-          <Button variant="primary"
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => setSelectedBillForPayment(row.id)}
-            className="inline-flex items-center gap-1 text-2xs"
+            className="!min-h-[28px] h-7 px-2.5 text-xs font-semibold inline-flex items-center gap-1 shadow-2xs shrink-0 cursor-pointer"
           >
-            <CreditCard className="w-3 h-3" /> Settle
+            <CreditCard className="w-3.5 h-3.5 shrink-0" /> Settle
           </Button>
         </div>
       ),
@@ -117,17 +121,17 @@ export const PendingPaymentsPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="bg-red-500/10 border border-red-200 p-4 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <h2 className="text-sm font-bold text-red-950 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-red-600" /> Pending Customer Receivables ({pendingBills.length} Unsettled Bills)
+          <h2 className="text-sm font-bold text-slate-900">
+            Pending Customer Receivables ({pendingBills.length} Unsettled Bills)
           </h2>
-          <p className="text-xs text-red-800">
+          <p className="text-xs text-slate-500">
             Uncollected manufacturing invoices requiring customer follow-up.
           </p>
         </div>
 
-        <div className="text-right p-2.5 rounded bg-white border border-red-200">
+        <div className="text-right p-2.5 rounded bg-red-50/60 border border-red-200 self-start sm:self-auto">
           <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Total Outstanding</span>
           <span className="font-mono text-base font-extrabold text-red-600">
             {formatCurrency(totalPendingReceivables, true)}

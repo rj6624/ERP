@@ -85,15 +85,12 @@ export const RecycleBinPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="erp-light-panel bg-slate-900 text-white p-5 rounded-lg border border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <div className="flex items-center gap-2">
-            <Trash2 className="w-5 h-5 text-slate-400" />
-            <h2 className="text-sm font-bold tracking-wide uppercase text-white">
-              Admin Recycle Bin & Soft-Deleted Audit Ledger
-            </h2>
-          </div>
-          <p className="text-xs text-slate-300 mt-0.5">
+          <h2 className="text-sm font-bold text-slate-900">
+            Admin Recycle Bin & Soft-Deleted Audit Ledger
+          </h2>
+          <p className="text-xs text-slate-500">
             Deleted records are safely archived here. Admin can audit and restore records back into the active database or purge permanently.
           </p>
         </div>

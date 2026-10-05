@@ -6,7 +6,7 @@ import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { calculateAgeDays } from '../../utils/calculations';
 import { formatWeight, formatDate } from '../../utils/formatters';
-import { Zap, ArrowUpRight, Eye, AlertCircle, Clock } from 'lucide-react';
+import { Zap, ArrowUpRight, Eye, AlertCircle, Clock, Plus } from 'lucide-react';
 
 export const FastForwardQueuePage: React.FC = () => {
   const { jobs, setCurrentPage, navigateToJob, navigateToCustomer } = useERP();
@@ -119,29 +119,22 @@ export const FastForwardQueuePage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="bg-amber-500 text-slate-950 p-4 rounded-lg shadow-sm border border-amber-400 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="p-1 bg-slate-950 text-amber-400 rounded">
-              <Zap className="w-4 h-4 fill-current" />
-            </span>
-            <h2 className="text-sm font-extrabold uppercase tracking-wide">
-              Fast Forward Priority Queue ({fastForwardPendingJobs.length} Urgent Jobs)
-            </h2>
-          </div>
-          <p className="text-xs text-slate-900 font-medium">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+        <div>
+          <h2 className="text-sm font-bold text-slate-900">
+            Fast Forward Priority Queue ({fastForwardPendingJobs.length} Urgent Jobs)
+          </h2>
+          <p className="text-xs text-slate-500">
             Active priority queue. Jobs auto-clear from this queue as soon as Outward dispatch is recorded.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="primary"
-            onClick={() => setCurrentPage('create_inward')}
-            className=""
-          >
-            + New Fast Forward
-          </Button>
-        </div>
+        <Button variant="primary"
+          onClick={() => setCurrentPage('create_inward')}
+          className="self-start sm:self-auto"
+        >
+          <Plus className="w-3.5 h-3.5" /> New Fast Forward
+        </Button>
       </div>
 
       {/* Fast Forward Table */}

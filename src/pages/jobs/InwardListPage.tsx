@@ -1,4 +1,4 @@
-import { Button, Card, Select } from '../../components/ui/Primitives';
+import { Button, CustomSelect } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { JewelleryJob, PlatingType, JobPriority, JobStatus } from '../../types/erp';
@@ -123,9 +123,7 @@ export const InwardListPage: React.FC = () => {
       {/* Header Banner */}
       <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <ArrowDownLeft className="w-4 h-4 text-blue-600" /> Customer Inward Receipts
-          </h2>
+          <h2 className="text-sm font-bold text-slate-900">Customer Inward Receipts</h2>
           <p className="text-xs text-slate-500">
             Intake of unplated silver jewellery with digital scale verification and system-generated IDs.
           </p>
@@ -138,89 +136,88 @@ export const InwardListPage: React.FC = () => {
         </Button>
       </div>
 
-      {/* Filter Toolbar */}
-      <Card padding="sm" className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center gap-3 text-xs">
-        <div className="flex items-center gap-1.5 text-slate-500 font-semibold">
-          <Filter className="w-3.5 h-3.5" /> Filters:
-        </div>
-
-        {/* Customer Filter */}
-        <Select
-          value={filterCustomer}
-          onChange={(e) => setFilterCustomer(e.target.value)}
-          className="w-auto"
-        >
-          <option value="ALL">All Customers</option>
-          {customers.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </Select>
-
-        {/* Plating Type */}
-        <Select
-          value={filterPlating}
-          onChange={(e) => setFilterPlating(e.target.value)}
-          className="w-auto"
-        >
-          <option value="ALL">All Plating Types</option>
-          <option value="White Gold">White Gold</option>
-          <option value="Golden Brass">Golden Brass</option>
-          <option value="Golden Silver">Golden Silver</option>
-          <option value="Antic Gold">Antic Gold</option>
-          <option value="Teen Gold">Teen Gold</option>
-          <option value="Rose Gold">Rose Gold</option>
-          <option value="Damar Gold">Damar Gold</option>
-          <option value="Dal Chhol Gold">Dal Chhol Gold</option>
-        </Select>
-
-        {/* Priority Filter */}
-        <Select
-          value={filterPriority}
-          onChange={(e) => setFilterPriority(e.target.value)}
-          className="w-auto"
-        >
-          <option value="ALL">All Priorities</option>
-          <option value="Regular">Regular</option>
-          <option value="Fast Forward">Fast Forward Only</option>
-        </Select>
-
-        {/* Status Filter */}
-        <Select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          className="w-auto"
-        >
-          <option value="ALL">All Statuses</option>
-          <option value="Inward Received">Inward Received</option>
-          <option value="In Process">In Process</option>
-          <option value="Ready for Outward">Ready for Outward</option>
-          <option value="Outward Completed">Outward Completed</option>
-        </Select>
-
-        {(filterCustomer !== 'ALL' ||
-          filterPlating !== 'ALL' ||
-          filterPriority !== 'ALL' ||
-          filterStatus !== 'ALL') && (
-          <Button variant="ghost"
-            onClick={() => {
-              setFilterCustomer('ALL');
-              setFilterPlating('ALL');
-              setFilterPriority('ALL');
-              setFilterStatus('ALL');
-            }}
-            className="hover:underline ml-auto"
-          >
-            Reset Filters
-          </Button>
-        )}
-      </Card>
-
-      {/* Inward Table */}
+      {/* Inward Table with Filters below Searchbar */}
       <DataTable
         data={filteredJobs}
         columns={columns}
+        filters={
+          <>
+            <div className="flex items-center gap-1.5 text-slate-500 font-medium shrink-0 mr-1">
+              <Filter className="w-3.5 h-3.5" />
+              <span>Filters:</span>
+            </div>
+
+            {/* Customer Filter */}
+            <CustomSelect
+              value={filterCustomer}
+              onChange={(val) => setFilterCustomer(typeof val === 'string' ? val : val.target.value)}
+            >
+              <option value="ALL">All Customers</option>
+              {customers.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </CustomSelect>
+
+            {/* Plating Type */}
+            <CustomSelect
+              value={filterPlating}
+              onChange={(val) => setFilterPlating(typeof val === 'string' ? val : val.target.value)}
+            >
+              <option value="ALL">All Plating Types</option>
+              <option value="White Gold">White Gold</option>
+              <option value="Golden Brass">Golden Brass</option>
+              <option value="Golden Silver">Golden Silver</option>
+              <option value="Antic Gold">Antic Gold</option>
+              <option value="Teen Gold">Teen Gold</option>
+              <option value="Rose Gold">Rose Gold</option>
+              <option value="Damar Gold">Damar Gold</option>
+              <option value="Dal Chhol Gold">Dal Chhol Gold</option>
+            </CustomSelect>
+
+            {/* Priority Filter */}
+            <CustomSelect
+              value={filterPriority}
+              onChange={(val) => setFilterPriority(typeof val === 'string' ? val : val.target.value)}
+            >
+              <option value="ALL">All Priorities</option>
+              <option value="Regular">Regular</option>
+              <option value="Fast Forward">Fast Forward Only</option>
+            </CustomSelect>
+
+            {/* Status Filter */}
+            <CustomSelect
+              value={filterStatus}
+              onChange={(val) => setFilterStatus(typeof val === 'string' ? val : val.target.value)}
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="Inward Received">Inward Received</option>
+              <option value="In Process">In Process</option>
+              <option value="Ready for Outward">Ready for Outward</option>
+              <option value="Outward Completed">Outward Completed</option>
+            </CustomSelect>
+
+            {(filterCustomer !== 'ALL' ||
+              filterPlating !== 'ALL' ||
+              filterPriority !== 'ALL' ||
+              filterStatus !== 'ALL') && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setFilterCustomer('ALL');
+                  setFilterPlating('ALL');
+                  setFilterPriority('ALL');
+                  setFilterStatus('ALL');
+                }}
+                className="erp-toolbar-control hover:underline text-xs text-slate-500 hover:text-slate-800 px-2.5 py-0"
+              >
+                Reset Filters
+              </Button>
+            )}
+          </>
+        }
         onRowClick={(row) => navigateToJob(row.id)}
         searchPlaceholder="Search Inward by Job ID, Customer, Plating..."
         exportFilename="inward_receipts"

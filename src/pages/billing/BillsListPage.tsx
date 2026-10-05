@@ -110,19 +110,23 @@ export const BillsListPage: React.FC = () => {
       align: 'right',
       cell: (row) => (
         <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
-          <Button variant="secondary" size="icon"
+          <Button
+            variant="secondary"
+            size="icon"
             onClick={() => navigateToBill(row.id)}
-            className=""
+            className="!min-h-[28px] !h-7 !w-7 p-0 shrink-0 cursor-pointer"
             title="View Invoice"
           >
-            <Eye className="w-3.5 h-3.5" />
+            <Eye className="w-3.5 h-3.5 text-slate-600" />
           </Button>
           {row.pendingAmount > 0 && (
-            <Button variant="ghost"
+            <Button
+              variant="primary"
+              size="sm"
               onClick={() => setSelectedBillForPayment(row.id)}
-              className="inline-flex items-center gap-1 text-2xs"
+              className="!min-h-[28px] h-7 px-2.5 text-xs font-semibold inline-flex items-center gap-1 shadow-2xs shrink-0 cursor-pointer"
             >
-              <CreditCard className="w-3 h-3" /> Pay
+              <CreditCard className="w-3.5 h-3.5 shrink-0" /> Settle
             </Button>
           )}
         </div>
@@ -135,9 +139,7 @@ export const BillsListPage: React.FC = () => {
       {/* Header Banner */}
       <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-slate-700" /> Manufacturing Bills & Invoicing
-          </h2>
+          <h2 className="text-sm font-bold text-slate-900">Manufacturing Bills & Invoicing</h2>
           <p className="text-xs text-slate-500">
             Automated invoices calculated on Inward Weight × Price per KG with integrated payment balance tracking.
           </p>

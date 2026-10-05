@@ -48,5 +48,7 @@ export type NavigationPage =
 export interface BreadcrumbItem {
   label: string;
   page?: NavigationPage;
+  path?: string;
   params?: Record<string, string>;
+  onClick?: () => void;
 }

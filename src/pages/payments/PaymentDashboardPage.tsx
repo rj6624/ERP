@@ -15,7 +15,6 @@ import {
   Calendar,
   AlertCircle,
   Eye,
-  ShieldCheck,
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { Bill } from '../../types/erp';
@@ -100,15 +99,17 @@ export const PaymentDashboardPage: React.FC = () => {
       sortable: false,
       align: 'right',
       cell: (row) => (
-        <Button variant="secondary" size="icon"
+        <Button
+          variant="secondary"
+          size="icon"
           onClick={(e) => {
             e.stopPropagation();
             navigateToBill(row.id);
           }}
-          className=""
+          className="!min-h-[28px] !h-7 !w-7 p-0 shrink-0 cursor-pointer"
           title="View Invoice"
         >
-          <Eye className="w-3.5 h-3.5" />
+          <Eye className="w-3.5 h-3.5 text-slate-600" />
         </Button>
       ),
     },
@@ -116,30 +117,20 @@ export const PaymentDashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-5">
-      {/* Header Banner */}
-      <div className="erp-light-panel bg-slate-900 text-white p-5 rounded-lg border border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* List Header */}
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-1 bg-emerald-500/20 text-emerald-400 rounded">
-              <ShieldCheck className="w-4 h-4" />
-            </span>
-            <h2 className="text-sm font-bold tracking-wide uppercase text-white">
-              Admin Payment Analytics & Collections Control
-            </h2>
-          </div>
-          <p className="text-xs text-slate-300 mt-0.5">
+          <h2 className="text-sm font-bold text-slate-900">Admin Payment Analytics & Collections Control</h2>
+          <p className="text-xs text-slate-500">
             Complete financial visibility over cash, bank transfers, UPI receipts, pending receivables, and promised date obligations.
           </p>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Button variant="primary"
-            onClick={() => setIsRecordModalOpen(true)}
-            className=""
-          >
-            <Plus className="w-3.5 h-3.5" /> Record Payment Receipt
-          </Button>
-        </div>
+        <Button variant="primary"
+          onClick={() => setIsRecordModalOpen(true)}
+          className="self-start sm:self-auto"
+        >
+          <Plus className="w-3.5 h-3.5" /> Record Payment Receipt
+        </Button>
       </div>
 
       {/* KPI Cards */}

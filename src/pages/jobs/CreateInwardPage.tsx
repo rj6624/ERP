@@ -84,9 +84,7 @@ export const CreateInwardPage: React.FC = () => {
         {/* Banner */}
         <div className="erp-light-panel p-4 bg-slate-900 text-white flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-bold flex items-center gap-2">
-              <ArrowDownLeft className="w-4 h-4 text-emerald-400" /> Create Customer Inward
-            </h2>
+            <h2 className="text-sm font-bold text-white">Create Customer Inward</h2>
             <p className="text-xs text-slate-300 mt-0.5">
               Automated Job ID sequence generated on customer selection
             </p>

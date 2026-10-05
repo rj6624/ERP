@@ -20,6 +20,12 @@ import {
 import { NotificationsPopover } from '../common/NotificationsPopover';
 import { RoleSwitcherDropdown } from './RoleSwitcherDropdown';
 
+interface BreadcrumbItem {
+  label: string;
+  page?: any;
+  onClick?: () => void;
+}
+
 interface AdminHeaderProps {
   collapsed: boolean;
   setCollapsed: (v: boolean | ((prev: boolean) => boolean)) => void;
@@ -34,6 +40,9 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ collapsed, setCollapse
     selectedCustomerId,
     selectedJobId,
     selectedBillId,
+    navigateToCustomer,
+    navigateToJob,
+    navigateToBill,
     customers,
     alerts,
     currentUser,
@@ -60,80 +69,282 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ collapsed, setCollapse
   }, [isProfileMenuOpen]);
 
   // Breadcrumbs title helper
-  const getPageInfo = () => {
+  const getPageInfo = (): { title: string; subtitle: string; crumbs: BreadcrumbItem[] } => {
     switch (currentPage) {
       case 'dashboard':
-        return { title: 'Operational Dashboard', subtitle: 'Real-time plating metrics & revenue', crumbs: ['Dashboard'] };
+        return {
+          title: 'Operational Dashboard',
+          subtitle: 'Real-time plating metrics & revenue',
+          crumbs: [{ label: 'Dashboard', page: 'dashboard' }],
+        };
       case 'customers':
-        return { title: 'Customer Master & Accounts', subtitle: 'Customer directory & profiles', crumbs: ['Customer', 'Customers'] };
+        return {
+          title: 'Customer Master & Accounts',
+          subtitle: 'Customer directory & profiles',
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Customers', page: 'customers' },
+          ],
+        };
       case 'customer_detail': {
         const cust = customers.find((c) => c.id === selectedCustomerId);
         return {
           title: cust ? cust.name : 'Customer Profile',
           subtitle: 'Profile, job history & ledger',
-          crumbs: ['Customer', 'Customers', cust ? cust.name : 'Detail'],
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Customers', page: 'customers' },
+            {
+              label: cust ? cust.name : (selectedCustomerId || 'Detail'),
+              page: 'customer_detail',
+              onClick: () => selectedCustomerId && navigateToCustomer(selectedCustomerId),
+            },
+          ],
         };
       }
       case 'inward_list':
-        return { title: 'Customer Inward Receipts', subtitle: 'Jewellery receipt registry', crumbs: ['Customer', 'Inward'] };
+        return {
+          title: 'Customer Inward Receipts',
+          subtitle: 'Jewellery receipt registry',
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Inward', page: 'inward_list' },
+          ],
+        };
       case 'create_inward':
-        return { title: 'Create Customer Inward', subtitle: 'Auto job ID generator', crumbs: ['Customer', 'Inward', 'New Inward'] };
+        return {
+          title: 'Create Customer Inward',
+          subtitle: 'Auto job ID generator',
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Inward', page: 'inward_list' },
+            { label: 'New Inward', page: 'create_inward' },
+          ],
+        };
       case 'outward_list':
-        return { title: 'Customer Outward Dispatches', subtitle: 'Completed job dispatches', crumbs: ['Customer', 'Outward'] };
+        return {
+          title: 'Customer Outward Dispatches',
+          subtitle: 'Completed job dispatches',
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Outward', page: 'outward_list' },
+          ],
+        };
       case 'create_outward':
-        return { title: 'Process Customer Outward', subtitle: 'Plating calculation & verification', crumbs: ['Customer', 'Outward', 'Process'] };
+        return {
+          title: 'Process Customer Outward',
+          subtitle: 'Plating calculation & verification',
+          crumbs: [
+            { label: 'Customer', page: 'customers' },
+            { label: 'Outward', page: 'outward_list' },
+            { label: 'Process', page: 'create_outward' },
+          ],
+        };
       case 'job_detail':
         return {
-          title: `Job Lifecycle Traceability`,
+          title: 'Job Lifecycle Traceability',
           subtitle: `Job ID: ${selectedJobId || 'JOB-1025'}`,
-          crumbs: ['Operations', 'Jobs', selectedJobId || 'Detail'],
+          crumbs: [
+            { label: 'Operations', page: 'dashboard' },
+            { label: 'Jobs', page: 'inward_list' },
+            {
+              label: selectedJobId || 'Detail',
+              page: 'job_detail',
+              onClick: () => selectedJobId && navigateToJob(selectedJobId),
+            },
+          ],
         };
       case 'fast_forward':
-        return { title: 'Fast Forward Priority Queue', subtitle: 'High urgency processing jobs', crumbs: ['Operations', 'Fast Forward Queue'] };
+        return {
+          title: 'Fast Forward Priority Queue',
+          subtitle: 'High urgency processing jobs',
+          crumbs: [
+            { label: 'Operations', page: 'dashboard' },
+            { label: 'Fast Forward Queue', page: 'fast_forward' },
+          ],
+        };
       case 'labour_list':
-        return { title: 'Labour Master Directory', subtitle: 'Artisan directory & active benches', crumbs: ['Labour', 'Labour Master'] };
+        return {
+          title: 'Labour Master Directory',
+          subtitle: 'Artisan directory & active benches',
+          crumbs: [
+            { label: 'Labour', page: 'labour_list' },
+            { label: 'Labour Master', page: 'labour_list' },
+          ],
+        };
       case 'labour_binding':
-        return { title: 'Labour Binding & Tar Usage', subtitle: 'Wire binding logs & tar consumption', crumbs: ['Labour', 'Binding Tasks'] };
+        return {
+          title: 'Labour Binding & Tar Usage',
+          subtitle: 'Wire binding logs & tar consumption',
+          crumbs: [
+            { label: 'Labour', page: 'labour_list' },
+            { label: 'Binding Tasks', page: 'labour_binding' },
+          ],
+        };
       case 'labour_open':
-        return { title: 'Labour Untying Operations', subtitle: 'Open work piece tracking', crumbs: ['Labour', 'Open Tasks'] };
+        return {
+          title: 'Labour Untying Operations',
+          subtitle: 'Open work piece tracking',
+          crumbs: [
+            { label: 'Labour', page: 'labour_list' },
+            { label: 'Open Tasks', page: 'labour_open' },
+          ],
+        };
       case 'stock_chemical':
-        return { title: 'Chemical Stock Inventory', subtitle: 'Bath tanks & chemical replenishment', crumbs: ['Stock', 'Chemicals'] };
+        return {
+          title: 'Chemical Stock Inventory',
+          subtitle: 'Bath tanks & chemical replenishment',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Chemicals', page: 'stock_chemical' },
+          ],
+        };
       case 'stock_acid':
-        return { title: 'Acid Stock Inventory', subtitle: 'Acid drums & titration logs', crumbs: ['Stock', 'Acids'] };
+        return {
+          title: 'Acid Stock Inventory',
+          subtitle: 'Acid drums & titration logs',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Acids', page: 'stock_acid' },
+          ],
+        };
       case 'stock_metal':
-        return { title: 'Precious Metals & Anodes', subtitle: 'Gold, Silver & Rhodium stocks', crumbs: ['Stock', 'Metals'] };
+        return {
+          title: 'Precious Metals & Anodes',
+          subtitle: 'Gold, Silver & Rhodium stocks',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Metals', page: 'stock_metal' },
+          ],
+        };
       case 'stock_tar':
-        return { title: 'Tar Stock & Melting Logs', subtitle: 'Sealing tar weight register', crumbs: ['Stock', 'Tar Stock'] };
+        return {
+          title: 'Tar Stock & Melting Logs',
+          subtitle: 'Sealing tar weight register',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Tar Stock', page: 'stock_tar' },
+          ],
+        };
       case 'stock_scrap':
-        return { title: 'Scrap Recovery & Refining', subtitle: 'Precious metal recovery tracking', crumbs: ['Stock', 'Scrap Management'] };
+        return {
+          title: 'Scrap Recovery & Refining',
+          subtitle: 'Precious metal recovery tracking',
+          crumbs: [
+            { label: 'Stock', page: 'stock_chemical' },
+            { label: 'Scrap Management', page: 'stock_scrap' },
+          ],
+        };
       case 'bills_list':
-        return { title: 'Billing & Invoicing', subtitle: 'Customer invoices & GST ledger', crumbs: ['Billing', 'Bills'] };
+        return {
+          title: 'Billing & Invoicing',
+          subtitle: 'Customer invoices & GST ledger',
+          crumbs: [
+            { label: 'Billing', page: 'bills_list' },
+            { label: 'Bills', page: 'bills_list' },
+          ],
+        };
       case 'bill_detail':
         return {
           title: `Invoice ${selectedBillId || 'BILL-1025'}`,
           subtitle: 'Invoice breakdown & itemized plating',
-          crumbs: ['Billing', 'Bills', selectedBillId || 'Invoice'],
+          crumbs: [
+            { label: 'Billing', page: 'bills_list' },
+            { label: 'Bills', page: 'bills_list' },
+            {
+              label: selectedBillId || 'Invoice',
+              page: 'bill_detail',
+              onClick: () => selectedBillId && navigateToBill(selectedBillId),
+            },
+          ],
         };
       case 'payments_dashboard':
-        return { title: 'Payment & Financial Analytics', subtitle: 'Collections, cashflow & receivables', crumbs: ['Payments', 'Dashboard'] };
+        return {
+          title: 'Payment & Financial Analytics',
+          subtitle: 'Collections, cashflow & receivables',
+          crumbs: [
+            { label: 'Payments', page: 'payments_dashboard' },
+            { label: 'Dashboard', page: 'payments_dashboard' },
+          ],
+        };
       case 'payments_received':
-        return { title: 'Payment Received Register', subtitle: 'Customer receipt vouchers', crumbs: ['Payments', 'Received'] };
+        return {
+          title: 'Payment Received Register',
+          subtitle: 'Customer receipt vouchers',
+          crumbs: [
+            { label: 'Payments', page: 'payments_dashboard' },
+            { label: 'Received', page: 'payments_received' },
+          ],
+        };
       case 'payments_pending':
-        return { title: 'Pending Customer Receivables', subtitle: 'Aging schedule & outstanding balances', crumbs: ['Payments', 'Pending'] };
+        return {
+          title: 'Pending Customer Receivables',
+          subtitle: 'Aging schedule & outstanding balances',
+          crumbs: [
+            { label: 'Payments', page: 'payments_dashboard' },
+            { label: 'Pending', page: 'payments_pending' },
+          ],
+        };
       case 'payments_promise_date':
-        return { title: 'Promise Date Due Tracker', subtitle: 'Scheduled customer payment commitments', crumbs: ['Payments', 'Promise Date Due'] };
+        return {
+          title: 'Promise Date Due Tracker',
+          subtitle: 'Scheduled customer payment commitments',
+          crumbs: [
+            { label: 'Payments', page: 'payments_dashboard' },
+            { label: 'Promise Date Due', page: 'payments_promise_date' },
+          ],
+        };
       case 'reports_center':
-        return { title: 'Enterprise Reports Center', subtitle: 'Consolidated analytics & export logs', crumbs: ['Reports', 'Consolidated'] };
+        return {
+          title: 'Enterprise Reports Center',
+          subtitle: 'Consolidated analytics & export logs',
+          crumbs: [
+            { label: 'Reports', page: 'reports_center' },
+            { label: 'Consolidated', page: 'reports_center' },
+          ],
+        };
       case 'admin_users':
-        return { title: 'User Management & Roles', subtitle: 'System credentials & access roles', crumbs: ['Administration', 'Users'] };
+        return {
+          title: 'User Management & Roles',
+          subtitle: 'System credentials & access roles',
+          crumbs: [
+            { label: 'Administration', page: 'admin_users' },
+            { label: 'Users', page: 'admin_users' },
+          ],
+        };
       case 'admin_permissions':
-        return { title: 'System Permissions Matrix', subtitle: 'Granular security & ACL policies', crumbs: ['Administration', 'Permissions'] };
+        return {
+          title: 'System Permissions Matrix',
+          subtitle: 'Granular security & ACL policies',
+          crumbs: [
+            { label: 'Administration', page: 'admin_users' },
+            { label: 'Permissions', page: 'admin_permissions' },
+          ],
+        };
       case 'admin_alerts':
-        return { title: 'Alerts & Threshold Center', subtitle: 'Real-time alert rules & triggers', crumbs: ['Administration', 'Alerts'] };
+        return {
+          title: 'Alerts & Threshold Center',
+          subtitle: 'Real-time alert rules & triggers',
+          crumbs: [
+            { label: 'Administration', page: 'admin_users' },
+            { label: 'Alerts', page: 'admin_alerts' },
+          ],
+        };
       case 'admin_recycle_bin':
-        return { title: 'Recycle Bin & Audit Recovery', subtitle: 'Soft-deleted records & audit trail', crumbs: ['Administration', 'Recycle Bin'] };
+        return {
+          title: 'Recycle Bin & Audit Recovery',
+          subtitle: 'Soft-deleted records & audit trail',
+          crumbs: [
+            { label: 'Administration', page: 'admin_users' },
+            { label: 'Recycle Bin', page: 'admin_recycle_bin' },
+          ],
+        };
       default:
-        return { title: 'Plating ERP Management', subtitle: 'Enterprise jewellery manufacturing', crumbs: ['System'] };
+        return {
+          title: 'Plating ERP Management',
+          subtitle: 'Enterprise jewellery manufacturing',
+          crumbs: [{ label: 'Dashboard', page: 'dashboard' }],
+        };
     }
   };
 
@@ -154,26 +365,33 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ collapsed, setCollapse
         </Button>
 
         <div className="flex flex-col min-w-0">
-          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
-            {crumbs.map((crumb, idx) => (
-              <React.Fragment key={idx}>
-                {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />}
-                <span
-                  onClick={() => {
-                    if (idx === 0 && crumb === 'Customer') setCurrentPage('customers');
-                    if (idx === 0 && crumb === 'Billing') setCurrentPage('bills_list');
-                    if (idx === 0 && crumb === 'Payments') setCurrentPage('payments_dashboard');
-                  }}
-                  className={`truncate ${
-                    idx === crumbs.length - 1
-                      ? 'text-slate-700 font-semibold'
-                      : 'hover:text-slate-900 cursor-pointer transition-colors'
-                  }`}
-                >
-                  {crumb}
-                </span>
-              </React.Fragment>
-            ))}
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-medium">
+            {crumbs.map((crumb, idx) => {
+              const isLast = idx === crumbs.length - 1;
+              return (
+                <React.Fragment key={idx}>
+                  {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (crumb.onClick) {
+                        crumb.onClick();
+                      } else if (crumb.page) {
+                        setCurrentPage(crumb.page);
+                      }
+                    }}
+                    className={`truncate transition-colors cursor-pointer text-left ${
+                      isLast
+                        ? 'text-slate-800 font-semibold hover:text-emerald-700 hover:underline'
+                        : 'text-slate-500 hover:text-slate-900 hover:underline'
+                    }`}
+                    title={`Navigate to ${crumb.label}`}
+                  >
+                    {crumb.label}
+                  </button>
+                </React.Fragment>
+              );
+            })}
           </div>
           <div className="flex items-center gap-2">
             <h1 className="text-xs sm:text-sm font-bold text-slate-900 truncate leading-snug">

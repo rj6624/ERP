@@ -98,9 +98,7 @@ export const PaymentReceivedPage: React.FC = () => {
       {/* Header Banner */}
       <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-emerald-600" /> Payment Received Register (Admin Only)
-          </h2>
+          <h2 className="text-sm font-bold text-slate-900">Payment Received Register (Admin Only)</h2>
           <p className="text-xs text-slate-500">
             Audit register of all funds deposited via Bank Transfer, Cash, UPI, and Cheque clearances.
           </p>

@@ -1,4 +1,4 @@
-import { Button, Card, Input, Select } from '../ui/Primitives';
+import { Button, Input, CustomSelect } from '../ui/Primitives';
 import React, { useState, useMemo } from 'react';
 import {
   ChevronLeft,
@@ -8,11 +8,8 @@ import {
   ChevronDown,
   Download,
   Search,
-  SlidersHorizontal,
   LayoutGrid,
   List,
-  ArrowUp,
-  ArrowDown,
   X,
 } from 'lucide-react';
 import { exportToCSV } from '../../utils/exportUtils';
@@ -37,6 +34,7 @@ interface DataTableProps<T> {
   searchPlaceholder?: string;
   onRowClick?: (item: T) => void;
   actions?: React.ReactNode;
+  filters?: React.ReactNode;
   exportFilename?: string;
   enableSelection?: boolean;
   onSelectionChange?: (selected: T[]) => void;
@@ -58,6 +56,7 @@ export function DataTable<T extends { id?: string | number }>({
   searchPlaceholder = 'Search records...',
   onRowClick,
   actions,
+  filters,
   exportFilename = 'erp_export',
   enableSelection = false,
   onSelectionChange,
@@ -75,7 +74,6 @@ export function DataTable<T extends { id?: string | number }>({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
-  const [density, setDensity] = useState<'compact' | 'normal'>('normal');
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
   const [internalViewMode, setInternalViewMode] = useState<DataTableViewMode>(defaultViewMode);
 
@@ -182,22 +180,23 @@ export function DataTable<T extends { id?: string | number }>({
     exportToCSV(exportFilename, headers, rows);
   };
 
-  const rowPadding = density === 'compact' ? 'py-2.5 px-3.5 text-xs' : 'py-3.5 px-4 text-xs';
+  const rowPadding = 'py-3 px-4 text-xs';
 
   // Render Top Toolbar Bar (Separate from table)
   const renderTopBar = () => (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      {/* Title / Subtitle if provided, or Search box */}
-      <div className="flex items-center gap-3 flex-1">
-        {(title || subtitle) && (
-          <div className="min-w-0 pr-2">
-            {title && <h3 className="text-sm font-bold text-slate-900 truncate">{title}</h3>}
-            {subtitle && <p className="text-xs text-slate-500 truncate mt-0.5">{subtitle}</p>}
-          </div>
-        )}
+    <div className="space-y-3">
+      {/* Title / Subtitle if provided */}
+      {(title || subtitle) && (
+        <div className="min-w-0">
+          {title && <h3 className="text-sm font-bold text-slate-900 tracking-tight">{title}</h3>}
+          {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
+        </div>
+      )}
 
+      {/* Main Toolbar Row: Searchbar on Left, Export, Actions, & Switcher on Right */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Search Box on Left */}
-        <div className="relative flex-1 sm:max-w-xs min-w-[180px]">
+        <div className="relative flex-1 sm:max-w-xs min-w-[200px]">
           <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           <Input
             type="text"
@@ -222,75 +221,68 @@ export function DataTable<T extends { id?: string | number }>({
             </button>
           )}
         </div>
-      </div>
 
-      {/* Right End: Filter (Density), Export, Actions, and View Switcher */}
-      <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-        {/* Filter / Density toggle button */}
-        {currentViewMode === 'table' && (
+        {/* Right End: Export, Actions, and View Switcher */}
+        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+          {/* CSV Export */}
           <Button
             variant="secondary"
-            size="icon"
-            onClick={() => setDensity(density === 'compact' ? 'normal' : 'compact')}
-            className="erp-toolbar-control w-9 inline-flex shrink-0 aspect-square p-0 justify-center items-center"
-            title="Toggle Row Density"
-            aria-label="Toggle Row Density"
+            size="sm"
+            onClick={handleExportCSV}
+            className="erp-toolbar-control inline-flex items-center gap-1.5 px-3 text-xs shrink-0 py-0"
+            title="Export CSV"
           >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <span>Export</span>
           </Button>
-        )}
 
-        {/* CSV Export */}
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={handleExportCSV}
-          className="erp-toolbar-control inline-flex items-center gap-1.5 px-3 text-xs shrink-0 py-0"
-          title="Export CSV"
-        >
-          <Download className="w-3.5 h-3.5 text-slate-500" />
-          <span>Export</span>
-        </Button>
+          {actions}
 
-        {actions}
+          {/* Reference-Styled Icon Segmented View Switcher Pill */}
+          {showViewToggle && (
+            <div className="erp-toolbar-control inline-flex items-center p-1 bg-white border border-slate-200 shadow-none gap-1 shrink-0">
+              {/* Cards / Grid View Button */}
+              <button
+                type="button"
+                onClick={() => handleViewModeChange('card')}
+                className={`h-7 w-7 flex items-center justify-center rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer ${
+                  currentViewMode === 'card'
+                    ? 'bg-[#081c05] text-white'
+                    : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
+                }`}
+                title="Cards View"
+                aria-label="Cards View"
+                aria-pressed={currentViewMode === 'card'}
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
 
-        {/* Reference-Styled Icon Segmented View Switcher Pill */}
-        {showViewToggle && (
-          <div className="erp-toolbar-control inline-flex items-center p-1 bg-white border border-slate-200 shadow-none gap-1 shrink-0">
-            {/* Cards / Grid View Button */}
-            <button
-              type="button"
-              onClick={() => handleViewModeChange('card')}
-              className={`h-7 w-7 flex items-center justify-center rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer ${
-                currentViewMode === 'card'
-                  ? 'bg-[#081c05] text-white'
-                  : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
-              }`}
-              title="Cards View"
-              aria-label="Cards View"
-              aria-pressed={currentViewMode === 'card'}
-            >
-              <LayoutGrid className="w-4 h-4" />
-            </button>
-
-            {/* Table / List View Button */}
-            <button
-              type="button"
-              onClick={() => handleViewModeChange('table')}
-              className={`h-7 w-7 flex items-center justify-center rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer ${
-                currentViewMode === 'table'
-                  ? 'bg-[#081c05] text-white'
-                  : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
-              }`}
-              title="Table View"
-              aria-label="Table View"
-              aria-pressed={currentViewMode === 'table'}
-            >
-              <List className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+              {/* Table / List View Button */}
+              <button
+                type="button"
+                onClick={() => handleViewModeChange('table')}
+                className={`h-7 w-7 flex items-center justify-center rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer ${
+                  currentViewMode === 'table'
+                    ? 'bg-[#081c05] text-white'
+                    : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
+                }`}
+                title="Table View"
+                aria-label="Table View"
+                aria-pressed={currentViewMode === 'table'}
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Filters row below the searchbar */}
+      {filters && (
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          {filters}
+        </div>
+      )}
     </div>
   );
 
@@ -305,20 +297,20 @@ export function DataTable<T extends { id?: string | number }>({
         </span>
         <div className="flex items-center gap-1.5 ml-2">
           <span className="text-slate-500">Rows:</span>
-          <Select
-            aria-label="Records per page"
+          <CustomSelect
+            direction="up"
             value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
+            onChange={(val) => {
+              setPageSize(Number(val));
               setCurrentPage(1);
             }}
-            className="h-8 py-0.5 text-xs"
+            className="w-auto h-8 py-0"
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={25}>25</option>
             <option value={50}>50</option>
-          </Select>
+          </CustomSelect>
         </div>
       </div>
 
@@ -383,6 +375,17 @@ export function DataTable<T extends { id?: string | number }>({
                 }
                 const rowId = row.id ?? JSON.stringify(row);
                 const isSelected = selectedIds.has(rowId);
+                const dataColumns = columns.filter((col) => {
+                  const headerStr = typeof col.header === 'string' ? col.header.toLowerCase().trim() : '';
+                  const keyStr = typeof col.accessorKey === 'string' ? col.accessorKey.toLowerCase().trim() : '';
+                  return !['action', 'actions'].includes(headerStr) && !['action', 'actions'].includes(keyStr);
+                });
+                const actionColumn = columns.find((col) => {
+                  const headerStr = typeof col.header === 'string' ? col.header.toLowerCase().trim() : '';
+                  const keyStr = typeof col.accessorKey === 'string' ? col.accessorKey.toLowerCase().trim() : '';
+                  return ['action', 'actions'].includes(headerStr) || ['action', 'actions'].includes(keyStr);
+                });
+
                 return (
                   <article
                     key={rowId}
@@ -401,20 +404,34 @@ export function DataTable<T extends { id?: string | number }>({
                         <span>Select record</span>
                       </label>
                     )}
-                    <dl className="space-y-2 text-xs">
-                      {columns.map((col, columnIndex) => (
-                        <div key={columnIndex} className="flex items-start justify-between gap-2">
-                          <dt className="text-slate-500 font-medium">{col.header}</dt>
+                    <dl className="space-y-2.5 text-xs flex-1">
+                      {dataColumns.map((col, columnIndex) => (
+                        <div key={columnIndex} className="flex items-center justify-between gap-2.5">
+                          <dt className="text-slate-500 font-medium shrink-0">{col.header}</dt>
                           <dd className="min-w-0 text-slate-900 font-semibold text-right break-words">
                             {col.cell ? col.cell(row) : col.accessorKey ? String(row[col.accessorKey] ?? '-') : '-'}
                           </dd>
                         </div>
                       ))}
                     </dl>
-                    {onRowClick && (
-                      <Button variant="secondary" size="sm" type="button" className="w-full text-xs" onClick={() => onRowClick(row)}>
-                        View Details <ChevronRight className="w-3.5 h-3.5" />
-                      </Button>
+                    {(actionColumn || onRowClick) && (
+                      <div className="pt-3 border-t border-slate-100 mt-auto flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                        {actionColumn ? (
+                          <div className="w-full flex items-center justify-end gap-1.5 flex-wrap">
+                            {actionColumn.cell ? actionColumn.cell(row) : (actionColumn.accessorKey ? String(row[actionColumn.accessorKey] ?? '') : null)}
+                          </div>
+                        ) : (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            type="button"
+                            className="w-full text-xs inline-flex items-center justify-center gap-1.5"
+                            onClick={() => onRowClick && onRowClick(row)}
+                          >
+                            View Details <ChevronRight className="w-3.5 h-3.5" />
+                          </Button>
+                        )}
+                      </div>
                     )}
                   </article>
                 );

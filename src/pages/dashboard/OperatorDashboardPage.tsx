@@ -1,391 +1,538 @@
-import { Button, Card } from '../../components/ui/Primitives';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
+import { Button, Card } from '../../components/ui/Primitives';
+import { StatCard } from '../../components/common/StatCard';
+import { DataTable, ColumnDef } from '../../components/common/DataTable';
+import { StatusBadge } from '../../components/common/StatusBadge';
+import { JewelleryJob } from '../../types/erp';
+import { formatWeight, formatPlating, formatDate } from '../../utils/formatters';
 import {
   Plus,
-  ArrowRight,
+  ArrowDownLeft,
+  ArrowUpRight,
   Zap,
-  CheckCircle2,
   Clock,
   Scale,
-  Sparkles,
-  Camera,
-  Layers,
-  ChevronRight,
-  ShieldCheck,
-  AlertCircle,
-  Play,
-  ArrowUpRight,
+  FileText,
+  Eye,
 } from 'lucide-react';
-import { ReferenceHeaderMetrics, MetricItem } from '../../components/common/ReferenceHeaderMetrics';
-import { ReferenceTabBar, TabOption } from '../../components/common/ReferenceTabBar';
-import { ReferenceEntityCard } from '../../components/common/ReferenceEntityCard';
-import { ReferencePriceCard } from '../../components/common/ReferencePriceCard';
-import { ReferenceCommentsCard, CommentItem } from '../../components/common/ReferenceCommentsCard';
-import { ProcessRouteStepper, RouteStop } from '../../components/common/ProcessRouteStepper';
-import { ReferenceFilterListCard, FilterListItem } from '../../components/common/ReferenceFilterListCard';
 
 export const OperatorDashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const { jobs, timeline, currentUser } = useERP();
+  const { jobs, navigateToCustomer } = useERP();
 
-  const [activeTab, setActiveTab] = useState<string>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'ff' | 'ready' | 'in_process' | 'completed'>('all');
 
-  // Filter items
-  const [filterList, setFilterList] = useState<FilterListItem[]>([
-    { id: 'all', label: 'All Jobs', count: jobs.length, checked: true },
-    { id: 'ff', label: 'Fast Forward Priority', count: 5, colorDot: '#f59e0b', checked: true },
-    { id: 'ready', label: 'Ready for Outward', count: 12, colorDot: '#10b981', checked: true },
-    { id: 'binding', label: 'In Binding / Labour', count: 18, colorDot: '#3b82f6', checked: false },
-    { id: 'completed', label: 'Completed Today', count: 37, colorDot: '#8b5cf6', checked: false },
-  ]);
+  // Compute metrics
+  const todayInwardJobs = useMemo(() => {
+    return jobs.filter((j) => {
+      const today = new Date().toISOString().split('T')[0];
+      return j.inwardDate.startsWith(today);
+    });
+  }, [jobs]);
 
-  const handleToggleFilter = (id: string) => {
-    setFilterList((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item))
-    );
-  };
+  const todayOutwardJobs = useMemo(() => {
+    return jobs.filter((j) => {
+      if (!j.outwardDate) return false;
+      const today = new Date().toISOString().split('T')[0];
+      return j.outwardDate.startsWith(today) && j.status === 'Outward Completed';
+    });
+  }, [jobs]);
 
-  // Top Metrics Strip Data (Matching Image 1, 2, 3)
-  const topMetrics: MetricItem[] = [
-    {
-      label: 'Total Pending Inward Weight',
-      value: '83.650 kg',
-      change: '11.3%',
-      isPositive: true,
-      subtext: '42 jobs in factory cycle',
-    },
-    {
-      label: 'Today\'s Inward Intake',
-      value: '42',
-      change: '+14',
-      isPositive: true,
-      subtext: 'Target 50 jobs/shift',
-    },
-    {
-      label: 'Average Plating per KG',
-      value: '53.659 g/kg',
-      change: '2.4%',
-      isPositive: true,
-      subtext: 'High precision calibration',
-    },
-    {
-      label: 'Pending Outward Dispatch',
-      value: '12',
-      change: '-5',
-      isPositive: true,
-      subtext: 'Awaiting scale verification',
-    },
-    {
-      label: 'Fast Forward Priority',
-      value: '5',
-      change: 'Urgent',
-      isPositive: false,
-      subtext: 'Expedited processing queue',
-    },
-    {
-      label: 'Completed Today',
-      value: '37',
-      change: '+12',
-      isPositive: true,
-      subtext: 'Dispatched & verified',
-    },
-  ];
+  const fastForwardJobs = useMemo(() => {
+    return jobs.filter((j) => j.priority === 'Fast Forward' && j.status !== 'Outward Completed');
+  }, [jobs]);
 
-  // Top Horizontal Pill Filter Tabs (Matching Image 3)
-  const tabOptions: TabOption[] = [
-    { id: 'all', label: 'All Work', count: jobs.length },
-    { id: 'ff', label: 'Fast Forward', count: 5, colorDot: '#f59e0b' },
-    { id: 'inward', label: 'Inward Received', count: 42, colorDot: '#3b82f6' },
-    { id: 'in_process', label: 'In Process', count: 18, colorDot: '#6366f1' },
-    { id: 'ready_outward', label: 'Ready for Outward', count: 12, colorDot: '#10b981' },
-    { id: 'completed', label: 'Completed Today', count: 37, colorDot: '#8b5cf6' },
-  ];
+  const readyForOutwardJobs = useMemo(() => {
+    return jobs.filter((j) => j.status !== 'Outward Completed');
+  }, [jobs]);
 
-  // Active Highlight Job
-  const highlightJob = jobs.find((j) => j.id === 'DARSHAN4') || jobs[0];
+  const inProgressJobs = useMemo(() => {
+    return jobs.filter((j) => j.status !== 'Outward Completed');
+  }, [jobs]);
 
-  // Stepper route stops (Matching Image 1 & 2 lifecycle)
-  const routeStops: RouteStop[] = [
-    {
-      id: 'step-1',
-      title: 'Customer Inward Intake — Darshan Jewellers',
-      subtitle: 'Recorded Inward Weight: 10.250 kg (Scale Photo Calibrated)',
-      time: '10:42 am, Thu 26/09/2026',
-      commentCount: 2,
-      status: 'completed',
-      tag: 'Scale Certified',
-    },
-    {
-      id: 'step-2',
-      title: 'Labour Binding Operation — Bench #4 (Suresh Parmar)',
-      subtitle: 'Copper wire framing with 120g Tar sealant fixation',
-      time: '11:30 am, Thu 26/09/2026',
-      commentCount: 1,
-      status: 'completed',
-      tag: 'Bench Active',
-    },
-    {
-      id: 'step-3',
-      title: 'White Gold Electroplating Bath — Tank #2',
-      subtitle: 'Current bath temperature: 52°C • Flash cycle active',
-      time: '01:15 pm, Thu 26/09/2026',
-      status: 'current',
-      tag: 'In Process',
-    },
-    {
-      id: 'step-4',
-      title: 'Labour Open & Ultrasonic Untying — Station 03',
-      subtitle: 'Post-plating rinsing, drying, and unbinding verification',
-      time: '02:45 pm, Thu 26/09/2026',
-      status: 'pending',
-    },
-    {
-      id: 'step-5',
-      title: 'Customer Outward Dispatch & Final Weight Entry',
-      subtitle: 'Target Outward Weight: ~10.800 kg (Plating per KG: 53.659 g/kg)',
-      time: '03:30 pm, Thu 26/09/2026',
-      status: 'pending',
-    },
-  ];
+  const todayInwardWeight = useMemo(() => {
+    return todayInwardJobs.reduce((acc, j) => acc + (j.inwardWeight || 0), 0);
+  }, [todayInwardJobs]);
 
-  // Comments Feed with Photo Evidence (Matching Image 1 & 5)
-  const operationalComments: CommentItem[] = [
+  const todayOutwardWeight = useMemo(() => {
+    return todayOutwardJobs.reduce((acc, j) => acc + (j.outwardWeight || 0), 0);
+  }, [todayOutwardJobs]);
+
+  // Filtered jobs by active tab
+  const filteredJobs = useMemo(() => {
+    switch (activeTab) {
+      case 'ff':
+        return fastForwardJobs;
+      case 'ready':
+        return jobs.filter((j) => j.status !== 'Outward Completed');
+      case 'in_process':
+        return jobs.filter((j) => j.status !== 'Outward Completed');
+      case 'completed':
+        return jobs.filter((j) => j.status === 'Outward Completed');
+      case 'all':
+      default:
+        return jobs;
+    }
+  }, [jobs, activeTab, fastForwardJobs]);
+
+  // Columns for the Work Queue DataTable
+  const columns: ColumnDef<JewelleryJob>[] = [
     {
-      id: 'c1',
-      authorName: 'Ramesh Patel',
-      authorRole: 'Intake Operator • Station 01',
-      avatarInitials: 'RP',
-      avatarBg: 'bg-slate-900 text-white',
-      date: '10:43 am',
-      text: 'Scale zero-calibration verified before intake. Item arrived in tamper-proof container.',
-      attachment: {
-        name: 'Scale_Reading_10.250kg.png',
-        subtext: 'Dual-Scale Photo Verification • Certified',
-      },
+      header: 'Job ID',
+      accessorKey: 'id',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-mono font-bold text-xs bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded">
+          {row.id}
+        </span>
+      ),
     },
     {
-      id: 'c2',
-      authorName: 'Suresh Parmar',
-      authorRole: 'Artisan Bench #4',
-      avatarInitials: 'SP',
-      avatarBg: 'bg-amber-600 text-white',
-      date: '11:35 am',
-      text: 'Binding executed with heavy gauge copper ties. 120 grams sealing tar consumed.',
+      header: 'Customer',
+      accessorKey: 'customerName',
+      sortable: true,
+      cell: (row) => (
+        <div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateToCustomer(row.customerId);
+            }}
+            className="text-left font-bold text-xs text-slate-800 hover:text-blue-600 hover:underline"
+          >
+            {row.customerName}
+          </button>
+        </div>
+      ),
+    },
+    {
+      header: 'Plating Type',
+      accessorKey: 'platingType',
+      sortable: true,
+      cell: (row) => (
+        <span className="text-xs font-semibold text-slate-700">
+          {row.platingType}
+        </span>
+      ),
+    },
+    {
+      header: 'Inward Wt',
+      accessorKey: 'inwardWeight',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-mono text-xs font-bold text-slate-900">
+          {formatWeight(row.inwardWeight)}
+        </span>
+      ),
+    },
+    {
+      header: 'Outward Wt',
+      accessorKey: 'outwardWeight',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-mono text-xs font-semibold text-slate-700">
+          {row.outwardWeight ? formatWeight(row.outwardWeight) : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Plating / KG',
+      accessorKey: 'platingPerKg',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-mono text-xs font-bold text-purple-700">
+          {row.platingPerKg ? formatPlating(row.platingPerKg) : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Inward Date',
+      accessorKey: 'inwardDate',
+      sortable: true,
+      cell: (row) => (
+        <span className="text-2xs text-slate-600">
+          {formatDate(row.inwardDate)}
+        </span>
+      ),
+    },
+    {
+      header: 'Priority',
+      accessorKey: 'priority',
+      sortable: true,
+      cell: (row) => (
+        <span
+          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-2xs font-bold ${
+            row.priority === 'Fast Forward'
+              ? 'bg-amber-100 text-amber-900 border border-amber-300'
+              : 'bg-slate-100 text-slate-700'
+          }`}
+        >
+          {row.priority === 'Fast Forward' && <Zap className="w-3 h-3 text-amber-600 fill-amber-600" />}
+          {row.priority}
+        </span>
+      ),
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+      sortable: true,
+      cell: (row) => <StatusBadge type="job" value={row.status} size="sm" />,
+    },
+    {
+      header: 'Action',
+      cell: (row) => (
+        <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/jobs/${row.id}`)}
+            className="text-xs"
+          >
+            <Eye className="w-3.5 h-3.5" /> View
+          </Button>
+          {row.status !== 'Outward Completed' ? (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => navigate('/outward/new')}
+              className="text-xs"
+            >
+              <ArrowUpRight className="w-3.5 h-3.5" /> Outward
+            </Button>
+          ) : (
+            <span className="text-2xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+              Dispatched
+            </span>
+          )}
+        </div>
+      ),
     },
   ];
 
   return (
-    <div className="space-y-5 font-sans text-slate-800">
-      {/* 1. Top Header Actions & Station Bar */}
-      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+    <div className="space-y-5">
+      {/* 1. Header Banner - Unified Application Standard */}
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-xs font-bold text-slate-900 tracking-tight">
-              Application #PLATING-OP-01
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-[11px] font-bold text-slate-500 font-mono uppercase tracking-wider">
+              Station 01 • Digital Scale Console
             </span>
-            <span className="text-xs text-slate-300">•</span>
-            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
-              Station 01 Active
+            <span className="text-slate-300">•</span>
+            <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              Shift Active
             </span>
           </div>
-          <h1 className="text-lg font-black text-slate-900 mt-1">
-            Operator Processing Console
-          </h1>
+          <h2 className="text-sm font-bold text-slate-900">Factory Operator Processing Console</h2>
+          <p className="text-xs text-slate-500">
+            High-speed intake scale verification, real-time inward & outward dispatch execution, and urgent fast-forward job queues.
+          </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2.5">
-          <Button variant="secondary"
+        <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+          <Button
+            variant="secondary"
             onClick={() => navigate('/outward/new')}
-            className="flex items-center gap-2"
+            className="inline-flex items-center gap-1.5"
           >
-            <span>Process Outward</span>
+            <ArrowUpRight className="w-3.5 h-3.5" /> Process Outward
           </Button>
-          <Button variant="primary"
+          <Button
+            variant="primary"
             onClick={() => navigate('/inward/new')}
-            className="flex items-center gap-2"
+            className="inline-flex items-center gap-1.5"
           >
-            <Plus className="w-4 h-4" />
-            <span>New Customer Inward</span>
+            <Plus className="w-3.5 h-3.5" /> New Inward Intake
           </Button>
         </div>
       </div>
 
-      {/* 2. Top Horizontal Metric Strip (Image 1, 2, 3) */}
-      <ReferenceHeaderMetrics metrics={topMetrics} />
-
-      {/* 3. Top Status Filter Tab Bar (Image 3) */}
-      <ReferenceTabBar
-        tabs={tabOptions}
-        activeTab={activeTab}
-        onTabChange={(id) => {
-          setActiveTab(id);
-          if (id === 'ff') navigate('/fast-forward');
-          if (id === 'ready_outward') navigate('/outward');
-        }}
-      />
-
-      {/* 4. 3-COLUMN MAIN WORKSPACE (Matching Image 1 & 2 Layout) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        {/* LEFT COLUMN: Entity Overview & Pricing/Weights & Activity (4 Cols) */}
-        <div className="lg:col-span-4 space-y-5">
-          {/* Active Job Card */}
-          <ReferenceEntityCard
-            id={highlightJob.id}
-            title={`Application #${highlightJob.id}`}
-            customerName={highlightJob.customerName}
-            customerSubtitle="Silver Jewellery Manufacturing & Exports"
-            creatorName="Ramesh Patel (Intake)"
-            artisanName="Suresh Parmar (Bench #4)"
-            inwardWeight={highlightJob.inwardWeight}
-            platingType={highlightJob.platingType}
-            priority={highlightJob.priority}
-            status={highlightJob.status}
-            onStatusClick={() => navigate(`/jobs/${highlightJob.id}`)}
+      {/* 2. Primary KPI Row (5 Core Operational KPIs) */}
+      <div>
+        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">
+          Station Operational Metrics
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
+          <StatCard
+            title="Today's Inward Intake"
+            value={`${todayInwardJobs.length} jobs`}
+            subtitle={`Gross Wt: ${formatWeight(todayInwardWeight)}`}
+            icon={ArrowDownLeft}
+            badgeText="Intake Active"
+            badgeVariant="info"
+            onClick={() => navigate('/inward')}
           />
-
-          {/* Weight & Plating Metrics Card */}
-          <ReferencePriceCard
-            title="Weight & Plating Metrics"
-            inwardWeight={highlightJob.inwardWeight}
-            outwardWeight={highlightJob.outwardWeight}
-            platingPerKg={highlightJob.platingPerKg}
-            onMoreClick={() => navigate('/reports')}
+          <StatCard
+            title="Today's Outward"
+            value={`${todayOutwardJobs.length} jobs`}
+            subtitle={`Gross Wt: ${formatWeight(todayOutwardWeight)}`}
+            icon={ArrowUpRight}
+            badgeText="Dispatched"
+            badgeVariant="success"
+            onClick={() => navigate('/outward')}
           />
-
-          {/* Comments & Photo Evidence Feed (Image 1 & 5) */}
-          <ReferenceCommentsCard
-            title="Verification & Scale Evidence"
-            subtitle="Job notes and scale camera attachments"
-            comments={operationalComments}
-            placeholder="Add operational notes to this job..."
+          <StatCard
+            title="Fast Forward Urgent"
+            value={`${fastForwardJobs.length} jobs`}
+            subtitle="Accelerated delivery queue"
+            icon={Zap}
+            badgeText="Priority 1"
+            badgeVariant="warning"
+            urgent={fastForwardJobs.length > 0}
+            onClick={() => navigate('/fast-forward')}
+          />
+          <StatCard
+            title="Pending Plant Jobs"
+            value={`${inProgressJobs.length} jobs`}
+            subtitle="In electroplating & labour"
+            icon={Clock}
+            badgeText="In Cycle"
+            badgeVariant="warning"
+            onClick={() => navigate('/inward')}
+          />
+          <StatCard
+            title="Digital Scale Status"
+            value="Calibrated"
+            subtitle="±0.001 kg Precision Sync"
+            icon={Scale}
+            badgeText="Certified"
+            badgeVariant="success"
+            onClick={() => {}}
           />
         </div>
+      </div>
 
-        {/* MIDDLE COLUMN: Process Route Stepper & Quick Intakes (5 Cols) */}
-        <div className="lg:col-span-5 space-y-5">
-          {/* Process Lifecycle Stepper Card */}
-          <ProcessRouteStepper
-            title="Manufacturing Lifecycle"
-            count={5}
-            actionText="View details"
-            onAction={() => navigate(`/jobs/${highlightJob.id}`)}
-            stops={routeStops}
-          />
-
-          {/* Touch Actions Promo Box */}
-          <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">Physical Station Workflows</h3>
-                <p className="text-[11px] text-slate-400">High-speed factory floor actions</p>
+      {/* 3. Station Quick Action Workflows */}
+      <div>
+        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">
+          Floor Workflows & Scale Operations
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          {/* Action 1 */}
+          <Card
+            padding="md"
+            className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:border-slate-300 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold border border-emerald-100">
+                  <ArrowDownLeft className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Step 1
+                </span>
               </div>
+              <h4 className="text-xs font-bold text-slate-900">New Customer Inward</h4>
+              <p className="text-2xs text-slate-500 mt-1 leading-relaxed">
+                Record intake weight on digital scale, attach camera photos, and assign sequential Job ID.
+              </p>
             </div>
-
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <Button variant="surface"
+            <div className="pt-3 border-t border-slate-100 mt-3">
+              <Button
+                variant="primary"
+                size="sm"
                 onClick={() => navigate('/inward/new')}
-                className="p-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex flex-col justify-between h-24 text-left transition-all shadow-xs cursor-pointer group"
+                className="w-full justify-center text-xs"
               >
-                <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-                  <Plus className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="font-bold text-white text-xs">New Inward</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Dual Photo Capture</div>
-                </div>
+                <Plus className="w-3.5 h-3.5" /> Start Inward Intake
               </Button>
+            </div>
+          </Card>
 
-              <Button variant="surface"
+          {/* Action 2 */}
+          <Card
+            padding="md"
+            className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:border-slate-300 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center font-bold border border-blue-100">
+                  <ArrowUpRight className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                  Step 2
+                </span>
+              </div>
+              <h4 className="text-xs font-bold text-slate-900">Process Outward Dispatch</h4>
+              <p className="text-2xs text-slate-500 mt-1 leading-relaxed">
+                Fetch Inward weight, record verified Outward weight, and compute Plating per KG automatically.
+              </p>
+            </div>
+            <div className="pt-3 border-t border-slate-100 mt-3">
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => navigate('/outward/new')}
-                className="p-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex flex-col justify-between h-24 text-left transition-all shadow-xs cursor-pointer group"
+                className="w-full justify-center text-xs"
               >
-                <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                  <ArrowRight className="w-4 h-4" />
+                <ArrowUpRight className="w-3.5 h-3.5" /> Process Outward
+              </Button>
+            </div>
+          </Card>
+
+          {/* Action 3 */}
+          <Card
+            padding="md"
+            className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:border-slate-300 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold border border-amber-100">
+                  <Zap className="w-5 h-5" />
                 </div>
-                <div>
-                  <div className="font-bold text-white text-xs">Process Outward</div>
-                  <div className="text-[10px] text-blue-100 font-normal">Plating per KG Auto</div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                  {fastForwardJobs.length} Urgent
+                </span>
+              </div>
+              <h4 className="text-xs font-bold text-slate-900">Fast Forward Priority Queue</h4>
+              <p className="text-2xs text-slate-500 mt-1 leading-relaxed">
+                Accelerated processing queue for high-priority same-day jewellery orders.
+              </p>
+            </div>
+            <div className="pt-3 border-t border-slate-100 mt-3">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => navigate('/fast-forward')}
+                className="w-full justify-center text-xs"
+              >
+                <Zap className="w-3.5 h-3.5 text-amber-600" /> View Priority Queue
+              </Button>
+            </div>
+          </Card>
+
+          {/* Action 4 */}
+          <Card
+            padding="md"
+            className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:border-slate-300 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-9 h-9 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center font-bold border border-purple-100">
+                  <FileText className="w-5 h-5" />
                 </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">
+                  Daily Audit
+                </span>
+              </div>
+              <h4 className="text-xs font-bold text-slate-900">Operator Reports & Shift Logs</h4>
+              <p className="text-2xs text-slate-500 mt-1 leading-relaxed">
+                Export daily batch logs, intake weighment records, and dispatch audit summaries.
+              </p>
+            </div>
+            <div className="pt-3 border-t border-slate-100 mt-3">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => navigate('/reports')}
+                className="w-full justify-center text-xs"
+              >
+                <FileText className="w-3.5 h-3.5" /> Shift Reports
               </Button>
             </div>
           </Card>
         </div>
+      </div>
 
-        {/* RIGHT COLUMN: Filter Checkbox List & Fast Forward Urgent Queue (3 Cols) */}
-        <div className="lg:col-span-3 space-y-5">
-          {/* Status Checkbox Filter List Card (Image 1) */}
-          <ReferenceFilterListCard
-            title="Work Queues"
-            items={filterList}
-            onToggle={handleToggleFilter}
-          />
+      {/* 4. Live Work Queue Table with Clean Filter Tabs */}
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Live Station Work Queue
+          </h3>
 
-          {/* Urgent Fast Forward Priority Card */}
-          <Card padding="md" className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-3 font-sans text-xs">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <div className="flex items-center gap-1.5 font-bold text-slate-900">
-                <Zap className="w-4 h-4 text-amber-500 fill-amber-500/20" />
-                <span>Fast Forward Queue</span>
-              </div>
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-200">
-                5 Pending
+          {/* Segmented Tab Filter */}
+          <div className="erp-nav-tabs flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
+            <button
+              onClick={() => setActiveTab('all')}
+              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+                activeTab === 'all'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              All Jobs ({jobs.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('ff')}
+              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all flex items-center gap-1.5 ${
+                activeTab === 'ff'
+                  ? 'bg-white text-amber-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
+              Fast Forward ({fastForwardJobs.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('ready')}
+              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+                activeTab === 'ready'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Active Intake ({readyForOutwardJobs.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('completed')}
+              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+                activeTab === 'completed'
+                  ? 'bg-white text-emerald-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Completed ({jobs.filter((j) => j.status === 'Outward Completed').length})
+            </button>
+          </div>
+        </div>
+
+        {/* Unified DataTable */}
+        <DataTable
+          data={filteredJobs}
+          columns={columns}
+          onRowClick={(row) => navigate(`/jobs/${row.id}`)}
+          searchPlaceholder="Search jobs by Job ID, Customer, Plating type..."
+          exportFilename="operator_work_queue"
+        />
+      </div>
+
+      {/* 5. Hardware Diagnostics & Scale Calibration Status */}
+      <Card
+        padding="md"
+        className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shrink-0">
+            <Scale className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="text-xs font-bold text-slate-900">Mettler Toledo Precision Industrial Balance #01</h4>
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                Connected
               </span>
             </div>
-
-            <div className="space-y-2.5">
-              <div className="p-3 rounded-xl bg-amber-50/50 border border-amber-200/60 flex items-center justify-between">
-                <div>
-                  <div className="font-mono font-bold text-blue-700 text-xs">MAGANLAL3</div>
-                  <div className="text-[11px] font-bold text-slate-800">8.500 kg • Rose Gold</div>
-                </div>
-                <Button variant="ghost" size="sm"
-                  onClick={() => navigate('/outward/new')}
-                  className="cursor-pointer"
-                >
-                  Process
-                </Button>
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between">
-                <div>
-                  <div className="font-mono font-bold text-blue-700 text-xs">DARSHAN4</div>
-                  <div className="text-[11px] font-bold text-slate-800">10.250 kg • Teen Gold</div>
-                </div>
-                <Button variant="ghost" size="sm"
-                  onClick={() => navigate('/jobs/DARSHAN4')}
-                  className="cursor-pointer"
-                >
-                  Open
-                </Button>
-              </div>
-            </div>
-
-            <Button variant="ghost"
-              onClick={() => navigate('/fast-forward')}
-              className="w-full text-center block transition-colors cursor-pointer"
-            >
-              View Full Priority Queue →
-            </Button>
-          </Card>
-
-          {/* Scale Calibration Hardware Card */}
-          <Card padding="sm" className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-2 text-xs">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-                <Scale className="w-3.5 h-3.5" />
-              </div>
-              <span className="font-bold text-slate-900 text-xs">Precision Scale Active</span>
-            </div>
-            <p className="text-[11px] text-slate-500">
-              Mettler Toledo Balance #S01 calibrated at ±0.001 kg precision. Dual camera link active.
+            <p className="text-2xs text-slate-500 mt-0.5">
+              Dual-scale zero-tare certified at ±0.001 kg. High-resolution camera stream active for photo-verified customer intake receipts.
             </p>
-          </Card>
+          </div>
         </div>
-      </div>
+
+        <div className="flex items-center gap-3 self-start md:self-auto shrink-0">
+          <div className="text-right p-2 rounded bg-slate-50 border border-slate-200">
+            <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-medium">Scale Tolerance</span>
+            <span className="font-mono text-xs font-extrabold text-slate-800">±0.001 kg</span>
+          </div>
+          <div className="text-right p-2 rounded bg-emerald-50 border border-emerald-200">
+            <span className="text-[10px] text-emerald-700 uppercase tracking-wider block font-medium">Camera Link</span>
+            <span className="font-mono text-xs font-extrabold text-emerald-800">Dual Sync 1080p</span>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 };

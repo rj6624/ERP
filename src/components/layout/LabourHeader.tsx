@@ -13,8 +13,9 @@ import {
   LogOut,
 } from 'lucide-react';
 import { NotificationsPopover } from '../common/NotificationsPopover';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { RoleSwitcherDropdown } from './RoleSwitcherDropdown';
+import { BreadcrumbItem } from '../../types/navigation';
 
 interface LabourHeaderProps {
   collapsed: boolean;
@@ -29,6 +30,7 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ collapsed, setCollap
   } = useERP();
 
   const location = useLocation();
+  const navigate = useNavigate();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -53,24 +55,63 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ collapsed, setCollap
     };
   }, [isProfileMenuOpen]);
 
-  const getPageInfo = () => {
+  const getPageInfo = (): { title: string; subtitle: string; crumbs: BreadcrumbItem[] } => {
     const path = location.pathname;
     if (path === '/' || path === '/dashboard') {
-      return { title: 'Artisan Work Dashboard', subtitle: 'Assigned pieces & daily output', crumbs: ['Labour', 'Dashboard'] };
+      return {
+        title: 'Artisan Work Dashboard',
+        subtitle: 'Assigned pieces & daily output',
+        crumbs: [
+          { label: 'Labour', path: '/dashboard' },
+          { label: 'Dashboard', path: '/dashboard' },
+        ],
+      };
     }
     if (path === '/my-work') {
-      return { title: 'All Assigned Work', subtitle: 'Active piecework queue', crumbs: ['Labour', 'My Work'] };
+      return {
+        title: 'All Assigned Work',
+        subtitle: 'Active piecework queue',
+        crumbs: [
+          { label: 'Labour', path: '/dashboard' },
+          { label: 'My Work', path: '/my-work' },
+        ],
+      };
     }
     if (path === '/labour/binding') {
-      return { title: 'Binding Work Operations', subtitle: 'Copper wire & tar preparation', crumbs: ['Labour', 'Binding Work'] };
+      return {
+        title: 'Binding Work Operations',
+        subtitle: 'Copper wire & tar preparation',
+        crumbs: [
+          { label: 'Labour', path: '/dashboard' },
+          { label: 'Binding Work', path: '/labour/binding' },
+        ],
+      };
     }
     if (path === '/labour/open') {
-      return { title: 'Open Work Operations', subtitle: 'Untying finished plated pieces', crumbs: ['Labour', 'Open Work'] };
+      return {
+        title: 'Open Work Operations',
+        subtitle: 'Untying finished plated pieces',
+        crumbs: [
+          { label: 'Labour', path: '/dashboard' },
+          { label: 'Open Work', path: '/labour/open' },
+        ],
+      };
     }
     if (path.startsWith('/labour/reports') || path === '/reports') {
-      return { title: 'Labour Work Reports', subtitle: 'Piece count & productivity history', crumbs: ['Labour', 'Reports'] };
+      return {
+        title: 'Labour Work Reports',
+        subtitle: 'Piece count & productivity history',
+        crumbs: [
+          { label: 'Labour', path: '/dashboard' },
+          { label: 'Reports', path: '/labour/reports' },
+        ],
+      };
     }
-    return { title: 'Labour Station', subtitle: 'Artisan piecework bench', crumbs: ['Labour'] };
+    return {
+      title: 'Labour Station',
+      subtitle: 'Artisan piecework bench',
+      crumbs: [{ label: 'Labour', path: '/dashboard' }],
+    };
   };
 
   const { title, subtitle, crumbs } = getPageInfo();
@@ -90,19 +131,33 @@ export const LabourHeader: React.FC<LabourHeaderProps> = ({ collapsed, setCollap
         </Button>
 
         <div className="flex flex-col min-w-0">
-          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
-            {crumbs.map((crumb, idx) => (
-              <React.Fragment key={idx}>
-                {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />}
-                <span
-                  className={`truncate ${
-                    idx === crumbs.length - 1 ? 'text-slate-700 font-semibold' : 'text-slate-500'
-                  }`}
-                >
-                  {crumb}
-                </span>
-              </React.Fragment>
-            ))}
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-medium">
+            {crumbs.map((crumb, idx) => {
+              const isLast = idx === crumbs.length - 1;
+              return (
+                <React.Fragment key={idx}>
+                  {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (crumb.onClick) {
+                        crumb.onClick();
+                      } else if (crumb.path) {
+                        navigate(crumb.path);
+                      }
+                    }}
+                    className={`truncate transition-colors cursor-pointer text-left ${
+                      isLast
+                        ? 'text-slate-800 font-semibold hover:text-emerald-700 hover:underline'
+                        : 'text-slate-500 hover:text-slate-900 hover:underline'
+                    }`}
+                    title={`Navigate to ${crumb.label}`}
+                  >
+                    {crumb.label}
+                  </button>
+                </React.Fragment>
+              );
+            })}
           </div>
           <div className="flex items-center gap-2">
             <h1 className="text-xs sm:text-sm font-bold text-slate-900 truncate leading-snug">

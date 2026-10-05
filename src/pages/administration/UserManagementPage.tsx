@@ -138,9 +138,7 @@ export const UserManagementPage: React.FC = () => {
       {/* Header Banner */}
       <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <UserCog className="w-4 h-4 text-slate-700" /> Staff & User Access Management
-          </h2>
+          <h2 className="text-sm font-bold text-slate-900">Staff & User Access Management</h2>
           <p className="text-xs text-slate-500">
             System user accounts, operational roles, and credential administration.
           </p>

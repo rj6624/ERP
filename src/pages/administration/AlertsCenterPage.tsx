@@ -61,23 +61,18 @@ export const AlertsCenterPage: React.FC = () => {
 
   return (
     <div className="space-y-5 font-sans">
-      {/* Header Banner */}
-      <div className="erp-light-panel bg-slate-900 text-white p-5 rounded-lg border border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* List Header */}
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <div className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-amber-400" />
-            <h2 className="text-sm font-bold tracking-wide uppercase text-white">
-              Operational Alerts & Threshold Rule Center
-            </h2>
-          </div>
-          <p className="text-xs text-slate-300 mt-0.5">
+          <h2 className="text-sm font-bold text-slate-900">Operational Alerts & Threshold Rule Center</h2>
+          <p className="text-xs text-slate-500">
             Monitor and configure plant alerts for overdue jewellery jobs, low chemical tanks, and fast forward queues.
           </p>
         </div>
 
         <Button variant="primary"
           onClick={clearAllAlerts}
-          className=""
+          className="self-start sm:self-auto"
         >
           <CheckCircle2 className="w-3.5 h-3.5" /> Mark All as Resolved
         </Button>

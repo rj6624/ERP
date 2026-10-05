@@ -50,3 +50,6 @@ type BadgeProps = ComponentPropsWithoutRef<'span'> & { tone?: BadgeTone; size?: 
 export function Badge({ tone = 'neutral', size = 'sm', className = '', ...props }: BadgeProps) {
   return <span className={`ds-badge ds-badge--${tone} ds-badge--${size} ${className}`} {...props} />;
 }
+
+export { CustomSelect } from './CustomSelect';
+

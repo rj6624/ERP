@@ -136,9 +136,7 @@ export const ScrapManagementPage: React.FC = () => {
       {/* Header Banner */}
       <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Recycle className="w-4 h-4 text-emerald-600" /> Scrap Recovery & Precious Sludge Refining
-          </h2>
+          <h2 className="text-sm font-bold text-slate-900">Scrap Recovery & Precious Sludge Refining</h2>
           <p className="text-xs text-slate-500">
             Filter dragout recovery, buffing lint smelting, and chemical precipitation logs with strict 3-decimal gross weights.
           </p>

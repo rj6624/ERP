@@ -131,26 +131,30 @@ export const ChemicalStockPage: React.FC = () => {
       sortable: false,
       align: 'right',
       cell: (row) => (
-        <div className="flex items-center justify-end gap-1">
-          <Button variant="ghost"
+        <div className="flex items-center justify-end gap-1.5">
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => {
               setSelectedChemicalId(row.id);
               setIsStockInModalOpen(true);
             }}
-            className="text-2xs flex items-center gap-0.5"
+            className="!min-h-[28px] h-7 px-3 text-xs font-semibold shadow-2xs cursor-pointer"
             title="Stock In"
           >
-            <ArrowDown className="w-3 h-3" /> +In
+            In
           </Button>
-          <Button variant="ghost"
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => {
               setSelectedChemicalId(row.id);
               setIsUsageModalOpen(true);
             }}
-            className="text-2xs flex items-center gap-0.5"
+            className="!min-h-[28px] h-7 px-3 text-xs font-semibold shadow-2xs cursor-pointer"
             title="Record Usage"
           >
-            <ArrowUp className="w-3 h-3" /> -Use
+            Use
           </Button>
         </div>
       ),
@@ -162,9 +166,7 @@ export const ChemicalStockPage: React.FC = () => {
       {/* Header Banner */}
       <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <FlaskConical className="w-4 h-4 text-purple-600" /> Chemical Baths & Salt Inventory
-          </h2>
+          <h2 className="text-sm font-bold text-slate-900">Chemical Baths & Salt Inventory</h2>
           <p className="text-xs text-slate-500">
             Precious metal solutions, flash plating salts, brighteners, and anti-tarnish chemicals.
           </p>

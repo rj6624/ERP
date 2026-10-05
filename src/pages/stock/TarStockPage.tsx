@@ -137,23 +137,20 @@ export const TarStockPage: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Prominent Current Stock Summary Card */}
-      <div className="erp-light-panel bg-slate-900 text-white p-5 rounded-lg border border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="erp-list-intro flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <div className="flex items-center gap-2">
-            <Box className="w-5 h-5 text-amber-400" />
-            <h2 className="text-sm font-bold tracking-wide uppercase text-white">
-              Tar Stock & Melting Inventory
-            </h2>
-          </div>
-          <p className="text-xs text-slate-300 mt-0.5">
+          <h2 className="text-sm font-bold text-slate-900">
+            Tar Stock & Melting Inventory
+          </h2>
+          <p className="text-xs text-slate-500">
             Formula: Opening Stock + Stock In (Purchase) − Labour Usage ± Adjustments
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="text-right p-2.5 rounded bg-slate-800 border border-slate-700">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Current Tar Stock</span>
-            <span className="font-mono text-xl font-extrabold text-amber-400">
+        <div className="flex items-center gap-3 self-start sm:self-auto">
+          <div className="text-right p-2 rounded bg-amber-50 border border-amber-200">
+            <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-medium">Current Tar Stock</span>
+            <span className="font-mono text-base font-extrabold text-amber-800">
               {formatWeight(currentTarStock)}
             </span>
           </div>
