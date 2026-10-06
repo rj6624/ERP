@@ -165,15 +165,14 @@
 }
 @media (max-width: 767px) {
   :root { --ds-control-height: 44px; }
-  .ds-button.ds-button--sm:not(.ds-button--surface), .ds-button.ds-button--icon:not(.ds-button--surface) { min-height: 44px; min-width: 44px; }
   .ds-control { font-size: 16px; }
   .ds-choice { width: 20px; height: 20px; }
   .ds-card.ds-card--md { padding: 18px; }
   .ds-card.erp-stat-card { padding: 14px; }
   .ds-tab.ds-button { min-height: 44px; }
   .ds-dialog { max-height: calc(100dvh - 16px); }
-  .erp-workspace .flex.items-center.justify-between:not(:where(.ds-dialog *, .ds-drawer *)) { flex-wrap: wrap; row-gap: 8px; }
-  .erp-workspace .flex.items-center.gap-2:has(> .ds-button) { flex-wrap: wrap; }
+  .erp-workspace .flex.items-center.justify-between:not(:where(.ds-dialog *, .ds-drawer *, .no-wrap-mobile, [class*="no-wrap"])) { flex-wrap: wrap; row-gap: 8px; }
+  .erp-workspace .flex.items-center.gap-2:has(> .ds-button:not(.ds-button--sm)) { flex-wrap: wrap; }
 }
 @media (prefers-reduced-motion: reduce) { :root { --ds-motion: 0ms; } }
 @media print {

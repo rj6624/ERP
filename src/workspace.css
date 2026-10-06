@@ -352,8 +352,8 @@ button:disabled { cursor: not-allowed; opacity: .55; }
   .erp-status-donut { width: 130px; height: 130px; }
   .erp-status-legend { gap: 13px; }
   .erp-status-legend > div { font-size: 11px; }
-  .erp-shell :is(button, a[role="button"]):not(.erp-sidebar button.uppercase), .erp-modal button { min-height: 44px; }
-  .erp-header button, .erp-data-table button, .erp-modal button { min-width: 44px; }
+  .erp-shell :is(button, a[role="button"]):not(.erp-sidebar button.uppercase):not(.ds-button--sm):not(.ds-button--icon):not(.ds-button--surface), .erp-modal button:not(.ds-button--sm):not(.ds-button--icon) { min-height: 44px; }
+  .erp-header button, .erp-data-table button, .erp-modal button:not(.ds-button--sm):not(.ds-button--icon) { min-width: 44px; }
   .erp-shell :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea),
   .erp-modal :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea) { min-height: 44px; font-size: 16px; max-width: 100%; }
   .erp-shell input:is([type="checkbox"], [type="radio"]) { width: 20px; height: 20px; flex-shrink: 0; }

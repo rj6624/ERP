@@ -2,6 +2,7 @@ import { Button, Card } from '../../components/ui/Primitives';
 import React from 'react';
 import { useERP } from '../../context/ERPContext';
 import { StatCard } from '../../components/common/StatCard';
+import { StatusBadge } from '../../components/common/StatusBadge';
 import { JobStatusChart } from '../../components/charts/JobStatusChart';
 import { WeightTrendChart } from '../../components/charts/WeightTrendChart';
 import { PaymentAnalyticsChart } from '../../components/charts/PaymentAnalyticsChart';
@@ -196,23 +197,26 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Fast Forward Queue widget */}
         <Card padding="md" className="erp-card bg-white p-4 lg:col-span-2 border-amber-300 bg-amber-50/10">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded bg-amber-500 text-slate-950">
+          <div className="flex items-center justify-between gap-2 mb-3 pb-2 border-b border-amber-200/50">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="p-1.5 rounded-lg bg-amber-500 text-slate-950 shrink-0 shadow-2xs">
                 <Zap className="w-4 h-4 fill-slate-950" />
               </div>
-              <div>
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+              <div className="min-w-0">
+                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider truncate">
                   Fast Forward Pending Queue ({fastForwardJobs.length})
                 </h3>
-                <p className="text-[11px] text-slate-500">Urgent customer batches requiring immediate turn-around</p>
+                <p className="text-[11px] text-slate-500 truncate">Urgent customer batches requiring immediate turn-around</p>
               </div>
             </div>
-            <Button variant="ghost"
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setCurrentPage('fast_forward')}
-              className="hover:underline flex items-center gap-1"
+              className="hover:underline flex items-center gap-1 shrink-0 text-xs font-semibold text-slate-700 hover:text-slate-900 px-2 py-1"
             >
-              View Full Queue <ArrowRight className="w-3.5 h-3.5" />
+              <span>View Full Queue</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </div>
 
@@ -226,30 +230,34 @@ export const DashboardPage: React.FC = () => {
                 <div
                   key={job.id}
                   onClick={() => navigateToJob(job.id)}
-                  className="py-2.5 flex items-center justify-between hover:bg-amber-50/50 px-2 rounded cursor-pointer transition-colors"
+                  className="py-3.5 px-2.5 rounded-lg flex items-center justify-between gap-4 hover:bg-amber-50/60 cursor-pointer transition-colors no-wrap-mobile"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono font-bold text-xs bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded">
+                  {/* LEFT SIDE: Tag -> [Name & Description Group] */}
+                  <div className="min-w-0 flex-1 flex flex-col items-start gap-1.5">
+                    <span className="font-mono font-bold text-xs bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.5 rounded shadow-2xs shrink-0">
                       {job.id}
                     </span>
-                    <div>
-                      <p className="font-bold text-xs text-slate-900">{job.customerName}</p>
-                      <p className="text-[11px] text-slate-500">
-                        {job.platingType} • <span className="font-mono font-semibold">{formatWeight(job.inwardWeight)}</span>
+                    <div className="min-w-0 w-full flex flex-col">
+                      <p className="font-bold text-xs text-slate-900 truncate leading-tight">
+                        {job.customerName}
+                      </p>
+                      <p className="text-[11px] text-slate-500 truncate leading-normal">
+                        {job.platingType} • <span className="font-mono font-semibold text-slate-700">{formatWeight(job.inwardWeight)}</span>
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
-                      {job.status}
-                    </span>
-                    <Button variant="primary" size="sm"
+                  {/* RIGHT SIDE: Top Status (Rounded Rectangle) -> Bottom Right Button with comfortable spacing */}
+                  <div className="flex flex-col items-end justify-between shrink-0 gap-3 py-0.5">
+                    <StatusBadge type="job" value={job.status} size="sm" />
+                    <Button
+                      variant="primary"
+                      size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
                         setCurrentPage('create_outward');
                       }}
-                      className=""
+                      className="text-[11px] font-semibold px-2.5 py-1 min-h-[26px] h-[26px] rounded-md whitespace-nowrap shadow-2xs"
                     >
                       Process Outward
                     </Button>
