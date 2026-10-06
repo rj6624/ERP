@@ -110,6 +110,79 @@ const ROLES: RoleOption[] = [
   },
 ];
 
+export interface RoleSwitcherSectionProps {
+  onRoleSelected?: () => void;
+}
+
+export const RoleSwitcherSection: React.FC<RoleSwitcherSectionProps> = ({ onRoleSelected }) => {
+  const { currentRole, setCurrentRole } = useERP();
+
+  const handleSelectRole = (roleId: 'Admin' | 'Manager' | 'Operator' | 'Labour') => {
+    setCurrentRole(roleId);
+    onRoleSelected?.();
+  };
+
+  return (
+    <div className="py-2">
+      <div className="px-3 pb-2 flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+        <span className="flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Switch Role
+        </span>
+        <span className="text-[10px] text-slate-400 font-normal">4 Views</span>
+      </div>
+
+      <div className="space-y-1.5 px-2">
+        {ROLES.map((role) => {
+          const RoleIcon = role.icon;
+          const isSelected = role.id === currentRole;
+
+          return (
+            <Button
+              variant="surface"
+              key={role.id}
+              type="button"
+              onClick={() => handleSelectRole(role.id)}
+              className={`w-full text-left p-2.5 rounded-xl border transition-all duration-150 flex items-center gap-2.5 cursor-pointer ${
+                isSelected
+                  ? `${role.theme.bg} ${role.theme.activeBorder} shadow-xs font-semibold`
+                  : 'bg-white hover:bg-slate-50 border-slate-200/80 text-slate-700'
+              }`}
+            >
+              <div className={`p-2 rounded-lg shrink-0 ${role.theme.iconBg}`}>
+                <RoleIcon className="w-4 h-4" />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-1">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="text-xs font-bold text-slate-900 truncate">
+                      {role.name}
+                    </span>
+                    <span
+                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${role.theme.badgeBg} ${role.theme.badgeText}`}
+                    >
+                      {role.badge}
+                    </span>
+                  </div>
+                  {isSelected && (
+                    <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded-full shrink-0 border border-emerald-200">
+                      <Check className="w-3 h-3 text-emerald-600" /> Active
+                    </span>
+                  )}
+                </div>
+
+                <div className="text-[11px] text-slate-500 truncate mt-0.5">
+                  {role.user} • {role.roleTag}
+                </div>
+              </div>
+            </Button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 export const RoleSwitcherDropdown: React.FC = () => {
   const { currentRole, setCurrentRole } = useERP();
   const [isOpen, setIsOpen] = useState(false);

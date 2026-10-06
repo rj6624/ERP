@@ -161,9 +161,7 @@
 }
 
 @media (max-width: 1023px) and (min-width: 768px) {
-  .erp-header { padding-inline: 16px; gap: 8px; }
-  .erp-header-search > span, .erp-header-search > kbd { display: none; }
-  .erp-header .erp-role-switcher > button > .flex { display: none; }
+  .erp-header { padding-inline: 16px; }
 }
 @media (max-width: 767px) {
   :root { --ds-control-height: 44px; }
@@ -173,10 +171,7 @@
   .ds-card.ds-card--md { padding: 18px; }
   .ds-card.erp-stat-card { padding: 14px; }
   .ds-tab.ds-button { min-height: 44px; }
-  .erp-header .erp-header-search { width: 44px; min-width: 44px; padding: 10px; }
-  .erp-header .erp-header-search > span { display: none; }
   .ds-dialog { max-height: calc(100dvh - 16px); }
-  .erp-header .ds-popover { position: fixed; top: 116px; left: 12px; right: 12px; width: auto; max-height: calc(100dvh - 128px); overflow-y: auto; }
   .erp-workspace .flex.items-center.justify-between:not(:where(.ds-dialog *, .ds-drawer *)) { flex-wrap: wrap; row-gap: 8px; }
   .erp-workspace .flex.items-center.gap-2:has(> .ds-button) { flex-wrap: wrap; }
 }
