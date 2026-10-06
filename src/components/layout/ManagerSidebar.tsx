@@ -107,8 +107,8 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({ collapsed }) => 
           onClick={() => handleNav('/dashboard', 'dashboard')}
           className={`flex items-center cursor-pointer overflow-hidden ${collapsed ? 'justify-center' : 'gap-2.5'}`}
         >
-          <div className="w-8 h-8 rounded bg-emerald-600 flex items-center justify-center text-white font-bold shrink-0 shadow-sm shadow-emerald-500/20">
-            <Sparkles className="w-4 h-4" />
+          <div className="w-8 h-8 rounded-lg overflow-hidden bg-black flex items-center justify-center shrink-0 shadow-sm border border-amber-500/20">
+            <img src="/brand-logo.png" alt="Plating ERP Logo" className="w-full h-full object-cover" />
           </div>
           {!collapsed && (
             <div className="flex flex-col">

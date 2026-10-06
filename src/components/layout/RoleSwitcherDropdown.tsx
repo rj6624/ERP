@@ -19,16 +19,6 @@ interface RoleOption {
   roleTag: string;
   description: string;
   icon: React.ElementType;
-  theme: {
-    bg: string;
-    border: string;
-    text: string;
-    badgeBg: string;
-    badgeText: string;
-    glow: string;
-    activeBorder: string;
-    iconBg: string;
-  };
 }
 
 const ROLES: RoleOption[] = [
@@ -40,16 +30,6 @@ const ROLES: RoleOption[] = [
     roleTag: 'Full Access',
     description: 'Enterprise control, financials, billing & permissions',
     icon: ShieldCheck,
-    theme: {
-      bg: 'bg-emerald-50 hover:bg-emerald-100/70',
-      border: 'border-emerald-200',
-      text: 'text-emerald-900',
-      badgeBg: 'bg-emerald-600',
-      badgeText: 'text-white',
-      glow: 'shadow-emerald-500/10',
-      activeBorder: 'border-emerald-500 ring-2 ring-emerald-500/20',
-      iconBg: 'bg-emerald-100 text-emerald-700',
-    },
   },
   {
     id: 'Manager',
@@ -59,16 +39,6 @@ const ROLES: RoleOption[] = [
     roleTag: 'Management',
     description: 'Floor supervision, inventory, queues & reports',
     icon: Shield,
-    theme: {
-      bg: 'bg-indigo-50 hover:bg-indigo-100/70',
-      border: 'border-indigo-200',
-      text: 'text-indigo-900',
-      badgeBg: 'bg-indigo-600',
-      badgeText: 'text-white',
-      glow: 'shadow-indigo-500/10',
-      activeBorder: 'border-indigo-500 ring-2 ring-indigo-500/20',
-      iconBg: 'bg-indigo-100 text-indigo-700',
-    },
   },
   {
     id: 'Operator',
@@ -78,16 +48,6 @@ const ROLES: RoleOption[] = [
     roleTag: 'Station 01',
     description: 'Barcode intake, weight calculation & dispatch',
     icon: HardHat,
-    theme: {
-      bg: 'bg-sky-50 hover:bg-sky-100/70',
-      border: 'border-sky-200',
-      text: 'text-sky-900',
-      badgeBg: 'bg-sky-600',
-      badgeText: 'text-white',
-      glow: 'shadow-sky-500/10',
-      activeBorder: 'border-sky-500 ring-2 ring-sky-500/20',
-      iconBg: 'bg-sky-100 text-sky-700',
-    },
   },
   {
     id: 'Labour',
@@ -97,16 +57,6 @@ const ROLES: RoleOption[] = [
     roleTag: 'Bench #4',
     description: 'Piecework queue, wire binding & untying tasks',
     icon: Hammer,
-    theme: {
-      bg: 'bg-amber-50 hover:bg-amber-100/70',
-      border: 'border-amber-200',
-      text: 'text-amber-900',
-      badgeBg: 'bg-amber-600',
-      badgeText: 'text-white',
-      glow: 'shadow-amber-500/10',
-      activeBorder: 'border-amber-500 ring-2 ring-amber-500/20',
-      iconBg: 'bg-amber-100 text-amber-800',
-    },
   },
 ];
 
@@ -126,7 +76,7 @@ export const RoleSwitcherSection: React.FC<RoleSwitcherSectionProps> = ({ onRole
     <div className="py-2">
       <div className="px-3 pb-2 flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider">
         <span className="flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Switch Role
+          <Sparkles className="w-3.5 h-3.5 text-slate-500" /> Switch Role
         </span>
         <span className="text-[10px] text-slate-400 font-normal">4 Views</span>
       </div>
@@ -144,11 +94,15 @@ export const RoleSwitcherSection: React.FC<RoleSwitcherSectionProps> = ({ onRole
               onClick={() => handleSelectRole(role.id)}
               className={`w-full text-left p-2.5 rounded-xl border transition-all duration-150 flex items-center gap-2.5 cursor-pointer ${
                 isSelected
-                  ? `${role.theme.bg} ${role.theme.activeBorder} shadow-xs font-semibold`
+                  ? 'bg-slate-50 border-slate-900 ring-1 ring-slate-900/10 shadow-xs font-semibold'
                   : 'bg-white hover:bg-slate-50 border-slate-200/80 text-slate-700'
               }`}
             >
-              <div className={`p-2 rounded-lg shrink-0 ${role.theme.iconBg}`}>
+              <div
+                className={`p-2 rounded-lg shrink-0 transition-colors ${
+                  isSelected ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'
+                }`}
+              >
                 <RoleIcon className="w-4 h-4" />
               </div>
 
@@ -159,14 +113,18 @@ export const RoleSwitcherSection: React.FC<RoleSwitcherSectionProps> = ({ onRole
                       {role.name}
                     </span>
                     <span
-                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${role.theme.badgeBg} ${role.theme.badgeText}`}
+                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                        isSelected
+                          ? 'bg-slate-900 text-white'
+                          : 'bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}
                     >
                       {role.badge}
                     </span>
                   </div>
                   {isSelected && (
-                    <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded-full shrink-0 border border-emerald-200">
-                      <Check className="w-3 h-3 text-emerald-600" /> Active
+                    <span className="flex items-center gap-1 text-[10px] font-bold text-slate-900 bg-slate-200/80 px-1.5 py-0.5 rounded-full shrink-0 border border-slate-300">
+                      <Check className="w-3 h-3 text-slate-900" /> Active
                     </span>
                   )}
                 </div>
@@ -213,22 +171,21 @@ export const RoleSwitcherDropdown: React.FC = () => {
   return (
     <div className="erp-role-switcher relative inline-block text-left" ref={dropdownRef}>
       {/* Role Pill Button */}
-      <Button variant="surface"
+      <Button
+        variant="surface"
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg border transition-all duration-150 cursor-pointer shadow-xs whitespace-nowrap ${activeRole.theme.bg} ${activeRole.theme.border} ${activeRole.theme.text}`}
+        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 transition-all duration-150 cursor-pointer shadow-xs whitespace-nowrap"
         title={`Current Role: ${activeRole.name} (${activeRole.user}) — Click to switch`}
       >
-        <div className={`p-1 rounded-md ${activeRole.theme.iconBg}`}>
+        <div className="p-1 rounded-md bg-slate-100 text-slate-700">
           <ActiveIcon className="w-3.5 h-3.5" />
         </div>
 
         <div className="flex items-center gap-1.5 text-xs font-semibold">
-          <span className="hidden sm:inline font-bold">{activeRole.name}</span>
-          <span className="sm:hidden font-bold">{activeRole.badge}</span>
-          <span
-            className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${activeRole.theme.badgeBg} ${activeRole.theme.badgeText}`}
-          >
+          <span className="hidden sm:inline font-bold text-slate-900">{activeRole.name}</span>
+          <span className="sm:hidden font-bold text-slate-900">{activeRole.badge}</span>
+          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-slate-900 text-white">
             {activeRole.badge}
           </span>
         </div>
@@ -246,7 +203,7 @@ export const RoleSwitcherDropdown: React.FC = () => {
           {/* Header */}
           <div className="px-3.5 pb-2.5 mb-1.5 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-slate-700" />
+              <Sparkles className="w-4 h-4 text-slate-600" />
               <span className="text-xs font-bold text-slate-900 uppercase tracking-wide">
                 Switch Perspective
               </span>
@@ -261,17 +218,22 @@ export const RoleSwitcherDropdown: React.FC = () => {
               const isSelected = role.id === currentRole;
 
               return (
-                <Button variant="surface"
+                <Button
+                  variant="surface"
                   key={role.id}
                   type="button"
                   onClick={() => handleSelectRole(role.id)}
                   className={`w-full text-left p-2.5 rounded-lg border transition-all duration-150 flex items-start gap-3 cursor-pointer ${
                     isSelected
-                      ? `${role.theme.bg} ${role.theme.activeBorder} shadow-xs`
+                      ? 'bg-slate-50 border-slate-900 ring-1 ring-slate-900/10 shadow-xs'
                       : 'bg-white hover:bg-slate-50 border-slate-200/80 hover:border-slate-300'
                   }`}
                 >
-                  <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${role.theme.iconBg}`}>
+                  <div
+                    className={`p-2 rounded-lg shrink-0 mt-0.5 ${
+                      isSelected ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
                     <RoleIcon className="w-4 h-4" />
                   </div>
 
@@ -282,14 +244,18 @@ export const RoleSwitcherDropdown: React.FC = () => {
                           {role.name}
                         </span>
                         <span
-                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${role.theme.badgeBg} ${role.theme.badgeText}`}
+                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                            isSelected
+                              ? 'bg-slate-900 text-white'
+                              : 'bg-slate-100 text-slate-600 border border-slate-200'
+                          }`}
                         >
                           {role.badge}
                         </span>
                       </div>
                       {isSelected && (
-                        <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 shrink-0">
-                          <Check className="w-3 h-3" /> Active
+                        <span className="flex items-center gap-1 text-[11px] font-semibold text-slate-900 bg-slate-200/80 px-1.5 py-0.5 rounded border border-slate-300 shrink-0">
+                          <Check className="w-3 h-3 text-slate-900" /> Active
                         </span>
                       )}
                     </div>
