@@ -328,14 +328,15 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
             {collapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
           </Button>
 
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium">
+          <div className="flex flex-col justify-center min-w-0">
+            <div className="erp-header-breadcrumb flex items-center gap-1.5 text-[11px] font-medium leading-none mb-0.5">
               {pageInfo.crumbs.map((crumb, idx) => {
                 const isLast = idx === pageInfo.crumbs.length - 1;
                 return (
                   <React.Fragment key={idx}>
                     {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />}
-                    <button
+                    <Button
+                      variant="surface"
                       type="button"
                       onClick={() => {
                         if (crumb.onClick) {
@@ -344,7 +345,7 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
                           navigate(crumb.path);
                         }
                       }}
-                      className={`truncate transition-colors cursor-pointer text-left ${
+                      className={`erp-breadcrumb-item truncate transition-colors cursor-pointer text-left leading-none p-0 border-0 shadow-none ${
                         isLast
                           ? 'text-slate-800 font-semibold hover:text-emerald-700 hover:underline'
                           : 'text-slate-500 hover:text-slate-900 hover:underline'
@@ -352,17 +353,17 @@ export const OperatorHeader: React.FC<OperatorHeaderProps> = ({ collapsed, setCo
                       title={`Navigate to ${crumb.label}`}
                     >
                       {crumb.label}
-                    </button>
+                    </Button>
                   </React.Fragment>
                 );
               })}
             </div>
             <div className="flex items-center gap-2">
-              <h1 className="text-sm font-bold text-slate-900 tracking-tight leading-snug truncate">
+              <h1 className="text-sm font-bold text-slate-900 tracking-tight leading-tight truncate">
                 {pageInfo.title}
               </h1>
               {pageInfo.subtitle && (
-                <span className="hidden xl:inline text-[11px] text-slate-600 font-normal truncate">
+                <span className="hidden xl:inline text-[11px] text-slate-600 font-normal truncate leading-tight">
                   • {pageInfo.subtitle}
                 </span>
               )}
