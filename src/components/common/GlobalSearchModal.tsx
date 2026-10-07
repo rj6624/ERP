@@ -1,8 +1,20 @@
 import { DialogSurface } from '../ui/DialogSurface';
-import { Button, Card, Input } from '../ui/Primitives';
+import { Button, Input } from '../ui/Primitives';
 import React, { useState, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
-import { Search, User, Briefcase, Box, Users, X, ArrowRight, ShieldCheck, Flame, FlaskConical, Hammer } from 'lucide-react';
+import {
+  Search,
+  User,
+  Briefcase,
+  Box,
+  X,
+  ArrowRight,
+  ShieldCheck,
+  Flame,
+  FlaskConical,
+  Hammer,
+  Clock,
+} from 'lucide-react';
 import { formatWeight, formatPlating } from '../../utils/formatters';
 
 export const GlobalSearchModal: React.FC = () => {
@@ -21,6 +33,46 @@ export const GlobalSearchModal: React.FC = () => {
   } = useERP();
 
   const [query, setQuery] = useState('');
+  const [searchHistory, setSearchHistory] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('erp_search_history');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed.slice(0, 5);
+      }
+    } catch {
+      // fallback
+    }
+    return ['DARSHAN1', 'Gold Plating', 'JOB-1025', 'Khimji Jewellers', 'Rhodium Bath'];
+  });
+
+  const saveToHistory = (term: string) => {
+    if (!term || !term.trim()) return;
+    const clean = term.trim();
+    setSearchHistory((prev) => {
+      const filtered = prev.filter((item) => item.toLowerCase() !== clean.toLowerCase());
+      const updated = [clean, ...filtered].slice(0, 5);
+      try {
+        localStorage.setItem('erp_search_history', JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  };
+
+  const removeFromHistory = (term: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSearchHistory((prev) => {
+      const updated = prev.filter((item) => item.toLowerCase() !== term.toLowerCase());
+      try {
+        localStorage.setItem('erp_search_history', JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -54,56 +106,110 @@ export const GlobalSearchModal: React.FC = () => {
 
   return (
     <div className="ds-overlay fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-start justify-center pt-3 sm:pt-20 px-3 sm:px-4 font-sans">
-      <DialogSurface onClose={() => setIsSearchModalOpen(false)}  role="dialog" aria-modal="true" aria-label="Search records" className="flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-6rem)] w-full max-w-2xl bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <DialogSurface onClose={() => setIsSearchModalOpen(false)} role="dialog" aria-modal="true" aria-label="Search records" className="flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-6rem)] w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Search Input Bar */}
-        <div className="shrink-0 p-3 sm:p-4 border-b border-slate-200 flex items-center gap-2 bg-slate-50/50">
-          <Search className="w-5 h-5 text-slate-400 shrink-0" />
-          <Input
-            type="text"
-            aria-label="Search customers, jobs and stock"
-            autoFocus
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search Customers, Job IDs (e.g. DARSHAN1), Labour, Materials, Stock..."
-            className="min-w-0 w-full placeholder-slate-400"
-          />
-          {query && (
-            <Button variant="ghost" size="icon" aria-label="Clear search" onClick={() => setQuery('')} className="shrink-0">
-              <X className="w-4 h-4" />
-            </Button>
-          )}
-          <Button variant="ghost" aria-label="Close search" onClick={() => setIsSearchModalOpen(false)} className="shrink-0">Close</Button>
-        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (query.trim()) saveToHistory(query.trim());
+          }}
+          className="shrink-0 p-3 sm:p-4 border-b border-slate-100 flex items-center gap-2.5 bg-white"
+        >
+          <div className="relative flex-1 min-w-0">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" />
+            <Input
+              type="text"
+              aria-label="Search records"
+              autoFocus
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search jobs, customers, labour, stock..."
+              className="erp-modal-search-input w-full"
+            />
+            {query && (
+              <Button
+                variant="surface"
+                type="button"
+                aria-label="Clear search"
+                onClick={() => setQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 h-6 w-6 min-h-0 min-w-0 p-0 flex items-center justify-center text-slate-400 hover:text-slate-700 rounded-md border-0 shadow-none cursor-pointer z-10"
+              >
+                <X className="w-3.5 h-3.5" />
+              </Button>
+            )}
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            type="button"
+            aria-label="Close search"
+            onClick={() => setIsSearchModalOpen(false)}
+            className="text-xs font-semibold text-slate-700 hover:text-slate-900 shrink-0 h-[42px] px-3.5 rounded-xl cursor-pointer"
+          >
+            Close
+          </Button>
+        </form>
 
-        {/* Results Container */}
-        <div className="min-h-0 overflow-y-auto overscroll-contain p-4 space-y-4">
+        {/* Results / History Container */}
+        <div className="min-h-0 overflow-y-auto overscroll-contain p-3.5 sm:p-4 space-y-4">
           {!q ? (
-            <div className="text-center py-8 text-xs text-slate-400 space-y-2">
-              <Search className="w-8 h-8 text-slate-300 mx-auto" />
-              <p>Type to search across manufacturing jobs, customer profiles, and factory inventory.</p>
-              <div className="flex justify-center gap-2 pt-2">
-                <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-2xs font-mono">DARSHAN1</span>
-                <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-2xs font-mono">Rose Gold</span>
-                <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-2xs font-mono">Silver Anode</span>
-              </div>
+            <div className="space-y-3">
+              {/* LAST 5 RECENT SEARCH HISTORY */}
+              {searchHistory.length > 0 ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 px-1">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Recent Searches</span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {searchHistory.map((item, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => {
+                          setQuery(item);
+                          saveToHistory(item);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-xs font-medium text-slate-700 hover:text-slate-950 transition-all cursor-pointer group"
+                      >
+                        <span>{item}</span>
+                        <Button
+                          variant="surface"
+                          type="button"
+                          onClick={(e) => removeFromHistory(item, e)}
+                          className="p-0.5 rounded-sm hover:bg-rose-100 text-slate-400 hover:text-rose-600 border-0 shadow-none cursor-pointer transition-colors"
+                          title="Remove from history"
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-xs text-slate-400">
+                  <p>Type to search across jobs, customers, labour, and stock...</p>
+                </div>
+              )}
             </div>
           ) : totalResults === 0 ? (
-            <div className="text-center py-8 text-xs text-slate-500">
-              No matching operational records found for &ldquo;<span className="font-semibold text-slate-700">{query}</span>&rdquo;.
+            <div className="text-center py-10 text-xs text-slate-500">
+              No matching records found for &ldquo;<span className="font-semibold text-slate-700">{query}</span>&rdquo;.
             </div>
           ) : (
             <div className="space-y-4 text-xs">
-              {/* JOBS SECTION (Section 39 example: DARSHAN1 -> Customer, Job, Inward, Outward, Status) */}
+              {/* JOBS SECTION */}
               {matchingJobs.length > 0 && (
                 <div className="space-y-1.5">
                   <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Briefcase className="w-3.5 h-3.5 text-brand-600" /> Jewellery Jobs ({matchingJobs.length})
                   </h4>
-                  <div className="divide-y divide-slate-100 rounded-lg border border-slate-200 overflow-hidden">
+                  <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
                     {matchingJobs.map((j) => (
                       <div
                         key={j.id}
                         onClick={() => {
+                          saveToHistory(j.id);
                           navigateToJob(j.id);
                           setIsSearchModalOpen(false);
                         }}
@@ -130,8 +236,8 @@ export const GlobalSearchModal: React.FC = () => {
                           <span
                             className={`text-2xs font-semibold px-2 py-0.5 rounded ${
                               j.status === 'Outward Completed'
-                                ? 'bg-emerald-50 text-emerald-700'
-                                : 'bg-amber-50 text-amber-700'
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+                                : 'bg-amber-50 text-amber-700 border border-amber-200/60'
                             }`}
                           >
                             {j.status}
@@ -150,11 +256,12 @@ export const GlobalSearchModal: React.FC = () => {
                   <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-purple-600" /> Customers ({matchingCustomers.length})
                   </h4>
-                  <div className="divide-y divide-slate-100 rounded-lg border border-slate-200 overflow-hidden">
+                  <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
                     {matchingCustomers.map((c) => (
                       <div
                         key={c.id}
                         onClick={() => {
+                          saveToHistory(c.name);
                           navigateToCustomer(c.id);
                           setIsSearchModalOpen(false);
                         }}
@@ -182,11 +289,12 @@ export const GlobalSearchModal: React.FC = () => {
                   <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Hammer className="w-3.5 h-3.5 text-indigo-600" /> Labour Force ({matchingLabour.length})
                   </h4>
-                  <div className="divide-y divide-slate-100 rounded-lg border border-slate-200 overflow-hidden">
+                  <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
                     {matchingLabour.map((l) => (
                       <div
                         key={l.id}
                         onClick={() => {
+                          saveToHistory(l.name);
                           setCurrentPage('labour_list');
                           setIsSearchModalOpen(false);
                         }}
@@ -217,13 +325,14 @@ export const GlobalSearchModal: React.FC = () => {
                   <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Box className="w-3.5 h-3.5 text-cyan-600" /> Factory Materials ({matchingStock.length})
                   </h4>
-                  <div className="divide-y divide-slate-100 rounded-lg border border-slate-200 overflow-hidden">
+                  <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
                     {matchingStock.map((s, idx) => {
                       const Icon = s.icon;
                       return (
                         <div
                           key={idx}
                           onClick={() => {
+                            saveToHistory(s.name);
                             setCurrentPage(s.page);
                             setIsSearchModalOpen(false);
                           }}

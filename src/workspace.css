@@ -290,6 +290,31 @@ body { background: var(--erp-canvas); color: var(--erp-ink); letter-spacing: 0; 
   color: #0f172a !important;
 }
 
+/* Modal Search Input with High Visibility and Proper Padding */
+.erp-modal-search-input {
+  padding-left: 40px !important;
+  padding-right: 36px !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  border-radius: 10px !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+.erp-modal-search-input::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
+  font-size: 13.5px !important;
+}
+.erp-modal-search-input:focus {
+  background-color: #ffffff !important;
+  border-color: #0f172a !important;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08) !important;
+  outline: none !important;
+}
+
 /* Consistent surfaces and typography across dashboards, details and forms. */
 .erp-card, .ref-card { border-radius: 15px; border-color: var(--erp-border); box-shadow: 0 2px 4px #223b4803; }
 .erp-card, .ref-card { padding: 22px; transition: border-color .16s, box-shadow .16s; }
