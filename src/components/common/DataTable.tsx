@@ -193,10 +193,10 @@ export function DataTable<T extends { id?: string | number }>({
         </div>
       )}
 
-      {/* Main Toolbar Row: Searchbar on Left, Export, Actions, & Switcher on Right */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* Main Toolbar Row: Searchbar on Left, Export, Actions, & Switcher on Right (Single row on mobile & desktop) */}
+      <div className="flex items-center justify-between gap-2 sm:gap-3 w-full">
         {/* Search Box on Left */}
-        <div className="relative flex-1 sm:max-w-xs min-w-[200px]">
+        <div className="relative flex-1 min-w-0 sm:max-w-xs">
           <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           <Input
             type="text"
@@ -210,68 +210,62 @@ export function DataTable<T extends { id?: string | number }>({
             className="erp-toolbar-control pl-8 pr-7 w-full text-xs ds-control-leading py-0"
           />
           {searchTerm && (
-            <button
+            <Button
+              variant="surface"
               type="button"
               onClick={() => setSearchTerm('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 min-w-0 min-h-0 h-5 w-5 flex items-center justify-center border-0 shadow-none cursor-pointer"
               title="Clear search"
               aria-label="Clear search"
             >
               <X className="w-3 h-3" />
-            </button>
+            </Button>
           )}
         </div>
 
         {/* Right End: Actions, Export, and View Switcher */}
-        <div className="flex flex-wrap items-center gap-2 self-end sm:self-auto shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {actions}
 
-          {/* CSV Export */}
+          {/* CSV Export Button (Icon only on mobile, Icon + Text on larger screens) */}
           <Button
             variant="secondary"
             size="sm"
             onClick={handleExportCSV}
-            className="erp-toolbar-control inline-flex items-center gap-1.5 px-3 text-xs shrink-0 py-0"
+            className="erp-toolbar-control inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 text-xs shrink-0 py-0"
             title="Export CSV"
+            aria-label="Export CSV"
           >
-            <Download className="w-3.5 h-3.5 text-slate-500" />
-            <span>Export</span>
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span className="hidden sm:inline">Export</span>
           </Button>
 
-          {/* Reference-Styled Icon Segmented View Switcher Pill */}
+          {/* Consistent Segmented Icon View Switcher */}
           {showViewToggle && (
-            <div className="erp-toolbar-control inline-flex items-center p-1 bg-white border border-slate-200 shadow-none gap-1 shrink-0">
+            <div className="erp-view-toggle">
               {/* Cards / Grid View Button */}
-              <button
+              <Button
+                variant="surface"
                 type="button"
                 onClick={() => handleViewModeChange('card')}
-                className={`h-7 w-7 flex items-center justify-center rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer ${
-                  currentViewMode === 'card'
-                    ? 'bg-[#081c05] text-white'
-                    : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
-                }`}
                 title="Cards View"
                 aria-label="Cards View"
                 aria-pressed={currentViewMode === 'card'}
               >
-                <LayoutGrid className="w-4 h-4" />
-              </button>
+                <LayoutGrid className="w-3.5 h-3.5" />
+              </Button>
 
               {/* Table / List View Button */}
-              <button
+              <Button
+                variant="surface"
                 type="button"
                 onClick={() => handleViewModeChange('table')}
-                className={`h-7 w-7 flex items-center justify-center rounded-[var(--ds-radius-sm,6px)] transition-all cursor-pointer ${
-                  currentViewMode === 'table'
-                    ? 'bg-[#081c05] text-white'
-                    : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
-                }`}
                 title="Table View"
                 aria-label="Table View"
                 aria-pressed={currentViewMode === 'table'}
               >
-                <List className="w-4 h-4" />
-              </button>
+                <List className="w-3.5 h-3.5" />
+              </Button>
             </div>
           )}
         </div>

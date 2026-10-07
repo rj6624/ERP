@@ -209,6 +209,87 @@ body { background: var(--erp-canvas); color: var(--erp-ink); letter-spacing: 0; 
 .erp-header button.bg-slate-900 { background: var(--erp-ink); border-radius: 9px; }
 .erp-role-switcher > button { border-radius: 9px; }
 
+/* Unified Toolbar Controls (Search, Buttons, View Toggle) */
+.erp-data-table .erp-toolbar-control,
+.erp-view-toggle {
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  border-radius: 9px !important;
+  box-sizing: border-box !important;
+  font-size: 13px !important;
+}
+
+.erp-data-table input.erp-toolbar-control {
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  line-height: 38px !important;
+}
+
+.erp-data-table button.erp-toolbar-control {
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  min-width: 38px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Segmented View Switcher (Table / Card) */
+.erp-view-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  background-color: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 9px !important;
+  padding: 3px !important;
+  gap: 2px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  box-sizing: border-box !important;
+}
+.erp-view-toggle button,
+.erp-view-toggle .ds-button {
+  min-width: 30px !important;
+  max-width: 30px !important;
+  width: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease-in-out !important;
+}
+.erp-view-toggle button[aria-pressed="true"],
+.erp-view-toggle .ds-button[aria-pressed="true"] {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+}
+.erp-view-toggle button[aria-pressed="false"],
+.erp-view-toggle .ds-button[aria-pressed="false"] {
+  background-color: transparent !important;
+  color: #64748b !important;
+}
+.erp-view-toggle button[aria-pressed="false"]:hover,
+.erp-view-toggle .ds-button[aria-pressed="false"]:hover {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  color: #0f172a !important;
+}
+
 /* Consistent surfaces and typography across dashboards, details and forms. */
 .erp-card, .ref-card { border-radius: 15px; border-color: var(--erp-border); box-shadow: 0 2px 4px #223b4803; }
 .erp-card, .ref-card { padding: 22px; transition: border-color .16s, box-shadow .16s; }
@@ -360,11 +441,9 @@ button:disabled { cursor: not-allowed; opacity: .55; }
   .erp-dashboard .erp-stat-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .erp-status-body { gap: 18px; }
   .erp-status-donut { width: 130px; height: 130px; }
-  .erp-status-legend { gap: 13px; }
-  .erp-status-legend > div { font-size: 11px; }
-  .erp-shell :is(button, a[role="button"]):not(.erp-sidebar button.uppercase):not(.ds-button--sm):not(.ds-button--icon):not(.ds-button--surface), .erp-modal button:not(.ds-button--sm):not(.ds-button--icon) { min-height: 44px; }
-  .erp-header button, .erp-data-table button, .erp-modal button:not(.ds-button--sm):not(.ds-button--icon) { min-width: 44px; }
-  .erp-shell :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea),
+  .erp-shell :is(button, a[role="button"]):not(.erp-sidebar button.uppercase):not(.ds-button--sm):not(.ds-button--icon):not(.ds-button--surface):not(.erp-toolbar-control):not(.erp-view-toggle button):not(.erp-view-toggle .ds-button), .erp-modal button:not(.ds-button--sm):not(.ds-button--icon) { min-height: 44px; }
+  .erp-header button:not(.erp-breadcrumb-item), .erp-data-table button:not(.erp-toolbar-control):not(.erp-view-toggle button):not(.erp-view-toggle .ds-button), .erp-modal button:not(.ds-button--sm):not(.ds-button--icon) { min-width: 44px; }
+  .erp-shell :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(.erp-toolbar-control), select, textarea),
   .erp-modal :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea) { min-height: 44px; font-size: 16px; max-width: 100%; }
   .erp-shell input:is([type="checkbox"], [type="radio"]) { width: 20px; height: 20px; flex-shrink: 0; }
   .erp-modal { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
