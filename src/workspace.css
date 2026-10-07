@@ -466,8 +466,8 @@ button:disabled { cursor: not-allowed; opacity: .55; }
   .erp-dashboard .erp-stat-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .erp-status-body { gap: 18px; }
   .erp-status-donut { width: 130px; height: 130px; }
-  .erp-shell :is(button, a[role="button"]):not(.erp-sidebar button.uppercase):not(.ds-button--sm):not(.ds-button--icon):not(.ds-button--surface):not(.erp-toolbar-control):not(.erp-view-toggle button):not(.erp-view-toggle .ds-button), .erp-modal button:not(.ds-button--sm):not(.ds-button--icon) { min-height: 44px; }
-  .erp-header button:not(.erp-breadcrumb-item), .erp-data-table button:not(.erp-toolbar-control):not(.erp-view-toggle button):not(.erp-view-toggle .ds-button), .erp-modal button:not(.ds-button--sm):not(.ds-button--icon) { min-width: 44px; }
+  .erp-shell :is(button, a[role="button"]):not(.erp-sidebar button.uppercase):not(.ds-button--sm):not(.ds-button--icon):not(.ds-button--surface):not(.erp-toolbar-control):not(.erp-view-toggle button):not(.erp-view-toggle .ds-button):not(.ds-tab):not(.ds-tab-item), .erp-modal button:not(.ds-button--sm):not(.ds-button--icon) { min-height: 44px; }
+  .erp-header button:not(.erp-breadcrumb-item), .erp-data-table button:not(.erp-toolbar-control):not(.erp-view-toggle button):not(.erp-view-toggle .ds-button):not(.ds-tab), .erp-modal button:not(.ds-button--sm):not(.ds-button--icon) { min-width: 44px; }
   .erp-shell :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(.erp-toolbar-control), select, textarea),
   .erp-modal :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea) { min-height: 44px; font-size: 16px; max-width: 100%; }
   .erp-shell input:is([type="checkbox"], [type="radio"]) { width: 20px; height: 20px; flex-shrink: 0; }

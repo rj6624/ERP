@@ -80,89 +80,93 @@ export const JobDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 1. HEADER (Section 17: DARSHAN1, Darshan, White Gold, 10.250 kg, Status, Priority) */}
-      <Card padding="md" className="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <span className="font-mono text-base font-extrabold text-slate-900 bg-slate-100 px-2.5 py-1 rounded border border-slate-300 shadow-sm">
-                {job.id}
-              </span>
-              <h2
-                onClick={() => navigateToCustomer(job.customerId)}
-                className="text-lg font-extrabold text-slate-900 hover:text-brand-600 cursor-pointer transition-colors"
-              >
-                {job.customerName}
-              </h2>
-              <StatusBadge type="priority" value={job.priority} />
-              <StatusBadge type="job" value={job.status} />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 pt-1">
-              <span className="font-semibold text-slate-800">
-                Plating: <span className="text-brand-700">{job.platingType}</span>
-              </span>
-              <span>•</span>
-              <span className="font-semibold text-slate-800 font-mono">
-                Inward: <span className="text-slate-900">{formatWeight(job.inwardWeight)}</span>
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1 text-slate-500">
-                <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                Intake: {formatDateTime(job.inwardDate)}
-              </span>
-            </div>
+      {/* 1. HEADER (Job ID, Customer, Plating, Inward, Status, Priority) */}
+      <Card padding="md" className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-3.5">
+        {/* Top line: Job ID + Customer Name + Status & Priority */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-sm font-extrabold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-300 shadow-2xs">
+              {job.id}
+            </span>
+            <span className="text-slate-300 hidden sm:inline">•</span>
+            <button
+              type="button"
+              onClick={() => navigateToCustomer(job.customerId)}
+              className="text-base sm:text-lg font-bold text-slate-900 hover:text-emerald-700 transition-colors cursor-pointer text-left"
+              title="View Customer Profile"
+            >
+              {job.customerName}
+            </button>
           </div>
 
-          <div className="text-right p-3 rounded-lg bg-slate-50 border border-slate-200">
-            <span className="text-[11px] text-slate-500 block uppercase tracking-wider font-semibold">
-              Current Production State
+          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+            <StatusBadge type="priority" value={job.priority} />
+            <StatusBadge type="job" value={job.status} />
+          </div>
+        </div>
+
+        {/* Bottom meta row: Plating, Inward, Intake Time */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 text-xs">
+          <div className="p-2.5 rounded-lg bg-slate-50/80 border border-slate-200/60">
+            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Plating Type</span>
+            <span className="font-semibold text-slate-900 mt-0.5 block">{job.platingType}</span>
+          </div>
+
+          <div className="p-2.5 rounded-lg bg-slate-50/80 border border-slate-200/60">
+            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Inward Weight</span>
+            <span className="font-mono font-bold text-slate-900 mt-0.5 block">{formatWeight(job.inwardWeight)}</span>
+          </div>
+
+          <div className="col-span-2 sm:col-span-1 p-2.5 rounded-lg bg-slate-50/80 border border-slate-200/60 flex flex-col justify-center">
+            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Intake Date & Time</span>
+            <span className="flex items-center gap-1.5 font-medium text-slate-700 mt-0.5">
+              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              {formatDateTime(job.inwardDate)}
             </span>
-            <span className="text-sm font-bold text-slate-800">{job.status}</span>
           </div>
         </div>
       </Card>
 
       {/* 2. JOB SUMMARY & SPECIFICATIONS */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <Card padding="md" className="erp-card bg-white p-3.5">
-          <span className="text-2xs font-semibold text-slate-500 uppercase block">Inward Gross Weight</span>
-          <span className="text-lg font-bold font-mono text-slate-900 mt-1 block">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+        <Card padding="md" className="erp-card bg-white p-3 sm:p-3.5">
+          <span className="text-2xs font-semibold text-slate-500 uppercase block">Inward Weight</span>
+          <span className="text-base sm:text-lg font-bold font-mono text-slate-900 mt-1 block">
             {formatWeight(job.inwardWeight)}
           </span>
-          <span className="text-[11px] text-slate-500">Initial verified scale tare</span>
+          <span className="text-[10px] sm:text-[11px] text-slate-500 truncate block">Initial verified tare</span>
         </Card>
 
-        <Card padding="md" className="erp-card bg-white p-3.5">
-          <span className="text-2xs font-semibold text-slate-500 uppercase block">Outward Net Weight</span>
-          <span className="text-lg font-bold font-mono text-emerald-700 mt-1 block">
-            {job.outwardWeight ? formatWeight(job.outwardWeight) : 'Pending Outward'}
+        <Card padding="md" className="erp-card bg-white p-3 sm:p-3.5">
+          <span className="text-2xs font-semibold text-slate-500 uppercase block">Outward Weight</span>
+          <span className="text-base sm:text-lg font-bold font-mono text-emerald-700 mt-1 block truncate">
+            {job.outwardWeight ? formatWeight(job.outwardWeight) : 'Pending'}
           </span>
-          <span className="text-[11px] text-slate-500">Finished plated jewellery</span>
+          <span className="text-[10px] sm:text-[11px] text-slate-500 truncate block">Finished jewellery</span>
         </Card>
 
-        <Card padding="md" className="erp-card bg-white p-3.5 border-purple-200 bg-purple-50/20">
+        <Card padding="md" className="erp-card bg-white p-3 sm:p-3.5 border-purple-200 bg-purple-50/20">
           <span className="text-2xs font-semibold text-purple-800 uppercase block">Plating per KG</span>
-          <span className="text-lg font-bold font-mono text-purple-700 mt-1 block">
-            {job.platingPerKg ? formatPlating(job.platingPerKg) : 'Awaiting Outward'}
+          <span className="text-base sm:text-lg font-bold font-mono text-purple-700 mt-1 block truncate">
+            {job.platingPerKg ? formatPlating(job.platingPerKg) : 'Awaiting'}
           </span>
-          <span className="text-[11px] text-purple-600 font-mono">((Out - In) / In) × 1000</span>
+          <span className="text-[10px] sm:text-[11px] text-purple-600 font-mono truncate block">((Out-In)/In)×1000</span>
         </Card>
 
-        <Card padding="md" className="erp-card bg-white p-3.5">
-          <span className="text-2xs font-semibold text-slate-500 uppercase block">Priority Level</span>
+        <Card padding="md" className="erp-card bg-white p-3 sm:p-3.5">
+          <span className="text-2xs font-semibold text-slate-500 uppercase block">Queue Priority</span>
           <div className="mt-1 flex items-center gap-1.5">
             {job.priority === 'Fast Forward' ? (
               <span className="inline-flex items-center gap-1 font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded text-xs">
-                <Zap className="w-3.5 h-3.5 fill-amber-500" /> Fast Forward Queue
+                <Zap className="w-3.5 h-3.5 fill-amber-500" /> Fast Forward
               </span>
             ) : (
               <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
-                Regular Queue
+                Regular
               </span>
             )}
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Factory turnaround profile</span>
+          <span className="text-[10px] sm:text-[11px] text-slate-500 mt-1 block truncate">Factory profile</span>
         </Card>
       </div>
 
@@ -348,83 +352,104 @@ export const JobDetailPage: React.FC = () => {
       </Card>
 
       {/* 6. ACTIVITY TIMELINE (Section 46: Job Created, Labour Assigned, Processing, Ready, Outward Completed) */}
-      <Card padding="md" className="erp-card p-5 border border-slate-200/80 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
+      <Card padding="md" className="erp-card p-4 sm:p-5 border border-slate-200/80 shadow-xs">
+        <h3 className="text-sm font-bold text-slate-900 tracking-tight mb-5 border-b border-slate-100 pb-3 flex items-center gap-2">
           <Clock className="w-4 h-4 text-slate-600" /> Complete Production Traceability Timeline
         </h3>
 
-        <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
-          <div className="relative">
-            <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-emerald-600 ring-4 ring-white"></div>
-            <div>
+        <div className="space-y-6">
+          {/* Step 1: Inward */}
+          <div className="relative flex gap-3.5 items-start">
+            <div className="flex flex-col items-center self-stretch shrink-0 relative w-4">
+              <div className="absolute top-3 -bottom-6 w-0.5 bg-slate-200 left-1/2 -translate-x-1/2" />
+              <div className="w-3 h-3 rounded-full bg-emerald-600 ring-4 ring-white relative z-10 mt-1 shrink-0" />
+            </div>
+            <div className="flex-1 min-w-0 space-y-1">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <p className="text-xs sm:text-sm font-bold text-slate-900">Job Inward Received & Verified</p>
                 <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
                   {formatDateTime(job.inwardDate)}
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                 Received {formatWeight(job.inwardWeight)} from {job.customerName}. Photo inspection passed.
               </p>
             </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-indigo-600 ring-4 ring-white"></div>
-            <div>
+          {/* Step 2: Binding */}
+          <div className="relative flex gap-3.5 items-start">
+            <div className="flex flex-col items-center self-stretch shrink-0 relative w-4">
+              <div className="absolute top-3 -bottom-6 w-0.5 bg-slate-200 left-1/2 -translate-x-1/2" />
+              <div className="w-3 h-3 rounded-full bg-indigo-600 ring-4 ring-white relative z-10 mt-1 shrink-0" />
+            </div>
+            <div className="flex-1 min-w-0 space-y-1">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <p className="text-xs sm:text-sm font-bold text-slate-900">Labour Binding Started & Completed</p>
                 <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
                   24 Sep 2026, 12:30 PM
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                 Assigned to {bindingTask?.labourName || 'Ramesh Patel'}. 150g hard tar used. Fixed on copper jigs.
               </p>
             </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-cyan-600 ring-4 ring-white"></div>
-            <div>
+          {/* Step 3: Plating */}
+          <div className="relative flex gap-3.5 items-start">
+            <div className="flex flex-col items-center self-stretch shrink-0 relative w-4">
+              <div className="absolute top-3 -bottom-6 w-0.5 bg-slate-200 left-1/2 -translate-x-1/2" />
+              <div className="w-3 h-3 rounded-full bg-cyan-600 ring-4 ring-white relative z-10 mt-1 shrink-0" />
+            </div>
+            <div className="flex-1 min-w-0 space-y-1">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <p className="text-xs sm:text-sm font-bold text-slate-900">Electroplating Bath Cycle ({job.platingType})</p>
                 <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
                   24 Sep 2026, 01:15 PM
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                 Bath 02 immersion at 45°C. Current density monitored. Gold solution replenishment verified.
               </p>
             </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-orange-600 ring-4 ring-white"></div>
-            <div>
+          {/* Step 4: Open */}
+          <div className="relative flex gap-3.5 items-start">
+            <div className="flex flex-col items-center self-stretch shrink-0 relative w-4">
+              {job.status === 'Outward Completed' && (
+                <div className="absolute top-3 -bottom-6 w-0.5 bg-slate-200 left-1/2 -translate-x-1/2" />
+              )}
+              <div className="w-3 h-3 rounded-full bg-orange-600 ring-4 ring-white relative z-10 mt-1 shrink-0" />
+            </div>
+            <div className="flex-1 min-w-0 space-y-1">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <p className="text-xs sm:text-sm font-bold text-slate-900">Labour Open / Untying Completed</p>
                 <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
                   24 Sep 2026, 03:00 PM
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                 Artisan {openTask?.labourName || 'Suresh Parmar'} untied pieces. Tar reclaimed into recovery vat.
               </p>
             </div>
           </div>
 
+          {/* Step 5: Outward */}
           {job.status === 'Outward Completed' && (
-            <div className="relative">
-              <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-emerald-600 ring-4 ring-white"></div>
-              <div>
+            <div className="relative flex gap-3.5 items-start">
+              <div className="flex flex-col items-center self-stretch shrink-0 relative w-4">
+                <div className="w-3 h-3 rounded-full bg-emerald-600 ring-4 ring-white relative z-10 mt-1 shrink-0" />
+              </div>
+              <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <p className="text-xs sm:text-sm font-bold text-emerald-800">Customer Outward Completed & Dispatched</p>
                   <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
                     {formatDateTime(job.outwardDate)}
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                   Final scale weight: {formatWeight(job.outwardWeight)}. Plating density certified at{' '}
                   <strong className="text-purple-700">{formatPlating(job.platingPerKg)}</strong>.
                 </p>

@@ -105,14 +105,77 @@
 .ds-card > .erp-chart-card { border: 0; box-shadow: none; padding: 12px 0; }
 .ds-card :is(h2, h3, h4).uppercase { text-transform: none; letter-spacing: -.015em; }
 .ds-card .font-black { font-weight: 650; }
-.ds-tabs { display: flex; align-items: center; gap: 6px; padding: 5px; border: 1px solid var(--ds-border); border-radius: 14px; background: var(--ds-surface); overflow-x: auto; max-width: 100%; width: 100%; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02); }
-.ds-tabs > div { display: flex; align-items: center; gap: 6px; width: 100%; min-width: max-content; }
-.ds-button.ds-tab { flex: 1 1 0%; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 6px 16px; border: 0; border-radius: 10px; background: transparent; color: var(--ds-text-secondary); font-size: 13px; font-weight: 500; white-space: nowrap; box-shadow: none; cursor: pointer; text-align: center; transition: background-color var(--ds-motion), color var(--ds-motion); }
-.ds-button.ds-tab:hover:not([aria-pressed="true"]) { background: var(--ds-surface-subtle); color: var(--ds-text); }
-.ds-button.ds-tab[aria-pressed="true"] { color: #ffffff !important; background: var(--ds-primary) !important; font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
-.ds-button.ds-tab[aria-pressed="true"] :is(svg, span, div) { color: #ffffff !important; }
-.ds-button.ds-tab:not([aria-pressed="true"]) :is(svg) { color: var(--ds-text-muted); }
-.ds-button.ds-tab:hover:not([aria-pressed="true"]) :is(svg) { color: var(--ds-text); }
+.ds-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--ds-border, #e2e8f0);
+  border-radius: 12px;
+  background: #f1f5f9;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+.ds-tabs::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.ds-tabs > div {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: max-content;
+}
+.ds-button.ds-tab {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px !important;
+  height: 36px !important;
+  max-height: 36px !important;
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: none;
+  cursor: pointer;
+  text-align: center;
+  flex-shrink: 0;
+  transition: all var(--ds-motion, 150ms) ease;
+}
+.ds-button.ds-tab:hover:not([aria-pressed="true"]) {
+  background: rgba(255, 255, 255, 0.6);
+  color: #0f172a;
+}
+.ds-button.ds-tab[aria-pressed="true"] {
+  color: #0f172a !important;
+  background: #ffffff !important;
+  font-weight: 600 !important;
+  border-color: rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+.ds-button.ds-tab[aria-pressed="true"] :is(svg, span, div) {
+  color: #0f172a !important;
+}
+.ds-button.ds-tab:not([aria-pressed="true"]) :is(svg) {
+  color: #94a3b8;
+}
+.ds-button.ds-tab:hover:not([aria-pressed="true"]) :is(svg) {
+  color: #475569;
+}
 .ds-badge { display: inline-flex; align-items: center; gap: 4px; border-radius: var(--ds-radius-sm); line-height: 1.4; font-weight: 500; box-shadow: none; animation: none; }
 .ds-badge.bg-amber-500 { background: var(--ds-warning-soft); color: var(--ds-warning); border-color: #eeddb5; }
 .ds-badge svg { flex-shrink: 0; }
@@ -169,7 +232,7 @@
   .ds-choice { width: 20px; height: 20px; }
   .ds-card.ds-card--md { padding: 18px; }
   .ds-card.erp-stat-card { padding: 14px; }
-  .ds-tab.ds-button { min-height: 44px; }
+  .ds-tab.ds-button { min-height: 36px !important; height: 36px !important; }
   .ds-dialog { max-height: calc(100dvh - 16px); }
   .erp-workspace .flex.items-center.justify-between:not(:where(.ds-dialog *, .ds-drawer *, .no-wrap-mobile, [class*="no-wrap"])) { flex-wrap: wrap; row-gap: 8px; }
   .erp-workspace .flex.items-center.gap-2:has(> .ds-button:not(.ds-button--sm)) { flex-wrap: wrap; }

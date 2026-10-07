@@ -160,28 +160,28 @@ export const CustomerDetailPage: React.FC = () => {
   return (
     <div className="space-y-4 font-sans">
       {/* Top Breadcrumb & Action */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <Button variant="ghost"
           onClick={() => setCurrentPage('customers')}
-          className="inline-flex items-center gap-1.5"
+          className="inline-flex items-center gap-1.5 self-start"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Customers
         </Button>
 
         <Button variant="primary"
           onClick={() => setCurrentPage('create_inward')}
-          className=""
+          className="w-full sm:w-auto"
         >
           <Plus className="w-3.5 h-3.5" /> Create Inward for {customer.name}
         </Button>
       </div>
 
       {/* Customer Profile Header (Section 12: Customer Name, Mobile Number, Address, Status) */}
-      <Card padding="md" className="bg-white rounded-lg border border-slate-200 p-5 shadow-sm">
+      <Card padding="md" className="bg-white rounded-lg border border-slate-200 p-4 sm:p-5 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-lg font-extrabold text-slate-900">{customer.name}</h2>
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-900">{customer.name}</h2>
               <span className="font-mono text-2xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200">
                 {customer.id}
               </span>
@@ -190,7 +190,7 @@ export const CustomerDetailPage: React.FC = () => {
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-500">
               <span className="flex items-center gap-1 font-mono">
                 <Phone className="w-3.5 h-3.5 text-slate-400" /> {customer.mobile}
               </span>
@@ -204,7 +204,7 @@ export const CustomerDetailPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="text-right p-3 rounded bg-slate-50 border border-slate-200 flex sm:flex-col justify-between sm:justify-center">
+          <div className="p-2.5 sm:p-3 rounded bg-slate-50 border border-slate-200 flex sm:flex-col justify-between sm:justify-center items-center sm:items-end">
             <span className="text-[11px] text-slate-500">Next Auto Job ID:</span>
             <span className="font-mono font-bold text-sm text-slate-900">
               {customer.name.toUpperCase().replace(/\s+/g, '')}{customer.lastIdSeq + 1}
@@ -213,7 +213,7 @@ export const CustomerDetailPage: React.FC = () => {
         </div>
 
         {/* Exact Summary Cards (Section 12: Total Jobs, Pending Jobs, Completed Jobs, Total Inward Weight, Total Outward Weight, Average Plating per KG) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-4 pt-4 border-t border-slate-100">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3 mt-4 pt-4 border-t border-slate-100">
           <div className="p-2.5 rounded bg-slate-50/80 border border-slate-200/60">
             <p className="text-2xs font-semibold text-slate-500 uppercase">Total Jobs</p>
             <p className="text-base font-bold font-mono text-slate-900 mt-0.5">{customer.totalJobs}</p>
@@ -249,29 +249,27 @@ export const CustomerDetailPage: React.FC = () => {
 
       {/* Tabs Navigation (Section 12: Overview, Jobs, Inward, Outward, Labour, Activity) */}
       <div className="ds-tabs" role="group" aria-label="Customer views">
-        <div>
-          {[
-            { key: 'jobs', label: `Jobs History (${customerJobs.length})`, icon: Briefcase },
-            { key: 'overview', label: 'Operational Overview', icon: Sparkles },
-            { key: 'inward', label: 'Inward Receipts', icon: ArrowDownLeft },
-            { key: 'outward', label: 'Outward Dispatches', icon: ArrowUpRight },
-            { key: 'labour', label: `Labour Work (${customerBindingTasks.length + customerOpenTasks.length})`, icon: Hammer },
-            { key: 'activity', label: 'Production Activity', icon: Clock },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.key;
-            return (
-              <TabButton active={isActive}
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key as any)}
-                className=""
-              >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
-              </TabButton>
-            );
-          })}
-        </div>
+        {[
+          { key: 'jobs', label: `Jobs History (${customerJobs.length})`, icon: Briefcase },
+          { key: 'overview', label: 'Operational Overview', icon: Sparkles },
+          { key: 'inward', label: 'Inward Receipts', icon: ArrowDownLeft },
+          { key: 'outward', label: 'Outward Dispatches', icon: ArrowUpRight },
+          { key: 'labour', label: `Labour Work (${customerBindingTasks.length + customerOpenTasks.length})`, icon: Hammer },
+          { key: 'activity', label: 'Production Activity', icon: Clock },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.key;
+          return (
+            <TabButton active={isActive}
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className=""
+            >
+              <Icon className="w-3.5 h-3.5 shrink-0" />
+              <span>{tab.label}</span>
+            </TabButton>
+          );
+        })}
       </div>
 
       {/* Tab 1: JOBS HISTORY TABLE */}
