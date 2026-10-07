@@ -8,7 +8,7 @@ import {
   Briefcase,
   Box,
   X,
-  ArrowRight,
+  ChevronRight,
   ShieldCheck,
   Flame,
   FlaskConical,
@@ -151,7 +151,7 @@ export const GlobalSearchModal: React.FC = () => {
         </form>
 
         {/* Results / History Container */}
-        <div className="min-h-0 overflow-y-auto overscroll-contain p-3.5 sm:p-4 space-y-4">
+        <div className="min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 space-y-4">
           {!q ? (
             <div className="space-y-3">
               {/* LAST 5 RECENT SEARCH HISTORY */}
@@ -170,7 +170,7 @@ export const GlobalSearchModal: React.FC = () => {
                           setQuery(item);
                           saveToHistory(item);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-xs font-medium text-slate-700 hover:text-slate-950 transition-all cursor-pointer group"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-xs font-medium text-slate-700 hover:text-slate-950 transition-all cursor-pointer group"
                       >
                         <span>{item}</span>
                         <Button
@@ -201,8 +201,8 @@ export const GlobalSearchModal: React.FC = () => {
               {/* JOBS SECTION */}
               {matchingJobs.length > 0 && (
                 <div className="space-y-1.5">
-                  <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Briefcase className="w-3.5 h-3.5 text-brand-600" /> Jewellery Jobs ({matchingJobs.length})
+                  <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 px-1">
+                    <Briefcase className="w-3.5 h-3.5 text-slate-500" /> Jewellery Jobs ({matchingJobs.length})
                   </h4>
                   <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
                     {matchingJobs.map((j) => (
@@ -213,36 +213,46 @@ export const GlobalSearchModal: React.FC = () => {
                           navigateToJob(j.id);
                           setIsSearchModalOpen(false);
                         }}
-                        className="p-3 hover:bg-slate-50 cursor-pointer flex items-center justify-between group transition-colors"
+                        className="p-3 hover:bg-slate-50/80 cursor-pointer flex flex-col gap-1.5 group transition-colors"
                       >
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                        {/* Row 1: ID + Customer on Left, Status + Chevron on Right */}
+                        <div className="flex items-center justify-between gap-2 min-w-0">
+                          <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                            <span className="font-mono font-bold text-slate-900 group-hover:text-emerald-700 transition-colors text-xs shrink-0">
                               {j.id}
                             </span>
-                            <span className="text-slate-400">•</span>
-                            <span className="font-bold text-slate-800">{j.customerName}</span>
-                            <span className="text-2xs font-medium text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded">
-                              {j.platingType}
+                            <span className="text-slate-300 shrink-0">•</span>
+                            <span className="font-semibold text-slate-800 truncate text-xs">
+                              {j.customerName}
                             </span>
                           </div>
-                          <div className="text-[11px] text-slate-500 font-mono">
-                            Inward: {formatWeight(j.inwardWeight)}
-                            {j.outwardWeight ? ` | Outward: ${formatWeight(j.outwardWeight)} | Plating: ${formatPlating(j.platingPerKg)}` : ''}
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <span
+                              className={`text-[10px] font-semibold px-2 py-0.5 rounded-md whitespace-nowrap shrink-0 text-center ${
+                                j.status === 'Outward Completed'
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80'
+                                  : j.status === 'Ready for Outward'
+                                  ? 'bg-amber-50 text-amber-700 border border-amber-200/80'
+                                  : 'bg-blue-50 text-blue-700 border border-blue-200/80'
+                              }`}
+                            >
+                              {j.status}
+                            </span>
+                            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0" />
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`text-2xs font-semibold px-2 py-0.5 rounded ${
-                              j.status === 'Outward Completed'
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
-                                : 'bg-amber-50 text-amber-700 border border-amber-200/60'
-                            }`}
-                          >
-                            {j.status}
+                        {/* Row 2: Plating Type Badge + Weights */}
+                        <div className="flex items-center gap-2 min-w-0 text-[11px] text-slate-500 font-mono">
+                          <span className="text-[10px] font-medium text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-md whitespace-nowrap shrink-0 border border-slate-200/60">
+                            {j.platingType}
                           </span>
-                          <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-600 transition-colors" />
+                          <span className="truncate">
+                            Inward: {formatWeight(j.inwardWeight)}
+                            {j.outwardWeight ? ` • Outward: ${formatWeight(j.outwardWeight)}` : ''}
+                            {j.platingPerKg ? ` • Plating: ${formatPlating(j.platingPerKg)}` : ''}
+                          </span>
                         </div>
                       </div>
                     ))}
@@ -253,8 +263,8 @@ export const GlobalSearchModal: React.FC = () => {
               {/* CUSTOMERS SECTION */}
               {matchingCustomers.length > 0 && (
                 <div className="space-y-1.5">
-                  <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-purple-600" /> Customers ({matchingCustomers.length})
+                  <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 px-1">
+                    <User className="w-3.5 h-3.5 text-slate-500" /> Customers ({matchingCustomers.length})
                   </h4>
                   <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
                     {matchingCustomers.map((c) => (
@@ -265,18 +275,25 @@ export const GlobalSearchModal: React.FC = () => {
                           navigateToCustomer(c.id);
                           setIsSearchModalOpen(false);
                         }}
-                        className="p-3 hover:bg-slate-50 cursor-pointer flex items-center justify-between group transition-colors"
+                        className="p-3 hover:bg-slate-50/80 cursor-pointer flex flex-col gap-1.5 group transition-colors"
                       >
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                        {/* Row 1: Customer Name + ID Badge on Left, Chevron on Right */}
+                        <div className="flex items-center justify-between gap-2 min-w-0">
+                          <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                            <span className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors text-xs truncate">
                               {c.name}
                             </span>
-                            <span className="font-mono text-2xs text-slate-400">{c.id}</span>
+                            <span className="font-mono text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md shrink-0 border border-slate-200/60">
+                              {c.id}
+                            </span>
                           </div>
-                          <p className="text-[11px] text-slate-500 font-mono">{c.mobile} • {c.address}</p>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0" />
                         </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-600 transition-colors" />
+
+                        {/* Row 2: Phone + Address */}
+                        <p className="text-[11px] text-slate-500 font-mono truncate">
+                          {c.mobile} {c.address ? `• ${c.address}` : ''}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -286,8 +303,8 @@ export const GlobalSearchModal: React.FC = () => {
               {/* LABOUR SECTION */}
               {matchingLabour.length > 0 && (
                 <div className="space-y-1.5">
-                  <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Hammer className="w-3.5 h-3.5 text-indigo-600" /> Labour Force ({matchingLabour.length})
+                  <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 px-1">
+                    <Hammer className="w-3.5 h-3.5 text-slate-500" /> Labour Force ({matchingLabour.length})
                   </h4>
                   <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
                     {matchingLabour.map((l) => (
@@ -298,21 +315,31 @@ export const GlobalSearchModal: React.FC = () => {
                           setCurrentPage('labour_list');
                           setIsSearchModalOpen(false);
                         }}
-                        className="p-3 hover:bg-slate-50 cursor-pointer flex items-center justify-between group transition-colors"
+                        className="p-3 hover:bg-slate-50/80 cursor-pointer flex flex-col gap-1.5 group transition-colors"
                       >
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                        {/* Row 1: Name + ID on Left, Type Badge + Chevron on Right */}
+                        <div className="flex items-center justify-between gap-2 min-w-0">
+                          <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                            <span className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors text-xs truncate">
                               {l.name}
                             </span>
-                            <span className="text-2xs text-slate-400 font-mono">{l.id}</span>
-                            <span className="text-2xs bg-indigo-50 text-indigo-700 px-1.5 py-0.2 rounded font-medium">
-                              {l.labourType}
+                            <span className="text-[10px] text-slate-500 font-mono bg-slate-100 px-1.5 py-0.5 rounded-md shrink-0 border border-slate-200/60">
+                              {l.id}
                             </span>
                           </div>
-                          <p className="text-[11px] text-slate-500 font-mono">{l.mobile} • Status: {l.status}</p>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <span className="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md font-medium whitespace-nowrap shrink-0 border border-indigo-200/60">
+                              {l.labourType}
+                            </span>
+                            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0" />
+                          </div>
                         </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-600 transition-colors" />
+
+                        {/* Row 2: Contact + Status */}
+                        <p className="text-[11px] text-slate-500 font-mono truncate">
+                          {l.mobile} • Status: {l.status}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -322,8 +349,8 @@ export const GlobalSearchModal: React.FC = () => {
               {/* STOCK MATERIALS SECTION */}
               {matchingStock.length > 0 && (
                 <div className="space-y-1.5">
-                  <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Box className="w-3.5 h-3.5 text-cyan-600" /> Factory Materials ({matchingStock.length})
+                  <h4 className="text-2xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 px-1">
+                    <Box className="w-3.5 h-3.5 text-slate-500" /> Factory Materials ({matchingStock.length})
                   </h4>
                   <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
                     {matchingStock.map((s, idx) => {
@@ -336,18 +363,22 @@ export const GlobalSearchModal: React.FC = () => {
                             setCurrentPage(s.page);
                             setIsSearchModalOpen(false);
                           }}
-                          className="p-3 hover:bg-slate-50 cursor-pointer flex items-center justify-between group transition-colors"
+                          className="p-3 hover:bg-slate-50/80 cursor-pointer flex items-center justify-between gap-3 group transition-colors"
                         >
-                          <div className="flex items-center gap-2.5">
-                            <Icon className="w-4 h-4 text-slate-500" />
-                            <div>
-                              <span className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200/60">
+                              <Icon className="w-4 h-4 text-slate-600" />
+                            </div>
+                            <div className="min-w-0 flex-1 space-y-0.5">
+                              <span className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors text-xs block truncate">
                                 {s.name}
                               </span>
-                              <span className="text-2xs text-slate-400 block">{s.type} Stock Ledger</span>
+                              <span className="text-[11px] text-slate-500 block truncate font-mono">
+                                {s.type} Stock Ledger
+                              </span>
                             </div>
                           </div>
-                          <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-600 transition-colors" />
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0" />
                         </div>
                       );
                     })}
