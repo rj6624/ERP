@@ -5,8 +5,9 @@ import { JewelleryJob } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { calculateAgeDays } from '../../utils/calculations';
+import { Zap, ArrowUpRight, Eye, AlertCircle, Clock, Plus, Download } from 'lucide-react';
 import { formatWeight, formatDate } from '../../utils/formatters';
-import { Zap, ArrowUpRight, Eye, AlertCircle, Clock, Plus } from 'lucide-react';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const FastForwardQueuePage: React.FC = () => {
   const { jobs, setCurrentPage, navigateToJob, navigateToCustomer } = useERP();
@@ -129,12 +130,23 @@ export const FastForwardQueuePage: React.FC = () => {
           </p>
         </div>
 
-        <Button variant="primary"
-          onClick={() => setCurrentPage('create_inward')}
-          className="self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" /> New Fast Forward
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('fast_forward_queue', columns, fastForwardPendingJobs)}
+            className="inline-flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => setCurrentPage('create_inward')}
+          >
+            <Plus className="w-3.5 h-3.5" /> New Fast Forward
+          </Button>
+        </div>
       </div>
 
       {/* Fast Forward Table */}

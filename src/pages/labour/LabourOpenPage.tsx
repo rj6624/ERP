@@ -7,7 +7,8 @@ import { StatusBadge } from '../../components/common/StatusBadge';
 import { Modal } from '../../components/common/Modal';
 import { calculateLabourCharge } from '../../utils/calculations';
 import { formatWeight, formatCurrency, formatDateTime } from '../../utils/formatters';
-import { Unlock, Plus } from 'lucide-react';
+import { Unlock, Plus, Download } from 'lucide-react';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const LabourOpenPage: React.FC = () => {
   const {
@@ -143,12 +144,23 @@ export const LabourOpenPage: React.FC = () => {
             Post-plating chain unbinding, tar residue cleaning, and labour remuneration tracking.
           </p>
         </div>
-        <Button variant="primary"
-          onClick={() => setIsAddModalOpen(true)}
-          className="self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" /> Create Labour Open Task
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('labour_open_tasks', columns, labourOpenTasks)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button variant="primary"
+            onClick={() => setIsAddModalOpen(true)}
+            className=""
+          >
+            <Plus className="w-3.5 h-3.5" /> Create Labour Open Task
+          </Button>
+        </div>
       </div>
 
       {/* Open Tasks Table */}

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
-import { Button } from '../../components/ui/Primitives';
+import { Button, Badge } from '../../components/ui/Primitives';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { JewelleryJob } from '../../types/erp';
@@ -11,7 +11,9 @@ import {
   Zap,
   Eye,
   Plus,
+  Download,
 } from 'lucide-react';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const OperatorOutwardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -157,9 +159,9 @@ export const OperatorOutwardPage: React.FC = () => {
               <ArrowUpRight className="w-3.5 h-3.5" /> Process Outward
             </Button>
           ) : (
-            <span className="text-2xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+            <Badge tone="success" size="sm">
               Dispatched
-            </span>
+            </Badge>
           )}
         </div>
       ),
@@ -179,13 +181,23 @@ export const OperatorOutwardPage: React.FC = () => {
           </p>
         </div>
 
-        <Button
-          variant="primary"
-          onClick={() => navigate('/outward/new')}
-          className="self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" /> Process Outward Directly
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('customer_outward_queue', columns, filteredJobs)}
+            className="inline-flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => navigate('/outward/new')}
+          >
+            <Plus className="w-3.5 h-3.5" /> Process Outward Directly
+          </Button>
+        </div>
       </div>
 
       {/* Unified DataTable with Filter Tabs next to Export */}

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useERP } from '../../context/ERPContext';
-import { Button } from '../../components/ui/Primitives';
+import { Button, Badge } from '../../components/ui/Primitives';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { LabourBindingTask } from '../../types/erp';
@@ -10,7 +10,9 @@ import {
   Layers,
   Play,
   CheckCircle,
+  Download,
 } from 'lucide-react';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const LabourBindingWorkPage: React.FC = () => {
   const {
@@ -156,9 +158,9 @@ export const LabourBindingWorkPage: React.FC = () => {
           )}
 
           {row.status === 'Completed' && (
-            <span className="text-2xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+            <Badge tone="success" size="sm">
               Completed
-            </span>
+            </Badge>
           )}
         </div>
       ),
@@ -178,8 +180,19 @@ export const LabourBindingWorkPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="text-xs text-slate-500 font-semibold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 self-start sm:self-auto">
-          {myBindingTasks.length} Total Binding Tasks
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('labour_binding_queue', columns, filteredTasks)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <div className="text-xs text-slate-500 font-semibold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+            {myBindingTasks.length} Total Binding Tasks
+          </div>
         </div>
       </div>
 

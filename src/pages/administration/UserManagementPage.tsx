@@ -6,8 +6,9 @@ import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Modal } from '../../components/common/Modal';
 import { SuccessModal } from '../../components/common/SuccessModal';
-import { UserCog, UserPlus, ShieldCheck, KeyRound, Lock, Unlock, UserCheck } from 'lucide-react';
+import { UserCog, UserPlus, ShieldCheck, KeyRound, Lock, Unlock, UserCheck, Download } from 'lucide-react';
 import { formatDate, formatDateTime } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const UserManagementPage: React.FC = () => {
   const { users, addUser, toggleUserStatus, setCurrentPage } = useERP();
@@ -144,7 +145,16 @@ export const UserManagementPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('erp_users_list', columns, users)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
           <Button variant="secondary"
             onClick={() => setCurrentPage('admin_permissions')}
             className=""

@@ -16,7 +16,9 @@ import {
   Scale,
   FileText,
   Eye,
+  Download,
 } from 'lucide-react';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const OperatorDashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -233,6 +235,15 @@ export const OperatorDashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('operator_work_queue', columns, filteredJobs)}
+            className="inline-flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
           <Button
             variant="secondary"
             onClick={() => navigate('/outward/new')}

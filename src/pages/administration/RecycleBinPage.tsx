@@ -4,8 +4,9 @@ import { useERP } from '../../context/ERPContext';
 import { RecycleBinItem } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
-import { Trash2, RotateCcw, ShieldAlert, AlertTriangle } from 'lucide-react';
+import { Trash2, RotateCcw, ShieldAlert, AlertTriangle, Download } from 'lucide-react';
 import { formatDateTime } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const RecycleBinPage: React.FC = () => {
   const {
@@ -95,14 +96,25 @@ export const RecycleBinPage: React.FC = () => {
           </p>
         </div>
 
-        {recycleBin.length > 0 && (
-          <Button variant="danger"
-            onClick={() => setIsEmptyingBin(true)}
-            className="self-start sm:self-auto"
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('recycle_bin_audit', columns, recycleBin)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
           >
-            <Trash2 className="w-3.5 h-3.5" /> Empty Recycle Bin
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
           </Button>
-        )}
+          {recycleBin.length > 0 && (
+            <Button variant="danger"
+              onClick={() => setIsEmptyingBin(true)}
+              className=""
+            >
+              <Trash2 className="w-3.5 h-3.5" /> Empty Recycle Bin
+            </Button>
+          )}
+        </div>
       </div>
 
       <DataTable

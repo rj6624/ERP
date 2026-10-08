@@ -5,8 +5,9 @@ import { AcidItem } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Modal } from '../../components/common/Modal';
-import { Flame, ArrowDown, ArrowUp, AlertTriangle } from 'lucide-react';
+import { Flame, ArrowDown, ArrowUp, AlertTriangle, Download } from 'lucide-react';
 import { formatCurrency } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const AcidStockPage: React.FC = () => {
   const { acids, updateAcidStock } = useERP();
@@ -142,7 +143,16 @@ export const AcidStockPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('acid_stock', columns, acids)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
           <Button variant="primary"
             onClick={() => setIsStockInModalOpen(true)}
             className=""

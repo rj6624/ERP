@@ -176,11 +176,11 @@
 .ds-button.ds-tab:hover:not([aria-pressed="true"]) :is(svg) {
   color: #475569;
 }
-.ds-badge { display: inline-flex; align-items: center; gap: 4px; border-radius: var(--ds-radius-sm); line-height: 1.4; font-weight: 500; box-shadow: none; animation: none; }
+.ds-badge { display: inline-flex; align-items: center; gap: 4px; border-radius: var(--ds-radius-sm); line-height: 1.4; font-weight: 500; box-shadow: none; animation: none; white-space: nowrap; }
 .ds-badge.bg-amber-500 { background: var(--ds-warning-soft); color: var(--ds-warning); border-color: #eeddb5; }
 .ds-badge svg { flex-shrink: 0; }
-.ds-badge--sm { padding: 3px 7px; font-size: 11px; }
-.ds-badge--md { padding: 5px 9px; font-size: 12px; }
+.ds-badge--sm { padding: 3px 8px; font-size: 11px; min-height: 24px; box-sizing: border-box; }
+.ds-badge--md { padding: 5px 10px; font-size: 12px; min-height: 28px; box-sizing: border-box; }
 .ds-badge { border: 1px solid transparent; max-width: 100%; vertical-align: middle; }
 .ds-badge--neutral { color: var(--ds-text-secondary); background: #f0f4f6; border-color: var(--ds-border); }
 .ds-badge--info { color: var(--ds-info); background: var(--ds-info-soft); border-color: #d3e4f5; }

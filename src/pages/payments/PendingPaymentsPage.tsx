@@ -5,8 +5,9 @@ import { Bill } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { RecordPaymentModal } from './RecordPaymentModal';
-import { CreditCard, AlertTriangle, Eye } from 'lucide-react';
+import { CreditCard, AlertTriangle, Eye, Download } from 'lucide-react';
 import { formatWeight, formatCurrency, formatDate } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const PendingPaymentsPage: React.FC = () => {
   const { bills, navigateToBill, navigateToCustomer } = useERP();
@@ -131,11 +132,23 @@ export const PendingPaymentsPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="text-right p-2.5 rounded bg-red-50/60 border border-red-200 self-start sm:self-auto">
-          <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Total Outstanding</span>
-          <span className="font-mono text-base font-extrabold text-red-600">
-            {formatCurrency(totalPendingReceivables, true)}
-          </span>
+        <div className="flex items-center gap-3 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('pending_payments', columns, pendingBills)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+
+          <div className="text-right p-2.5 rounded bg-red-50/60 border border-red-200">
+            <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Total Outstanding</span>
+            <span className="font-mono text-base font-extrabold text-red-600">
+              {formatCurrency(totalPendingReceivables, true)}
+            </span>
+          </div>
         </div>
       </div>
 

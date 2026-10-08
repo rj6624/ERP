@@ -1,11 +1,12 @@
-import { Button, Input, Select } from '../../components/ui/Primitives';
+import { Button, Input, Select, Badge } from '../../components/ui/Primitives';
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { ScrapRecord } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { Modal } from '../../components/common/Modal';
-import { PackageCheck, Plus, Recycle, Scale } from 'lucide-react';
+import { PackageCheck, Plus, Recycle, Scale, Download } from 'lucide-react';
 import { formatWeight, formatDate, formatDateTime } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const ScrapManagementPage: React.FC = () => {
   const { scrapRecords, addScrapRecord, customers } = useERP();
@@ -112,15 +113,15 @@ export const ScrapManagementPage: React.FC = () => {
       cell: (row) => {
         if (row.status === 'Recovered') {
           return (
-            <span className="px-2 py-0.5 rounded text-2xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <Badge tone="success" size="sm">
               Recovered
-            </span>
+            </Badge>
           );
         }
         return (
-          <span className="px-2 py-0.5 rounded text-2xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+          <Badge tone="warning" size="sm">
             Pending Recovery
-          </span>
+          </Badge>
         );
       },
     },
@@ -141,12 +142,23 @@ export const ScrapManagementPage: React.FC = () => {
             Filter dragout recovery, buffing lint smelting, and chemical precipitation logs with strict 3-decimal gross weights.
           </p>
         </div>
-        <Button variant="primary"
-          onClick={() => setIsAddModalOpen(true)}
-          className="self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" /> Record Scrap Batch
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('scrap_recovery_ledger', columns, scrapRecords)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button variant="primary"
+            onClick={() => setIsAddModalOpen(true)}
+            className=""
+          >
+            <Plus className="w-3.5 h-3.5" /> Record Scrap Batch
+          </Button>
+        </div>
       </div>
 
       <DataTable

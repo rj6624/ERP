@@ -45,6 +45,7 @@ interface DataTableProps<T> {
   defaultViewMode?: DataTableViewMode;
   onViewModeChange?: (mode: DataTableViewMode) => void;
   showViewToggle?: boolean;
+  showExport?: boolean;
   renderCard?: (item: T, index: number) => React.ReactNode;
 }
 
@@ -67,6 +68,7 @@ export function DataTable<T extends { id?: string | number }>({
   defaultViewMode = 'table',
   onViewModeChange,
   showViewToggle = true,
+  showExport = false,
   renderCard,
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -227,18 +229,20 @@ export function DataTable<T extends { id?: string | number }>({
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {actions}
 
-          {/* CSV Export Button (Icon only on mobile, Icon + Text on larger screens) */}
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleExportCSV}
-            className="erp-toolbar-control inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 text-xs shrink-0 py-0"
-            title="Export CSV"
-            aria-label="Export CSV"
-          >
-            <Download className="w-3.5 h-3.5 text-slate-600" />
-            <span className="hidden sm:inline">Export</span>
-          </Button>
+          {/* CSV Export Button (Only if showExport is explicitly true) */}
+          {showExport && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleExportCSV}
+              className="erp-toolbar-control inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 text-xs shrink-0 py-0"
+              title="Export CSV"
+              aria-label="Export CSV"
+            >
+              <Download className="w-3.5 h-3.5 text-slate-600" />
+              <span className="hidden sm:inline">Export</span>
+            </Button>
+          )}
 
           {/* Consistent Segmented Icon View Switcher */}
           {showViewToggle && (

@@ -4,8 +4,9 @@ import { useERP } from '../../context/ERPContext';
 import { LabourRecord, LabourType } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { Modal } from '../../components/common/Modal';
-import { Hammer, UserPlus, Phone, MapPin, DollarSign } from 'lucide-react';
+import { Hammer, UserPlus, Phone, MapPin, DollarSign, Download } from 'lucide-react';
 import { formatCurrency } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const LabourListPage: React.FC = () => {
   const { labourList, addLabour } = useERP();
@@ -124,12 +125,23 @@ export const LabourListPage: React.FC = () => {
             Contract workers, binding specialists, and untying operators with default charge rates.
           </p>
         </div>
-        <Button variant="primary"
-          onClick={() => setIsAddModalOpen(true)}
-          className="self-start sm:self-auto"
-        >
-          <UserPlus className="w-3.5 h-3.5" /> Add Labour Worker
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('labour_master', columns, labourList)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button variant="primary"
+            onClick={() => setIsAddModalOpen(true)}
+            className=""
+          >
+            <UserPlus className="w-3.5 h-3.5" /> Add Labour Worker
+          </Button>
+        </div>
       </div>
 
       {/* Labour Table */}

@@ -4,8 +4,9 @@ import { useERP } from '../../context/ERPContext';
 import { Payment } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { RecordPaymentModal } from './RecordPaymentModal';
-import { CreditCard, Plus, ArrowLeft } from 'lucide-react';
+import { CreditCard, Plus, ArrowLeft, Download } from 'lucide-react';
 import { formatCurrency, formatDate, formatDateTime } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const PaymentReceivedPage: React.FC = () => {
   const { payments, navigateToCustomer, navigateToBill } = useERP();
@@ -103,12 +104,23 @@ export const PaymentReceivedPage: React.FC = () => {
             Audit register of all funds deposited via Bank Transfer, Cash, UPI, and Cheque clearances.
           </p>
         </div>
-        <Button variant="primary"
-          onClick={() => setIsRecordModalOpen(true)}
-          className="self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" /> Record Payment
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('payment_received_ledger', columns, payments)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button variant="primary"
+            onClick={() => setIsRecordModalOpen(true)}
+            className=""
+          >
+            <Plus className="w-3.5 h-3.5" /> Record Payment
+          </Button>
+        </div>
       </div>
 
       <DataTable

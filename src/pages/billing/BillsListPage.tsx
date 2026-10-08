@@ -6,8 +6,9 @@ import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { CreateBillModal } from './CreateBillModal';
 import { RecordPaymentModal } from '../payments/RecordPaymentModal';
-import { FileText, Plus, Eye, CreditCard } from 'lucide-react';
+import { FileText, Plus, Eye, CreditCard, Download } from 'lucide-react';
 import { formatWeight, formatCurrency, formatDate } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const BillsListPage: React.FC = () => {
   const { bills, setCurrentPage, navigateToBill, navigateToCustomer } = useERP();
@@ -144,12 +145,23 @@ export const BillsListPage: React.FC = () => {
             Automated invoices calculated on Inward Weight × Price per KG with integrated payment balance tracking.
           </p>
         </div>
-        <Button variant="primary"
-          onClick={() => setIsCreateModalOpen(true)}
-          className="self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" /> Generate New Bill
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('bills_invoices', columns, bills)}
+            className="inline-flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            <Plus className="w-3.5 h-3.5" /> Generate New Bill
+          </Button>
+        </div>
       </div>
 
       <DataTable

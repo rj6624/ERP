@@ -6,8 +6,9 @@ import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { CustomerFormModal } from './CustomerFormModal';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { SuccessModal } from '../../components/common/SuccessModal';
-import { UserPlus, Eye, Edit2, Trash2, Phone, Calendar, Scale, Briefcase, Plus } from 'lucide-react';
+import { UserPlus, Eye, Edit2, Trash2, Phone, Calendar, Scale, Briefcase, Plus, Download } from 'lucide-react';
 import { formatWeight, formatDate } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const CustomersListPage: React.FC = () => {
   const {
@@ -258,12 +259,23 @@ export const CustomersListPage: React.FC = () => {
             Registered jewellery retailers, wholesalers, and manufacturers with automated job ID sequencing.
           </p>
         </div>
-        <Button variant="primary"
-          onClick={() => setIsAddModalOpen(true)}
-          className="self-start sm:self-auto"
-        >
-          <UserPlus className="w-3.5 h-3.5" /> Add Customer
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('customers_master', columns, customers)}
+            className="inline-flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            <UserPlus className="w-3.5 h-3.5" /> Add Customer
+          </Button>
+        </div>
       </div>
 
       {/* Main Customers Table / Card View */}

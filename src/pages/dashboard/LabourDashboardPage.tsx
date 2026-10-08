@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ERPContext';
-import { Button, Card } from '../../components/ui/Primitives';
+import { Button, Card, Badge } from '../../components/ui/Primitives';
 import { StatCard } from '../../components/common/StatCard';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -17,7 +17,9 @@ import {
   CheckCircle,
   FileText,
   Hammer,
+  Download,
 } from 'lucide-react';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 interface UnifiedTask {
   id: string;
@@ -242,9 +244,9 @@ export const LabourDashboardPage: React.FC = () => {
           )}
 
           {row.status === 'Completed' && (
-            <span className="text-2xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+            <Badge tone="success" size="sm">
               Completed
-            </span>
+            </Badge>
           )}
         </div>
       ),
@@ -273,6 +275,15 @@ export const LabourDashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('artisan_work_queue', columns, filteredTasks)}
+            className="inline-flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
           <Button
             variant="secondary"
             onClick={() => navigate('/labour/reports')}

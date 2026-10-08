@@ -25,6 +25,25 @@ export function exportToCSV(filename: string, headers: string[], rows: (string |
   document.body.removeChild(link);
 }
 
+export function exportTableToCSV<T>(
+  filename: string,
+  columns: { header: string; accessorKey?: any }[],
+  data: T[]
+) {
+  const validCols = columns.filter((col) => col.header && col.header !== 'Actions');
+  const headers = validCols.map((col) => col.header);
+  const rows = data.map((item) =>
+    validCols.map((col) => {
+      if (col.accessorKey) {
+        return String((item as any)[col.accessorKey] ?? '');
+      }
+      return '';
+    })
+  );
+  exportToCSV(filename, headers, rows);
+}
+
 export function triggerPrint() {
   window.print();
 }
+

@@ -15,8 +15,10 @@ import {
   Calendar,
   AlertCircle,
   Eye,
+  Download,
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 import { Bill } from '../../types/erp';
 
 export const PaymentDashboardPage: React.FC = () => {
@@ -125,12 +127,23 @@ export const PaymentDashboardPage: React.FC = () => {
             Complete financial visibility over cash, bank transfers, UPI receipts, pending receivables, and promised date obligations.
           </p>
         </div>
-        <Button variant="primary"
-          onClick={() => setIsRecordModalOpen(true)}
-          className="self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" /> Record Payment Receipt
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('payment_receivables_summary', columns, bills)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button variant="primary"
+            onClick={() => setIsRecordModalOpen(true)}
+            className=""
+          >
+            <Plus className="w-3.5 h-3.5" /> Record Payment Receipt
+          </Button>
+        </div>
       </div>
 
       {/* KPI Cards */}

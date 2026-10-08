@@ -4,8 +4,9 @@ import { useERP } from '../../context/ERPContext';
 import { TarTransaction } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { Modal } from '../../components/common/Modal';
-import { Box, Plus, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
+import { Box, Plus, TrendingUp, TrendingDown, RefreshCw, Download } from 'lucide-react';
 import { formatWeight, formatCurrency, formatDate, formatDateTime } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const TarStockPage: React.FC = () => {
   const { tarTransactions, currentTarStock, addTarTransaction, labourList } = useERP();
@@ -147,13 +148,23 @@ export const TarStockPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 self-start sm:self-auto">
-          <div className="text-right p-2 rounded bg-amber-50 border border-amber-200">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <div className="text-right p-2 rounded bg-amber-50 border border-amber-200 mr-1">
             <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-medium">Current Tar Stock</span>
             <span className="font-mono text-base font-extrabold text-amber-800">
               {formatWeight(currentTarStock)}
             </span>
           </div>
+
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('tar_stock_ledger', columns, tarTransactions)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
 
           <Button variant="primary"
             onClick={() => setIsAddModalOpen(true)}

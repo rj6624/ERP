@@ -5,8 +5,9 @@ import { Bill } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { RecordPaymentModal } from './RecordPaymentModal';
-import { Clock, AlertCircle, CreditCard, Eye } from 'lucide-react';
+import { Clock, AlertCircle, CreditCard, Eye, Download } from 'lucide-react';
 import { formatCurrency, formatDate } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const PromiseDatePendingPage: React.FC = () => {
   const { bills, navigateToBill, navigateToCustomer } = useERP();
@@ -126,6 +127,18 @@ export const PromiseDatePendingPage: React.FC = () => {
           <p className="text-xs text-slate-500">
             Customer payment promises committed for specific calendar dates. Auto-flagged for daily collection follow-up.
           </p>
+        </div>
+
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('promise_date_pending', columns, promiseBills)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
         </div>
       </div>
 

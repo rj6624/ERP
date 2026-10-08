@@ -1,11 +1,12 @@
-import { Button } from '../../components/ui/Primitives';
+import { Button, Badge } from '../../components/ui/Primitives';
 import React from 'react';
 import { useERP } from '../../context/ERPContext';
 import { JewelleryJob } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
-import { ArrowUpRight, Plus, Eye } from 'lucide-react';
+import { ArrowUpRight, Plus, Eye, Download } from 'lucide-react';
 import { formatWeight, formatPlating, formatDateTime } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const OutwardListPage: React.FC = () => {
   const { jobs, setCurrentPage, navigateToJob, navigateToCustomer } = useERP();
@@ -89,9 +90,9 @@ export const OutwardListPage: React.FC = () => {
         row.billNumber ? (
           <span className="font-mono text-xs text-slate-800 font-semibold">{row.billNumber}</span>
         ) : (
-          <span className="text-amber-700 text-2xs bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+          <Badge tone="warning" size="sm">
             Pending Bill
-          </span>
+          </Badge>
         ),
     },
     {
@@ -123,12 +124,23 @@ export const OutwardListPage: React.FC = () => {
             Finished goods dispatch record with verified scale weight and automatically calculated Plating per KG.
           </p>
         </div>
-        <Button variant="primary"
-          onClick={() => setCurrentPage('create_outward')}
-          className="self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" /> Process Outward
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('outward_dispatches', columns, outwardCompletedJobs)}
+            className="inline-flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => setCurrentPage('create_outward')}
+          >
+            <Plus className="w-3.5 h-3.5" /> Process Outward
+          </Button>
+        </div>
       </div>
 
       {/* Outward Table */}

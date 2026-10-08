@@ -6,8 +6,9 @@ import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Modal } from '../../components/common/Modal';
 import { SuccessModal } from '../../components/common/SuccessModal';
-import { FlaskConical, Plus, ArrowDown, ArrowUp, AlertTriangle } from 'lucide-react';
+import { FlaskConical, Plus, ArrowDown, ArrowUp, AlertTriangle, Download } from 'lucide-react';
 import { formatCurrency, formatDateTime } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const ChemicalStockPage: React.FC = () => {
   const { chemicals, updateChemicalStock } = useERP();
@@ -172,7 +173,16 @@ export const ChemicalStockPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('chemicals_inventory', columns, chemicals)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
           <Button variant="primary"
             onClick={() => setIsStockInModalOpen(true)}
             className=""

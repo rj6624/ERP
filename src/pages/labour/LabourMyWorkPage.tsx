@@ -6,12 +6,13 @@ import { StatusBadge } from '../../components/common/StatusBadge';
 import { CompleteWorkModal } from '../../components/labour/CompleteWorkModal';
 import { formatWeight, formatDateTime } from '../../utils/formatters';
 import {
-  Briefcase,
   Layers,
   Sparkles,
   Play,
   CheckCircle,
+  Download,
 } from 'lucide-react';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 interface UnifiedTask {
   id: string;
@@ -256,8 +257,19 @@ export const LabourMyWorkPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="text-xs text-slate-500 font-semibold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 self-start sm:self-auto">
-          {filteredTasks.length} Assigned Tasks
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('my_assigned_work', columns, filteredTasks)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <div className="text-xs text-slate-500 font-semibold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+            {filteredTasks.length} Assigned Tasks
+          </div>
         </div>
       </div>
 

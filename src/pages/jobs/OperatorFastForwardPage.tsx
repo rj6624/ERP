@@ -12,7 +12,9 @@ import {
   ArrowUpRight,
   Eye,
   Plus,
+  Download,
 } from 'lucide-react';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const OperatorFastForwardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -144,13 +146,23 @@ export const OperatorFastForwardPage: React.FC = () => {
           </p>
         </div>
 
-        <Button
-          variant="primary"
-          onClick={() => navigate('/inward/new')}
-          className="self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" /> New Fast Forward
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('fast_forward_queue', columns, pendingFastForwardJobs)}
+            className="inline-flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => navigate('/inward/new')}
+          >
+            <Plus className="w-3.5 h-3.5" /> New Fast Forward
+          </Button>
+        </div>
       </div>
 
       {/* Priority Queue DataTable */}

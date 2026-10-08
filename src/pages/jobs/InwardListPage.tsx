@@ -1,11 +1,12 @@
-import { Button, CustomSelect } from '../../components/ui/Primitives';
+import { Button, CustomSelect, Badge } from '../../components/ui/Primitives';
 import React, { useState, useMemo } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { JewelleryJob } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
-import { Plus, Eye, Filter, SlidersHorizontal, X } from 'lucide-react';
+import { Plus, Eye, Filter, SlidersHorizontal, X, Download } from 'lucide-react';
 import { formatWeight, formatDateTime } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 import { FilterBottomSheet } from '../../components/common/FilterBottomSheet';
 
 export const InwardListPage: React.FC = () => {
@@ -126,13 +127,13 @@ export const InwardListPage: React.FC = () => {
       accessorKey: 'status',
       cell: (row) =>
         row.status === 'Outward Completed' ? (
-          <span className="text-emerald-700 font-semibold text-2xs bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+          <Badge tone="success" size="sm">
             Dispatched ({formatWeight(row.outwardWeight)})
-          </span>
+          </Badge>
         ) : (
-          <span className="text-amber-700 text-2xs bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+          <Badge tone="warning" size="sm">
             Pending Outward
-          </span>
+          </Badge>
         ),
     },
     {
@@ -164,12 +165,23 @@ export const InwardListPage: React.FC = () => {
             Intake of unplated silver jewellery with digital scale verification and system-generated IDs.
           </p>
         </div>
-        <Button variant="primary"
-          onClick={() => setCurrentPage('create_inward')}
-          className="self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" /> Create Inward
-        </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('inward_receipts', columns, filteredJobs)}
+            className="inline-flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => setCurrentPage('create_inward')}
+          >
+            <Plus className="w-3.5 h-3.5" /> Create Inward
+          </Button>
+        </div>
       </div>
 
       {/* Inward Table with Filters below Searchbar */}

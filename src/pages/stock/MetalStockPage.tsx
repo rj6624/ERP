@@ -5,8 +5,9 @@ import { MetalItem } from '../../types/erp';
 import { DataTable, ColumnDef } from '../../components/common/DataTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Modal } from '../../components/common/Modal';
-import { ShieldCheck, ArrowDown, ArrowUp } from 'lucide-react';
+import { ShieldCheck, ArrowDown, ArrowUp, Download } from 'lucide-react';
 import { formatWeight, formatCurrency } from '../../utils/formatters';
+import { exportTableToCSV } from '../../utils/exportUtils';
 
 export const MetalStockPage: React.FC = () => {
   const { metals, updateMetalStock } = useERP();
@@ -152,7 +153,16 @@ export const MetalStockPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="secondary"
+            onClick={() => exportTableToCSV('metal_inventory', columns, metals)}
+            className="flex items-center gap-1.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export</span>
+          </Button>
           <Button variant="primary"
             onClick={() => setIsStockInModalOpen(true)}
             className=""
