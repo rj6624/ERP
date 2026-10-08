@@ -207,7 +207,7 @@ export function DataTable<T extends { id?: string | number }>({
             }}
             placeholder={searchPlaceholder}
             aria-label={searchPlaceholder}
-            className="erp-toolbar-control pl-8 pr-7 w-full text-xs ds-control-leading py-0"
+            className="erp-toolbar-control !pl-9 pr-7 w-full text-xs ds-control-leading py-0"
           />
           {searchTerm && (
             <Button
